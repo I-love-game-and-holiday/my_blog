@@ -1,12 +1,10 @@
-import { BlogThemeConfig } from 'nextra-theme-blog'
-
-const config: BlogThemeConfig = {
+const config = {
   footer: <p>MIT 2025 © Your Name.</p>,
-  head: ({ title, meta }) => (
+  head: ({ meta }: { title?: string; meta?: Record<string, string> }) => (
     <>
-      {meta.description && <meta name="description" content={meta.description} />}
-      {meta.tag && <meta name="keywords" content={meta.tag} />}
-      {meta.author && <meta name="author" content={meta.author} />}
+      {meta?.description && <meta name="description" content={meta.description} />}
+      {meta?.tag && <meta name="keywords" content={meta.tag} />}
+      {meta?.author && <meta name="author" content={meta.author} />}
     </>
   ),
   readMore: '続きを読む →',
@@ -14,6 +12,18 @@ const config: BlogThemeConfig = {
   postFooter: null,
   darkMode: true,
   navs: [
+    {
+      url: '/posts/db',
+      name: 'データベース',
+    },
+    {
+      url: '/posts/network',
+      name: 'ネットワーク',
+    },
+    {
+      url: '/posts/diary',
+      name: '日記',
+    },
     {
       url: 'https://github.com',
       name: 'GitHub',
