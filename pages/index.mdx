@@ -3,96 +3,22 @@ title: 技術ブログ
 description: 技術的なトピックについて記事を書いていきます
 ---
 
-import Link from "next/link";
+import CategoryCard from "../components/CategoryCard";
+import { categories } from "../components/categories";
 
 # 技術ブログ
 
 <div>技術的なトピックについて記事を書いていきます。</div>
 
-<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', marginTop: '2rem' }}>
-  <div style={{ border: '1px solid #e5e7eb', borderRadius: '0.5rem', padding: '1.5rem', transition: 'box-shadow 0.3s', cursor: 'pointer' }} onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)'} onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'none'}>
-    <h2 style={{ marginTop: 0, marginBottom: '1rem', fontSize: '1.5rem', fontWeight: 'bold' }}>
-      <Link href="/posts/db" style={{ textDecoration: 'none', color: 'inherit' }}>📊 データベース</Link>
-    </h2>
-    <div style={{ color: '#6b7280', marginBottom: '1rem' }}>データベースに関する技術記事</div>
-    <div style={{ marginBottom: '1rem' }}>
-      <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem' }}>最新記事</h3>
-      <ul style={{ fontSize: '0.875rem', marginLeft: '1rem', marginBottom: '0.5rem' }}>
-        <li><Link href="/posts/db/first-post" style={{ color: '#3b82f6', textDecoration: 'none' }}>Next.jsとNextraでブログを始める</Link></li>
-      </ul>
-    </div>
-    <Link href="/posts/db" style={{ color: '#3b82f6', textDecoration: 'none', fontSize: '0.875rem', fontWeight: '500' }}>
-      もっと見る →
-    </Link>
-  </div>
-
-{" "}
-
 <div
   style={{
-    border: "1px solid #e5e7eb",
-    borderRadius: "0.5rem",
-    padding: "1.5rem",
-    transition: "box-shadow 0.3s",
-    cursor: "pointer",
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+    gap: "2rem",
+    marginTop: "2rem",
   }}
-  onMouseEnter={(e) =>
-    (e.currentTarget.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.1)")
-  }
-  onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "none")}
 >
-  <h2
-    style={{
-      marginTop: 0,
-      marginBottom: "1rem",
-      fontSize: "1.5rem",
-      fontWeight: "bold",
-    }}
-  >
-    <Link
-      href="/posts/network"
-      style={{ textDecoration: "none", color: "inherit" }}
-    >
-      🌐 ネットワーク
-    </Link>
-  </h2>
-  <div style={{ color: "#6b7280", marginBottom: "1rem" }}>
-    ネットワークに関する技術記事
-  </div>
-  <div style={{ marginBottom: "1rem" }}>
-    <h3 style={{ fontSize: "1rem", fontWeight: "600", marginBottom: "0.5rem" }}>
-      最新記事
-    </h3>
-    <div style={{ fontSize: "0.875rem", color: "#9ca3af" }}>
-      記事はまだありません
-    </div>
-  </div>
-  <Link
-    href="/posts/network"
-    style={{
-      color: "#3b82f6",
-      textDecoration: "none",
-      fontSize: "0.875rem",
-      fontWeight: "500",
-    }}
-  >
-    もっと見る →
-  </Link>
-</div>
-
-  <div style={{ border: '1px solid #e5e7eb', borderRadius: '0.5rem', padding: '1.5rem', transition: 'box-shadow 0.3s', cursor: 'pointer' }} onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)'} onMouseLeave={(e) => e.currentTarget.style.boxShadow = 'none'}>
-    <h2 style={{ marginTop: 0, marginBottom: '1rem', fontSize: '1.5rem', fontWeight: 'bold' }}>
-      <Link href="/posts/diary" style={{ textDecoration: 'none', color: 'inherit' }}>📝 日記</Link>
-    </h2>
-    <div style={{ color: '#6b7280', marginBottom: '1rem' }}>日々の出来事や雑記</div>
-    <div style={{ marginBottom: '1rem' }}>
-      <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem' }}>最新記事</h3>
-      <ul style={{ fontSize: '0.875rem', marginLeft: '1rem', marginBottom: '0.5rem' }}>
-        <li><Link href="/posts/diary/getting-started" style={{ color: '#3b82f6', textDecoration: 'none' }}>はじめに</Link></li>
-      </ul>
-    </div>
-    <Link href="/posts/diary" style={{ color: '#3b82f6', textDecoration: 'none', fontSize: '0.875rem', fontWeight: '500' }}>
-      もっと見る →
-    </Link>
-  </div>
+  {categories.map((category) => (
+    <CategoryCard key={category.id} category={category} />
+  ))}
 </div>
