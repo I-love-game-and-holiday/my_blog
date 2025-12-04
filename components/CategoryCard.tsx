@@ -70,16 +70,20 @@ export default function CategoryCard({ category }: CategoryCardProps) {
               marginBottom: '0.5rem',
             }}
           >
-            {category.posts.map((post) => (
-              <li key={post.href}>
-                <Link
-                  href={post.href}
-                  style={{ color: '#3b82f6', textDecoration: 'none' }}
-                >
-                  {post.title}
-                </Link>
-              </li>
-            ))}
+            {category.posts.map((post) => {
+              // hrefからファイル名を抽出（例: /posts/db/first-post -> first-post）
+              const fileName = post.href.split('/').pop() || post.href;
+              return (
+                <li key={post.href}>
+                  <Link
+                    href={post.href}
+                    style={{ color: '#3b82f6', textDecoration: 'none' }}
+                  >
+                    {fileName}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         ) : (
           <div style={{ fontSize: '0.875rem', color: '#9ca3af' }}>

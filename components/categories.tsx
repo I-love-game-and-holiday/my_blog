@@ -2,9 +2,9 @@ import StorageIcon from '@mui/icons-material/Storage';
 import RssFeedIcon from '@mui/icons-material/RssFeed';
 import ArticleIcon from '@mui/icons-material/Article';
 import { ComponentType } from 'react';
+import { CardDescription } from '../constants/CardDescription';
 
 export interface CategoryPost {
-  title: string;
   href: string;
 }
 
@@ -21,12 +21,11 @@ export const categories: Category[] = [
   {
     id: 'db',
     title: 'データベース',
-    description: 'データベースに関する技術記事',
+    description: CardDescription.db,
     href: '/posts/db',
     Icon: StorageIcon,
     posts: [
       {
-        title: 'Next.jsとNextraでブログを始める',
         href: '/posts/db/first-post',
       },
     ],
@@ -34,7 +33,7 @@ export const categories: Category[] = [
   {
     id: 'network',
     title: 'ネットワーク',
-    description: 'ネットワークに関する技術記事',
+    description: CardDescription.network,
     href: '/posts/network',
     Icon: RssFeedIcon,
     posts: [],
@@ -42,15 +41,10 @@ export const categories: Category[] = [
   {
     id: 'diary',
     title: '日記',
-    description: '日々の出来事や雑記',
+    description: CardDescription.diary,
     href: '/posts/diary',
     Icon: ArticleIcon,
-    posts: [
-      {
-        title: 'はじめに',
-        href: '/posts/diary/getting-started',
-      },
-    ],
+    posts: [],
   },
 ];
 

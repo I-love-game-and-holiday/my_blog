@@ -1,10 +1,13 @@
+// デフォルトの著者名（個人開発のため一括管理）
+const AUTHOR = 'ウツ抜けエンジニア田中'
+
 const config = {
-  footer: <p>MIT 2025 © Your Name.</p>,
+  footer: <p>MIT 2025 © {AUTHOR}.</p>,
   head: ({ meta }: { title?: string; meta?: Record<string, string> }) => (
     <>
       {meta?.description && <meta name="description" content={meta.description} />}
       {meta?.tag && <meta name="keywords" content={meta.tag} />}
-      {meta?.author && <meta name="author" content={meta.author} />}
+      <meta name="author" content={meta?.author || AUTHOR} />
     </>
   ),
   readMore: '続きを読む →',
