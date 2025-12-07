@@ -1,0 +1,164 @@
+---
+title: sqlって画像保存できるんですか!?
+date: "2025-12-07"
+tags: ["MySQL", "Docker", "sql"]
+description: A comprehensive guide to implementing dark mode with system preferences detection and persistent user choice.
+enableComment: true
+---
+
+# sql って画像保存できるんですか!?
+
+非構造化データ(画像や動画など)は AWS S3 のようなオブジェクトストレージが担うイメージが強かったのですが、 SQL に、画像等を保存するデータ型があると知ったので実際に試してみます。
+
+<Alert variant="note">
+  この記事はハンズオン形式で MySQL に画像保存ができることを確認します。
+</Alert>
+
+## BLOB(ブロブ)型とは
+
+- **バイナリデータを格納するためのデータ型**
+- 文字コードに依存しない生のデータをそのまま保存できる。サイズによって TINYBLOB、BLOB、MEDIUMBLOB、LONGBLOB の 4 種類がある
+
+## ハンズオン
+
+### docker の構築
+
+```yml filename="docker-compose.yml"
+version: "3.8"
+
+services:
+mysql-server:
+image: mysql:8.0
+container_name: mysql-server
+environment:
+MYSQL_ROOT_PASSWORD: rootpassword
+MYSQL_DATABASE: testdb
+TZ: Asia/Tokyo
+ports: - "3306:3306"
+volumes: - mysql-data:/var/lib/mysql - ./app:/app
+working_dir: /app
+command: --default-authentication-plugin=mysql_native_password
+
+volumes:
+mysql-data:
+```
+
+> **注意**
+> docker ファイルと同じレベルに app ディレクトリを作成し、任意の画像を設置してください。
+> また、この yml は検証用です。パスワードをハードコードしています。
+
+## コンテナ起動
+
+```shell filename="power-shell"
+docker compose build
+docker compose up -d
+docker exec -it mysql-server mysql -u root -prootpassword
+```
+
+> **注意**
+> docker デスクトップをインストールして起動しておきましょう。
+> https://www.docker.com/
+
+## スキーマ挿入
+
+```sql filename="MySQLコンテナ"
+use testdb;
+CREATE TABLE `images` (
+`id` smallint unsigned NOT NULL AUTO_INCREMENT,
+`filename` varchar(255) NOT NULL,
+`data` mediumblob NOT NULL,
+PRIMARY KEY (`id`)
+);
+```
+
+## ロードできるファイルパスの確認
+
+```sql filename="MySQLコンテナ"
+SHOW VARIABLES LIKE 'secure_file_priv';
+-- 実行結果例
+-- +------------------+-----------------------+
+-- | Variable_name    | Value                 |
+-- +------------------+-----------------------+
+-- | secure_file_priv | /var/lib/mysql-files/ |
+-- +------------------+-----------------------+
+```
+
+DBMS が読み書きできるフォルダーは制限されており、MySQL では上記コマンドで確認可能
+
+/var/lib/mysql-files/にあるファイルは MySQL が読み書きできる。
+
+root ユーザーでコマンド実行する前提で話を進めます。
+
+## Bash にて secure_file_priv に画像をコピーする
+
+ローカルの app ディレクトリをマウントしているので、まず確認しましょう。
+
+_※docker-compose.yml と同じ階層に app フォルダーを作成して、任意の画像を置いてください_
+
+```bash filename="bash"
+docker compose exec mysql-server bash
+```
+
+作業ディレクトリを/app としているので、バッシュに入って`ls `
+すると画像ファイルが確認できるはず。
+
+```bash filename="bash"
+# コンテナ内で secure_file_priv のパスにコピー
+cp /app/sample.jpg /var/lib/mysql-files/sample.jpg
+
+# 念のため確認
+ls /var/lib/mysql-files -l
+```
+
+## いざロードファイル！
+
+```sql filename="MySQLコンテナ"
+INSERT INTO images (filename, filename, data)
+VALUES (
+  'sample.jpg',
+  'image/jpeg',
+  LOAD_FILE('/var/lib/mysql-files/sample.jpg')
+);
+```
+
+実務では AP 層で画像や動画データをバイナリに変換して、直接 blob に挿入するのが一般的だと思ってます。
+この LOAD_FILE は DBMS ごとにコマンドが異なりますが、機能自体は用意されているようです。(私は今回の検証で load_file を初めて使用しました)
+
+```sql filename="MySQLコンテナ"
+select count(data) from images;
+
+-- 結果例
+-- +--------------+
+-- | count(data)  |
+-- +--------------+
+-- |           1  |
+-- +--------------+
+```
+
+blob カラムにデータが入っていることが確認できましたね。select data...とするとターミナルがバイナリデータで埋め尽くされるのでちょっと注意
+
+## 保存したバイナリデータを確認する
+
+```sql filename="MySQLコンテナ"
+-- 画像をbashに書き込み
+SELECT data
+INTO DUMPFILE '/var/lib/mysql-files/check_image.jpg'
+FROM images;
+
+-- 書き込みの確認
+ls -l /var/lib/mysql-files/
+docker cp mysql-server:/var/lib/mysql-files/check_image.jpg ./image.jpg
+```
+
+```powershell filename="powershell"
+# 画像をローカルにコピー
+docker cp mysql-server:/var/lib/mysql-files/check_image.jpg ./image.jpg
+```
+
+image.jpg を開いて、/app に置いた画像と同じなら成功！！
+
+## まとめ
+
+- ハンズオン形式で MySQL に画像を保存できることを確認しました。
+
+実務で使用することは恐らくないような気もしますが、いい勉強になりました。
