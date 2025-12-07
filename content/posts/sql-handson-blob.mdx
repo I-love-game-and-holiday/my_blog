@@ -10,177 +10,46 @@ enableComment: true
 
 非構造化データ(画像や動画など)は AWS S3 のようなオブジェクトストレージが担うイメージが強かったのですが、 SQL でも保存できると聞いたので試してみます。
 
-<Alert variant="note" title="注意">
-  aaa
+<Alert variant="note">
+  この記事はハンズオン形式で blob に画像保存ができることを確認します。
 </Alert>
 
-## Why Dark Mode Matters
+## BLOB(ブロブ)型とは
 
-- Reduces eye strain in low-light environments
-- Saves battery on OLED screens
-- User preference and accessibility
-- Modern, polished feel
+- **バイナリデータを格納するためのデータ型**
+- 文字コードに依存しない生のデータをそのまま保存でき、サイズによって TINYBLOB、BLOB、MEDIUMBLOB、LONGBLOB の 4 種類がある
 
-## CSS Variables Example
+## ハンズオン
 
-Define theme colors as CSS variables:
+docker で mysql 環境を作ります。
 
-```css
-:root {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f3f4f6;
-  --text-primary: #111827;
-  --text-secondary: #6b7280;
-  --border: #d1d5db;
-}
+```yml filename="docker-compose.yml"
+version: "3.8"
 
-[data-theme="dark"] {
-  --bg-primary: #1f2937;
-  --bg-secondary: #374151;
-  --text-primary: #f3f4f6;
-  --text-secondary: #9ca3af;
-  --border: #4b5563;
-}
+services:
+mysql-server:
+image: mysql:8.0
+container_name: mysql-server
+environment:
+MYSQL_ROOT_PASSWORD: rootpassword
+MYSQL_DATABASE: testdb
+TZ: Asia/Tokyo
+ports: - "3306:3306"
+volumes: - mysql-data:/var/lib/mysql - ./app:/app
+working_dir: /app
+command: --default-authentication-plugin=mysql_native_password
 
-body {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
+volumes:
+mysql-data:
 ```
 
 ## React Context Implementation
-
-```jsx
-import { createContext, useContext, useState, useEffect } from "react";
-
-const ThemeContext = createContext();
-
-export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState("light");
-
-  useEffect(() => {
-    // Load saved theme
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme) {
-      setTheme(savedTheme);
-    } else {
-      // Use system preference
-      const prefersDark = window.matchMedia(
-        "(prefers-color-scheme: dark)"
-      ).matches;
-      setTheme(prefersDark ? "dark" : "light");
-    }
-  }, []);
-
-  useEffect(() => {
-    // Apply theme to document
-    document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("theme", theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === "light" ? "dark" : "light"));
-  };
-
-  return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
-}
-
-export function useTheme() {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error("useTheme must be used within ThemeProvider");
-  }
-  return context;
-}
-```
-
-## Usage in Components
-
-```jsx
-function Header() {
-  const { theme, toggleTheme } = useTheme();
-
-  return (
-    <header>
-      <h1>My App</h1>
-      <button onClick={toggleTheme}>{theme === "light" ? "🌙" : "☀️"}</button>
-    </header>
-  );
-}
-```
-
-## Detecting System Preference
-
-Listen to system theme changes:
-
-```javascript
-useEffect(() => {
-  const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-
-  const handleChange = (e) => {
-    if (e.matches) {
-      setTheme("dark");
-    } else {
-      setTheme("light");
-    }
-  };
-
-  mediaQuery.addEventListener("change", handleChange);
-
-  return () => mediaQuery.removeEventListener("change", handleChange);
-}, []);
-```
-
-## Preventing Flash of Unstyled Content
-
-Add a script in your HTML `<head>` to set theme before render:
-
-```html
-<script>
-  (function () {
-    const theme =
-      localStorage.getItem("theme") ||
-      (window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light");
-    document.documentElement.setAttribute("data-theme", theme);
-  })();
-</script>
-```
-
-## TailwindCSS Dark Mode
-
-If using Tailwind, enable dark mode in config:
-
-```javascript
-// tailwind.config.js
-module.exports = {
-  darkMode: "class", // or 'media' for system preference
-  // ... other config
-};
-```
-
-Usage:
-
-```jsx
-<div className="bg-white dark:bg-gray-900 text-black dark:text-white">
-  This text changes color based on theme
-</div>
-```
 
 ## Best Practices
 
 1. **Respect user preference** - Check system settings first
 2. **Persist choice** - Save to localStorage
-3. **Smooth transitions** - Use CSS transitions for theme changes
-4. **Test contrast ratios** - Ensure accessibility in both modes
-5. **Consider images** - Provide different versions for each theme if needed
 
 ## Conclusion
 
-Dark mode is more than just inverting colors. A thoughtful implementation respects user preferences, maintains accessibility, and enhances the overall user experience!
+Dark mode is more than just inverting colors.
