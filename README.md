@@ -1,57 +1,67 @@
-# 技術ブログ
+# Nextra Blog Starter
+<img width="1632" height="1061" alt="screenshot" src="https://github.com/user-attachments/assets/1c2ee6d0-719d-4f56-b39b-99dc3fcbb428" />
 
-## 記事の作成方法
+A modern, feature-rich blog template built with [Nextra](https://nextra.site).
 
-`pages/posts/` ディレクトリに `.mdx` または `.md` ファイルを作成するだけで、自動的にブログ記事として認識される。
+## 🚀 Demo
 
-### 記事のテンプレート
+- [Official Nextra Documentation](https://nextra.site)
+- [Live Demo of This Template](https://nextra-blog.phucbm.com)
 
-```markdown
----
-title: "記事のタイトル"
-date: "2025-01-03"
-description: "記事の説明"
-tag: "タグ1, タグ2"
-author: "Your Name"
----
+## Quick Start
 
-# 記事のタイトル
+You can deploy this template on Vercel by clicking the button below
 
-記事の内容をここに書きます。
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fphucbm%2Fnextra-blog-starter)
 
-## セクション 1
+## Features
 
-内容...
+- [Nextra 4](https://nextra.site/docs) with Next.js 16 + React 19 + TypeScript
+- [shadcn/ui](https://ui.shadcn.com/) and Tailwind CSS
+- [Pagefind](https://the-guild.dev/blog/nextra-4#new-search-engine--pagefind) for search engine
+- [Giscus](https://giscus.app/) for commenting system
+- [View Transitions API](https://developer.mozilla.org/en-US/docs/Web/API/View_Transitions_API) in Next.js App Router with [next-view-transitions](https://github.com/shuding/next-view-transitions)
 
-## セクション 2
+## Local Development
 
-内容...
+### Clone this repository
+
+Using the GitHub CLI:
+```bash
+gh repo clone phucbm/nextra-blog-starter
 ```
 
-### 記事一覧の更新
-
-新しい記事を作成したら、`pages/index.mdx` の記事一覧に追加してください。
-
-```markdown
-- [記事のタイトル](/posts/記事のファイル名) - 日付
-  - 記事の説明
+### Install
+```bash
+pnpm i
 ```
 
-## カスタマイズ
+### Run the development server
+```bash
+pnpm dev
+```
 
-### ブログの設定
+## 📝 Usage
 
-`theme.config.tsx` でブログの設定（フッター、ナビゲーションなど）をカスタマイズできます。
+### Adding New Posts
 
-### スタイル
+1. Create a new `.mdx` file in the `content` directory
+2. Add your front matter at the top of the file:
 
-`app/layout.tsx` でグローバルなスタイルを変更できます。
+```yaml
+---
+title: Your Post Title
+date: 2025/1/30
+description: A brief description of your post
+tags: [ "web development", "react" ]
+author: Your Name
+---
+```
 
-## 技術スタック
+3. Write your content in MDX format below the front matter
 
-- Next.js 16.0.6
-- Nextra 4.6.0
-- nextra-theme-blog 4.6.0
-- React 19.2.0
-- TypeScript 5.x
-- Tailwind CSS 4.x
+---
+
+Created with ❤️ by PHUCBM
+
+Don't forget to ⭐ this repository if you found it helpful!
