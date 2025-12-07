@@ -6,7 +6,7 @@ const CustomHeader = async () => {
         <div className="custom-header flex items-center justify-between mb-10">
             <div className="flex items-center gap-2">
                 <Logo/>
-                <span className="font-bold">Felix</span>
+                <span className="font-bold">ウツ上がりエンジニア田中</span>
             </div>
 
 
