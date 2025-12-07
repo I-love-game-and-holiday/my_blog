@@ -9,7 +9,12 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "next": "16.0.6",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.6",
+    "@mui/material": "^7.3.6",
+    "gray-matter": "^4.0.3",
+    "next": "^16.0.7",
     "nextra": "^4.6.0",
     "nextra-theme-blog": "^4.6.0",
     "react": "19.2.0",
