@@ -55,7 +55,7 @@ export async function Posts({posts, tags, excludeByTitle, first, showViewAllButt
 
             {showViewAllButton === true &&
                 <Link href="/posts" className="flex gap-1 items-center hover:underline">
-                    View all posts <IconArrowNarrowRight className="w-4"/>
+                    記事一覧 <IconArrowNarrowRight className="w-4"/>
                 </Link>
             }
         </div>
