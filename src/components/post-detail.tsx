@@ -29,11 +29,11 @@ export function PostDetail({metadata, children}: Props) {
             <h2>Related</h2>
             <Posts tags={metadata.tags} excludeByTitle={metadata.title as string} first={5}/>
 
-            {metadata.enableComment === true &&
+            {/* {metadata.enableComment === true &&
                 <div className="pt-32">
                     <GiscusComments/>
                 </div>
-            }
+            } */}
         </>
     );
 }
