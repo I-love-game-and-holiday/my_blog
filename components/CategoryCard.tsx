@@ -71,15 +71,14 @@ export default function CategoryCard({ category }: CategoryCardProps) {
             }}
           >
             {category.posts.map((post) => {
-              // hrefからファイル名を抽出（例: /posts/db/first-post -> first-post）
-              const fileName = post.href.split('/').pop() || post.href;
+            
               return (
                 <li key={post.href}>
                   <Link
                     href={post.href}
                     style={{ color: '#3b82f6', textDecoration: 'none' }}
                   >
-                    {fileName}
+                    {post.title}
                   </Link>
                 </li>
               );

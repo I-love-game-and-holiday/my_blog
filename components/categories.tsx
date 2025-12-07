@@ -6,6 +6,7 @@ import { CardDescription } from '../constants/CardDescription';
 
 export interface CategoryPost {
   href: string;
+  title: string;
 }
 
 export interface Category {
@@ -26,7 +27,8 @@ export const categories: Category[] = [
     Icon: StorageIcon,
     posts: [
       {
-        href: '/posts/db/first-post',
+        href: '/posts/db/sql-blob',
+        title: 'SQLって画像保存できるんですか!?',
       },
     ],
   },
