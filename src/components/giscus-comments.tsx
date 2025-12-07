@@ -7,7 +7,7 @@ const GiscusComments = () => {
     return (
         <Giscus
             id="comments"
-            repo="phucbm/nextra-blog-starter"
+            repo="I-love-game-and-holiday/my_blog"
             repoId="R_kgDONxvZHA"
             category="Announcements"
             categoryId="DIC_kwDONxvZHM4Cmh3a"
