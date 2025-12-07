@@ -17,7 +17,7 @@ const CustomFooter = async () => {
                             © {new Date().getFullYear()} Felix
                         </div>
                     </div>
-                    <Search placeholder="Search posts..."/>
+                    <Search placeholder="記事を検索..."/>
                 </div>
             </div>
         </div>
