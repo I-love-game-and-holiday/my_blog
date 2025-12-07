@@ -14,7 +14,7 @@ const CustomFooter = async () => {
                     <div className="flex gap-2 items-center">
                         <ThemeSwitch/>
                         <div>
-                            © {new Date().getFullYear()} Felix
+                            © {new Date().getFullYear()} ウツ上がりエンジニア田中
                         </div>
                     </div>
                     <Search placeholder="記事を検索..."/>
