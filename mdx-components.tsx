@@ -1,22 +1,42 @@
-import type { MDXComponents } from 'mdx/types'
-import { useMDXComponents as getNextraComponents } from 'nextra/mdx-components'
-import { TOC } from './app/_components/toc'
+import {useMDXComponents as getBlogMDXComponents} from 'nextra-theme-blog'
+import {useMDXComponents as getNextraComponents} from 'nextra/mdx-components'
+import {Posts} from "@/components/posts";
+import {Tags} from "@/components/tags";
+import {Alert} from "@/components/ui/alert";
+
+const blogComponents = getBlogMDXComponents({
+    h1: ({children}) => (
+        <h1 className="custom-h1">
+            {children}
+        </h1>
+    ),
+    DateFormatter: ({date}) =>
+        `Last updated at ${date.toLocaleDateString('en', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        })}`
+})
+
 
 const defaultComponents = getNextraComponents({
-  wrapper({ children, toc }) {
-    // tocがundefinedの場合は空配列を渡す
-    const headings = toc || []
-    return (
-      <>
-        <div style={{ flexGrow: 1, padding: 20 }}>{children}</div>
-        <TOC toc={headings} />
-      </>
-    )
-  }
+    wrapper({children, toc}) {
+        return (
+            <>
+                {children}
+
+                {/*<TOC toc={toc}/>*/}
+            </>
+        )
+    }
 })
 
-export const useMDXComponents = (components: MDXComponents): MDXComponents => ({
-  ...defaultComponents,
-  ...components
-})
-
+export function useMDXComponents() {
+    return {
+        ...blogComponents,
+        ...defaultComponents,
+        Posts: Posts,
+        Tags: Tags,
+        Alert: Alert,
+    }
+}
