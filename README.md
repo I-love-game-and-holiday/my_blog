@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 技術ブログ
 
-## Getting Started
+## 記事の作成方法
 
-First, run the development server:
+`pages/posts/` ディレクトリに `.mdx` または `.md` ファイルを作成するだけで、自動的にブログ記事として認識される。
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### 記事のテンプレート
+
+```markdown
+---
+title: "記事のタイトル"
+date: "2025-01-03"
+description: "記事の説明"
+tag: "タグ1, タグ2"
+author: "Your Name"
+---
+
+# 記事のタイトル
+
+記事の内容をここに書きます。
+
+## セクション 1
+
+内容...
+
+## セクション 2
+
+内容...
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 記事一覧の更新
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+新しい記事を作成したら、`pages/index.mdx` の記事一覧に追加してください。
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```markdown
+- [記事のタイトル](/posts/記事のファイル名) - 日付
+  - 記事の説明
+```
 
-## Learn More
+## カスタマイズ
 
-To learn more about Next.js, take a look at the following resources:
+### ブログの設定
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+`theme.config.tsx` でブログの設定（フッター、ナビゲーションなど）をカスタマイズできます。
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### スタイル
 
-## Deploy on Vercel
+`app/layout.tsx` でグローバルなスタイルを変更できます。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 技術スタック
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Next.js 16.0.6
+- Nextra 4.6.0
+- nextra-theme-blog 4.6.0
+- React 19.2.0
+- TypeScript 5.x
+- Tailwind CSS 4.x

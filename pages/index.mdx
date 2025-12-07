@@ -1,0 +1,24 @@
+---
+title: 技術ブログ
+description: 技術的なトピックについて記事を書いていきます
+---
+
+import CategoryCard from "../components/CategoryCard";
+import { categories } from "../constants/categories";
+
+# ウツ抜けエンジニア田中
+
+<div>新卒SIerで身体壊してフリーエンジニアになりました。</div>
+<div>業務中に生じた疑問を検証します。</div>
+<div
+  style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+    gap: "2rem",
+    marginTop: "2rem",
+  }}
+>
+  {categories.map((category) => (
+    <CategoryCard key={category.id} category={category} />
+  ))}
+</div>
