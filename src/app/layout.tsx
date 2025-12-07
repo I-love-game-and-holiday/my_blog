@@ -19,7 +19,7 @@ export default async function RootLayout({children}) {
     return (
         <html
             // Not required, but good for SEO
-            lang="en"
+            lang="ja"
             // Required to be set
             dir="ltr"
             // Suggested by `next-themes` package https://github.com/pacocoursey/next-themes#with-app
