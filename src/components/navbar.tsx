@@ -24,12 +24,12 @@ export const Navbar: FC<NavbarProps> = ({children, pageMap, className}) => {
             ))}
             {children}
 
-            <NavbarLink href="/rss.xml" target="_blank">
+            {/* <NavbarLink href="/rss.xml" target="_blank">
                 RSS
             </NavbarLink>
             <NavbarLink href="https://github.com/phucbm/nextra-blog-starter" target="_blank">
                 GitHub
-            </NavbarLink>
+            </NavbarLink> */}
         </div>
     )
 }
