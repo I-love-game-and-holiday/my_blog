@@ -6,7 +6,11 @@
     "start": "next start"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@giscus/react": "^3.1.0",
+    "@mui/icons-material": "^7.3.6",
+    "@mui/material": "^7.3.6",
     "@radix-ui/react-slot": "^1.2.3",
     "@tabler/icons-react": "^3.35.0",
     "class-variance-authority": "^0.7.1",
