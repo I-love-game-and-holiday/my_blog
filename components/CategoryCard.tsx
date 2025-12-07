@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Category } from './categories';
+import { Category } from '../constants/categories';
 
 interface CategoryCardProps {
   category: Category;

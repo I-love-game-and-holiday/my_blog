@@ -2,7 +2,7 @@ import StorageIcon from '@mui/icons-material/Storage';
 import RssFeedIcon from '@mui/icons-material/RssFeed';
 import ArticleIcon from '@mui/icons-material/Article';
 import { ComponentType } from 'react';
-import { CardDescription } from '../constants/CardDescription';
+import { CardDescription } from './CardDescription';
 
 export interface CategoryPost {
   href: string;
