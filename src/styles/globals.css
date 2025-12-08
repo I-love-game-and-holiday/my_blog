@@ -138,3 +138,31 @@
         @apply !max-w-[700px];
     }
 }
+
+/* Nextra のコードブロック行（data-highlighted-line付き）を赤く強調 */
+pre code.nextra-code > span[data-highlighted-line] {
+    display: block;                 /* 行として扱う */
+    background: rgba(255, 0, 0, 0.08)!important;
+    border-left: 3px solid #ff3b30;
+    padding-left: 0.75rem;
+    margin-left: -0.75rem;          /* 左ライン分を揃える */
+  }
+
+/* ハイライト行 + その中身の文字色も強制 */
+pre code.nextra-code > span[data-highlighted-line],
+pre code.nextra-code > span[data-highlighted-line] * {
+  color: #b00020;
+}
+
+/* ダークモード対応 */
+.dark pre code.nextra-code > span[data-highlighted-line] {
+    background: rgba(255, 100, 100, 0.15)!important;
+    border-left-color: #ff6b6b;
+}
+
+.dark pre code.nextra-code > span[data-highlighted-line],
+.dark pre code.nextra-code > span[data-highlighted-line] * {
+  color: #ff6b6b;
+}
+
+   
