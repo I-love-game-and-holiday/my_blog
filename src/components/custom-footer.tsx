@@ -14,8 +14,23 @@ const CustomFooter = async () => {
                     <div className="flex gap-2 items-center">
                         <ThemeSwitch/>
                         <div>
-                            © {new Date().getFullYear()} ウツ上がりエンジニア田中
+                            © {new Date().getFullYear()}{' '}
+                            <br className="md:hidden" />
+                            <span className="inline md:hidden">エンジニア田中</span>
+                            <span className="hidden md:inline">ウツ上がりエンジニア田中</span>
                         </div>
+                        <a 
+                            href="https://x.com/utu_engineer_" 
+                            className="block transition-transform hover:scale-110 cursor-pointer" 
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <img 
+                                src="/yuka.jpg" 
+                                alt="twitter-link" 
+                                className="w-10 h-10 rounded-full object-cover transition-opacity hover:opacity-80"
+                            />
+                        </a>
                     </div>
                     <Search placeholder="記事を検索..."/>
                 </div>
