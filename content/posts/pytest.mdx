@@ -1,0 +1,90 @@
+---
+title: pytestの使い方
+date: "2025-12-08"
+tags: ["Python"]
+description: pytest使い方を確認する.
+enableComment: true
+---
+
+# 今更 ですが、pytest を勉強する
+
+私は日系 SIer に新卒で就職しました。官公庁独特？日本企業独特？なのか知りませんが、当時は一挙手一投足スクリーンショットを撮りながらテスト環境の実機を動かしていました。
+
+ほとんどの言語にはテスト機能を自動化するツールやフレームワークがあります。例えば Python には pytest というフレームワークがあり、簡単にテストができるようです
+
+<Alert variant="note">Pythonフレームワーク『pytest』の基本操作を学びます</Alert>
+
+> Python 3.12.0 で検証しました(pytest をインストールしてください)
+
+## pytest 特徴
+
+- テストファイルの自動検出
+- 標準の assert 文が使用できる
+
+## 検証
+
+```py filename="Python"
+# main.py
+def add(a, b):
+    return a + b
+
+def validate_age(age):
+    if age < 0:
+        raise ValueError("年齢は0以上である必要があります")
+    return age
+
+# main_test.py
+import pytest
+from main import add, validate_age
+
+def test_add():
+    assert add(2, 3) == 4 #意図的に誤った値を設定する
+    assert add(-1, 1) == 0
+
+def test_validate_age():
+    assert validate_age(25) == 25
+    with pytest.raises(ValueError):
+        validate_age(-5)
+```
+
+足し算する関数と年齢が 0 以上であることを確認する簡単な関数を作成しました。テストを実行するには、ファイル名と関数名に **\_test** を含める必要があります。
+
+pytest コマンドだけで自動検出してテストしてくれます。
+
+```bash {11-16}
+$ pytest
+======================================== test session starts ==========
+rootdir: D:\<project-path>
+collected 2 items
+
+main_test.py F.                                                   [100%]
+
+============================================= FAILURES =================
+_____________________________________________ test_add _________________
+
+    def test_add():
+>       assert add(2, 3) == 4
+E       assert 5 == 4
+E        +  where 5 = add(2, 3)
+
+main_test.py:5: AssertionError
+====================================== short test summary info =========
+FAILED main_test.py::test_add - assert 5 == 4
+==================================== 1 failed, 1 passed in 0.06s =======
+```
+
+pytest 時にパス指定しなくても自動でファイル検出してくれることを確認できました。
+assert の予想と実際の add 関数の結果が異なるのでエラーを吐きましたね。
+
+<small>
+  ※ちょっと話変わりますが、TDD(テスト開発駆動)つまり、テストを失敗する状態から作り、テストが通るように修正していくような開発手法って実際どれくらい利用されているんですかねぇ
+</small>
+
+pytest にはデコレータによる依存性の注入などもできるようです。
+仕事納めたら年内に勉強して記事にしたい！
+
+## まとめ
+
+pytest は assert を使用してテストできる
+
+ファイルや関数に test を含めることで自動検出できる
