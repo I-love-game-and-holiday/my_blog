@@ -1,0 +1,33 @@
+name: Tweet on Vercel Production Deploy
+
+on:
+  deployment_status:
+
+jobs:
+  tweet:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug - Check deployment_status event
+        run: |
+          echo "=== Deployment Status Event ==="
+          echo "State: ${{ github.event.deployment_status.state }}"
+          echo "Environment: ${{ github.event.deployment_status.environment }}"
+          echo "Environment URL: ${{ github.event.deployment_status.environment_url }}"
+          echo ""
+          echo "=== Full Event JSON ==="
+          echo '${{ toJSON(github.event) }}' | jq '.'
+      # - name: Post to X (call your endpoint)
+      #   if: >
+      #     github.event.deployment_status.state == 'success' &&
+      #     github.event.deployment_status.environment == 'production'
+      #   run: |
+      #     curl -sS -X POST "$TWEET_WEBHOOK_URL" \
+      #       -H "Content-Type: application/json" \
+      #       -d @- << 'JSON'
+      #     {
+      #       "text": "新しい記事を公開しました！",
+      #       "url": "${{ github.event.deployment_status.environment_url }}"
+      #     }
+      #     JSON
+      #   env:
+      #     TWEET_WEBHOOK_URL: ${{ secrets.TWEET_WEBHOOK_URL }}
