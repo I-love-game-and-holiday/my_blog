@@ -2,7 +2,7 @@
 title: sqlって画像保存できるんですか!?
 date: "2025-12-07"
 tags: ["MySQL", "Docker", "sql"]
-description: A comprehensive guide to implementing dark mode with system preferences detection and persistent user choice.
+description: mysqlにてblobに画像を保存できるか確認する.
 enableComment: true
 ---
 
@@ -147,7 +147,6 @@ FROM images;
 
 -- 書き込みの確認
 ls -l /var/lib/mysql-files/
-docker cp mysql-server:/var/lib/mysql-files/check_image.jpg ./image.jpg
 ```
 
 ```powershell filename="powershell"
