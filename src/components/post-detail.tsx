@@ -18,7 +18,7 @@ export function PostDetail({metadata, children}: Props) {
             <div className="flex items-center gap-4 text-sm mb-6">
                 <Link href="/posts" className="hover:underline no-underline flex items-center gap-1">
                     <IconArrowBack className="w-4"/>
-                    Back to Posts
+                    記事一覧へ戻る
                 </Link>
                 <IconPoint className="w-3"/>
                 <div>{formatDate(metadata.date)}</div>
