@@ -14,7 +14,7 @@ type TagPageProps = {
 export async function generateMetadata(props: TagPageProps): Promise<Metadata> {
     const params = await props.params
     return {
-        title: `Posts Tagged with "${decodeURIComponent(params.tag)}"`
+        title: `記事タグ："${decodeURIComponent(params.tag)}"`
     }
 }
 
@@ -29,10 +29,10 @@ export default async function TagPage(props: TagPageProps) {
 
     return (
         <>
-            <h1>Posts Tagged with &quot;{decodedTag}&quot;</h1>
+            <h1>記事タグ：&quot;{decodedTag}&quot;</h1>
             <Posts tags={[decodedTag]}/>
 
-            <h2>More tags</h2>
+            <h2>その他のタグ</h2>
             <Tags/>
         </>
     )

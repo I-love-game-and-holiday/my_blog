@@ -20,7 +20,7 @@ export async function Posts({posts, tags, excludeByTitle, first, showViewAllButt
                 return (
                     <div key={post.route} className="flex flex-wrap">
 
-                        <div className="w-[calc(100%-100px)]">
+                        <div className="w-[calc(100%-120px)]">
                             <div className="font-bold">
                                 <Link href={post.route} className="hover:underline">
                                     {post.title}
@@ -41,7 +41,7 @@ export async function Posts({posts, tags, excludeByTitle, first, showViewAllButt
                             </div>
                         </div>
 
-                        <div className="w-[100px] text-right">
+                        <div className="w-[120px] text-right">
                             <div className="text-sm text-muted-foreground pt-1">
                                 <div>
                                     {formatDate(post.frontMatter.date)}
