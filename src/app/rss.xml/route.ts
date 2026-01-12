@@ -1,9 +1,9 @@
-import {getPosts} from "@/lib/get-posts";
+import { getPosts } from "@/lib/get-posts"
 
 const CONFIG = {
-    title: 'My Blog',
-    siteUrl: 'https://your-domain.com',
-    description: 'Latest blog posts',
+    title: 'tanaka101',
+    siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://tanaka101.com',
+    description: 'プロゲートを終えた非エンジニア向けの学習サイト',
     lang: 'ja-jp'
 }
 
@@ -12,13 +12,14 @@ export async function GET() {
     const posts = allPosts
         .map(
             post => `    <item>
-        <title>${post.title}</title>
-        <description>${post.frontMatter.description}</description>
+        <title>${escapeXml(post.frontMatter?.title || post.title)}</title>
+        <description>${escapeXml(post.frontMatter?.description || '')}</description>
         <link>${CONFIG.siteUrl}${post.route}</link>
-        <pubDate>${new Date(post.frontMatter.date).toUTCString()}</pubDate>
+        <pubDate>${post.frontMatter?.date ? new Date(post.frontMatter.date).toUTCString() : new Date().toUTCString()}</pubDate>
     </item>`
         )
         .join('\n')
+
     const xml = `<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
   <channel>
@@ -35,4 +36,13 @@ ${posts}
             'Content-Type': 'application/rss+xml'
         }
     })
+}
+
+function escapeXml(text: string): string {
+    return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;')
 }
