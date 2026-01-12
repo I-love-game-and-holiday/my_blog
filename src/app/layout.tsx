@@ -1,42 +1,38 @@
-import {Head} from 'nextra/components'
-import 'nextra-theme-blog/style.css'
+import { Head } from 'nextra/components'
 import '@/styles/globals.css'
-import CustomFooter from "@/components/custom-footer";
-import CustomHeader from "@/components/custom-header";
-import {Metadata} from "next";
-import {Layout} from "nextra-theme-blog";
-import {Inter} from 'next/font/google';
+import { SiteHeader } from '@/components/site-header'
+import { SiteFooter } from '@/components/site-footer'
+import { Metadata } from 'next'
+import { Inter } from 'next/font/google'
 
 export const metadata: Metadata = {
-    title: 'Nextra Blog'
+    title: {
+        default: 'tanaka101',
+        template: '%s | tanaka101',
+    },
+    description: 'プロゲートを終えた非エンジニア向け。実践的なハンズオンで次のステップへ。',
 }
 
-const bodyFont = Inter({
-    subsets: ['latin', 'vietnamese'],
+const inter = Inter({
+    subsets: ['latin'],
+    display: 'swap',
 })
 
-export default async function RootLayout({children}) {
+export default function RootLayout({
+    children,
+}: {
+    children: React.ReactNode
+}) {
     return (
-        <html
-            // Not required, but good for SEO
-            lang="ja"
-            // Required to be set
-            dir="ltr"
-            // Suggested by `next-themes` package https://github.com/pacocoursey/next-themes#with-app
-            suppressHydrationWarning
-
-            className={bodyFont.className}
-        >
-        <Head backgroundColor={{dark: '#15120d', light: '#faf5e9'}}/>
-        <body className="min-h-screen">
-        <Layout>
-            <CustomHeader/>
-
-            {children}
-
-            <CustomFooter/>
-        </Layout>
-        </body>
+        <html lang="ja" className={inter.className}>
+            <Head backgroundColor={{ dark: '#171717', light: '#ffffff' }} />
+            <body className="min-h-screen flex flex-col">
+                <SiteHeader />
+                <main className="flex-1">
+                    {children}
+                </main>
+                <SiteFooter />
+            </body>
         </html>
     )
 }
