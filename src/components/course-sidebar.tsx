@@ -1,32 +1,27 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { ChevronsRight, ChevronRight, Target, BookOpen, Check } from 'lucide-react'
 import type { CourseItem, LessonItem } from '@/lib/get-courses'
 import { HEADER_HEIGHT } from '@/lib/constants'
 
-const SIDEBAR_VISITED_KEY = 'course-sidebar-visited'
+interface TableOfContentsItem {
+    id: string
+    text: string
+    level: number
+}
 
 interface CourseSidebarProps {
     course: CourseItem
     currentLessonSlug: string
     currentIndex: number
+    headings?: TableOfContentsItem[]
 }
 
-export function CourseSidebar({ course, currentLessonSlug, currentIndex }: CourseSidebarProps) {
-    const [isOpen, setIsOpen] = useState(false)
-    const [isInitialized, setIsInitialized] = useState(false)
+export function CourseSidebar({ course, currentLessonSlug, currentIndex, headings = [] }: CourseSidebarProps) {
+    const [isOpen, setIsOpen] = useState(true)
     const goals = course.frontMatter?.goals || []
-
-    useEffect(() => {
-        const hasVisited = localStorage.getItem(SIDEBAR_VISITED_KEY)
-        if (!hasVisited) {
-            setIsOpen(true)
-            localStorage.setItem(SIDEBAR_VISITED_KEY, 'true')
-        }
-        setIsInitialized(true)
-    }, [])
 
     return (
         <>
@@ -49,19 +44,20 @@ export function CourseSidebar({ course, currentLessonSlug, currentIndex }: Cours
                             goals={goals}
                             currentLessonSlug={currentLessonSlug}
                             currentIndex={currentIndex}
+                            headings={headings}
                         />
                     </div>
                 )}
             </div>
 
             {/* Desktop: Left edge trigger area */}
-            <div className={`hidden lg:block ${!isInitialized ? 'opacity-0' : 'opacity-100'} transition-opacity`}>
+            <div className="hidden lg:block">
                 {/* Full-height clickable area on left edge */}
                 <button
                     onClick={() => setIsOpen(true)}
                     style={{ top: HEADER_HEIGHT }}
                     className={`
-                        fixed left-0 h-[calc(100%-56px)] w-6
+                        fixed left-0 h-[calc(100%-56px)] w-12
                         bg-transparent hover:bg-muted-foreground/20
                         transition-colors cursor-pointer z-40
                         ${isOpen ? 'pointer-events-none' : ''}
@@ -73,7 +69,7 @@ export function CourseSidebar({ course, currentLessonSlug, currentIndex }: Cours
                 <div
                     style={{ top: HEADER_HEIGHT + 12 }}
                     className={`
-                        fixed left-1 z-40
+                        fixed left-2 z-40
                         pointer-events-none
                         transition-opacity
                         ${isOpen ? 'opacity-0' : 'opacity-100'}
@@ -93,34 +89,26 @@ export function CourseSidebar({ course, currentLessonSlug, currentIndex }: Cours
                         overflow-y-auto
                     `}
                 >
+                    {/* Close button - full width bar at top */}
+                    <button
+                        onClick={() => setIsOpen(false)}
+                        className="w-full flex items-center justify-between px-6 py-4 hover:bg-secondary transition-colors border-b border-border"
+                        aria-label="閉じる"
+                    >
+                        <h2 className="font-bold text-lg">コース内容</h2>
+                        <ChevronRight className="h-5 w-5 rotate-180" />
+                    </button>
                     <div className="p-6">
-                        <div className="flex items-center justify-between mb-6">
-                            <h2 className="font-bold text-lg">コース内容</h2>
-                            <button
-                                onClick={() => setIsOpen(false)}
-                                className="p-1 hover:bg-secondary rounded"
-                                aria-label="閉じる"
-                            >
-                                <ChevronRight className="h-5 w-5 rotate-180" />
-                            </button>
-                        </div>
                         <SidebarContent
                             course={course}
                             goals={goals}
                             currentLessonSlug={currentLessonSlug}
                             currentIndex={currentIndex}
+                            headings={headings}
                         />
                     </div>
                 </div>
 
-                {/* Backdrop */}
-                {isOpen && (
-                    <div
-                        style={{ top: HEADER_HEIGHT }}
-                        className="fixed inset-x-0 bottom-0 bg-black/20 z-40"
-                        onClick={() => setIsOpen(false)}
-                    />
-                )}
             </div>
         </>
     )
@@ -131,9 +119,10 @@ interface SidebarContentProps {
     goals: string[]
     currentLessonSlug: string
     currentIndex: number
+    headings: TableOfContentsItem[]
 }
 
-function SidebarContent({ course, goals, currentLessonSlug, currentIndex }: SidebarContentProps) {
+function SidebarContent({ course, goals, currentLessonSlug, currentIndex, headings }: SidebarContentProps) {
     return (
         <div className="space-y-6">
             {/* Course title */}
@@ -178,6 +167,7 @@ function SidebarContent({ course, goals, currentLessonSlug, currentIndex }: Side
                             index={index}
                             isCurrent={lesson.slug === currentLessonSlug}
                             isCompleted={index < currentIndex}
+                            headings={lesson.slug === currentLessonSlug ? headings : []}
                         />
                     ))}
                 </ul>
@@ -204,9 +194,10 @@ interface LessonLinkProps {
     index: number
     isCurrent: boolean
     isCompleted: boolean
+    headings: TableOfContentsItem[]
 }
 
-function LessonLink({ lesson, index, isCurrent, isCompleted }: LessonLinkProps) {
+function LessonLink({ lesson, index, isCurrent, isCompleted, headings }: LessonLinkProps) {
     return (
         <li>
             <Link
@@ -233,6 +224,26 @@ function LessonLink({ lesson, index, isCurrent, isCompleted }: LessonLinkProps) 
                 </span>
                 <span className="truncate">{lesson.frontMatter?.title || lesson.title}</span>
             </Link>
+            {/* Table of contents for current lesson */}
+            {isCurrent && headings.length > 0 && (
+                <ul className="ml-7 mt-1 space-y-0.5 border-l border-border pl-2">
+                    {headings.map((heading) => (
+                        <li key={heading.id}>
+                            <a
+                                href={`#${heading.id}`}
+                                className={`
+                                    block text-xs text-muted-foreground hover:text-foreground
+                                    transition-colors py-0.5
+                                    ${heading.level === 3 ? 'pl-3' : ''}
+                                    ${heading.level === 4 ? 'pl-6' : ''}
+                                `}
+                            >
+                                {heading.text}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            )}
         </li>
     )
 }

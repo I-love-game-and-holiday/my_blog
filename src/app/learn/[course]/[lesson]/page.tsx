@@ -58,7 +58,7 @@ export default async function LessonPage(props: PageProps) {
         notFound()
     }
 
-    const { metadata, content } = result
+    const { metadata, content, headings } = result
     const dictionaryEntries = await getDictionaryEntries()
 
     // Find current lesson index and navigation
@@ -89,6 +89,7 @@ export default async function LessonPage(props: PageProps) {
                     course={course}
                     currentLessonSlug={params.lesson}
                     currentIndex={currentIndex}
+                    headings={headings}
                 />
 
 
