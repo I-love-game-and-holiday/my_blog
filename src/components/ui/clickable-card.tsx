@@ -10,6 +10,10 @@ interface ClickableCardProps {
     href: string
     children: React.ReactNode
     className?: string
+    /** デフォルトのカードスタイル（border, rounded-lg）を適用するか */
+    variant?: 'default' | 'plain'
+    /** デフォルトのパディング（p-4）を適用するか */
+    padding?: 'default' | 'none'
 }
 
 /**
@@ -22,12 +26,16 @@ export function ClickableCard({
     href,
     children,
     className,
+    variant = 'default',
+    padding = 'default',
 }: ClickableCardProps) {
     return (
         <Link
             href={href}
             className={cn(
-                'group flex items-center gap-4 p-4 border border-border rounded-lg',
+                'group block rounded-lg',
+                variant === 'default' && 'border border-border',
+                padding === 'default' && 'p-4',
                 INTERACTIVE_HOVER_BG,
                 INTERACTIVE_ACTIVE_BG,
                 INTERACTIVE_TRANSITION,

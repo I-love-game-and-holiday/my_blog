@@ -1,5 +1,5 @@
-import Link from 'next/link'
 import { getCourses } from '@/lib/get-courses'
+import { ClickableCard } from '@/components/ui/clickable-card'
 
 export const metadata = {
     title: 'Learn',
@@ -25,10 +25,11 @@ export default async function LearnPage() {
             ) : (
                 <div className="grid gap-6">
                     {courses.map((course) => (
-                        <Link
+                        <ClickableCard
                             key={course.route}
                             href={course.route}
-                            className="group block p-6 border border-border rounded-lg hover:border-foreground/20 transition-colors"
+                            padding="none"
+                            className="p-6"
                         >
                             <div className="flex items-start justify-between gap-4">
                                 <div>
@@ -45,7 +46,7 @@ export default async function LearnPage() {
                                     {course.lessons.length} lessons
                                 </div>
                             </div>
-                        </Link>
+                        </ClickableCard>
                     ))}
                 </div>
             )}

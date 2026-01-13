@@ -65,18 +65,20 @@ export default async function CoursePage(props: PageProps) {
                 <div className="space-y-3">
                     {course.lessons.map((lesson, index) => (
                         <ClickableCard key={lesson.route} href={lesson.route}>
-                            <span className="flex items-center justify-center w-8 h-8 text-sm font-medium bg-secondary rounded-full shrink-0">
-                                {index + 1}
-                            </span>
-                            <div>
-                                <h3 className="font-medium group-hover:underline">
-                                    {lesson.frontMatter?.title || lesson.title}
-                                </h3>
-                                {lesson.frontMatter?.description && (
-                                    <p className="text-sm text-muted-foreground">
-                                        {lesson.frontMatter.description}
-                                    </p>
-                                )}
+                            <div className="flex items-center gap-4">
+                                <span className="flex items-center justify-center w-8 h-8 text-sm font-medium bg-secondary rounded-full shrink-0">
+                                    {index + 1}
+                                </span>
+                                <div>
+                                    <h3 className="font-medium group-hover:underline">
+                                        {lesson.frontMatter?.title || lesson.title}
+                                    </h3>
+                                    {lesson.frontMatter?.description && (
+                                        <p className="text-sm text-muted-foreground">
+                                            {lesson.frontMatter.description}
+                                        </p>
+                                    )}
+                                </div>
                             </div>
                         </ClickableCard>
                     ))}
