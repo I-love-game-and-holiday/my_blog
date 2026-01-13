@@ -2,8 +2,33 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 import { compileMDX } from 'next-mdx-remote/rsc'
+import rehypeSlug from 'rehype-slug'
+import GithubSlugger from 'github-slugger'
 
 const CONTENT_DIR = path.join(process.cwd(), 'content')
+
+export interface HeadingItem {
+    id: string
+    text: string
+    level: number
+}
+
+export function extractHeadings(content: string): HeadingItem[] {
+    const headingRegex = /^(#{2,4})\s+(.+)$/gm
+    const headings: HeadingItem[] = []
+    const slugger = new GithubSlugger()
+    let match
+
+    while ((match = headingRegex.exec(content)) !== null) {
+        const level = match[1].length
+        const text = match[2].trim()
+        const id = slugger.slug(text)
+
+        headings.push({ id, text, level })
+    }
+
+    return headings
+}
 
 export async function getPostContent(slug: string) {
     const filePath = path.join(CONTENT_DIR, 'blog', `${slug}.mdx`)
@@ -19,6 +44,9 @@ export async function getPostContent(slug: string) {
         source: content,
         options: {
             parseFrontmatter: false,
+            mdxOptions: {
+                rehypePlugins: [rehypeSlug],
+            },
         },
     })
 
@@ -38,15 +66,21 @@ export async function getLessonContent(courseSlug: string, lessonSlug: string) {
     const fileContent = fs.readFileSync(filePath, 'utf-8')
     const { data, content } = matter(fileContent)
 
+    const headings = extractHeadings(content)
+
     const { content: mdxContent } = await compileMDX({
         source: content,
         options: {
             parseFrontmatter: false,
+            mdxOptions: {
+                rehypePlugins: [rehypeSlug],
+            },
         },
     })
 
     return {
         metadata: data,
         content: mdxContent,
+        headings,
     }
 }
