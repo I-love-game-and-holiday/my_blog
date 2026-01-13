@@ -138,7 +138,7 @@ pre code.nextra-code > span[data-highlighted-line] {
 
 @media (min-width: 1536px) {
     .dictionary-panel {
-        right: calc((100vw - 1280px) / 2 - 340px);
+        right: calc((100vw - 896px) / 2 - 340px);
     }
 }
 
