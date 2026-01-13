@@ -4,6 +4,15 @@ import matter from 'gray-matter'
 import { compileMDX } from 'next-mdx-remote/rsc'
 import rehypeSlug from 'rehype-slug'
 import GithubSlugger from 'github-slugger'
+import { ContentImage } from '@/components/content-image'
+import { ContentTable, BoxDiagram, FlowDiagram } from '@/components/content-table'
+
+const mdxComponents = {
+    ContentImage,
+    ContentTable,
+    BoxDiagram,
+    FlowDiagram,
+}
 
 const CONTENT_DIR = path.join(process.cwd(), 'content')
 
@@ -42,6 +51,7 @@ export async function getPostContent(slug: string) {
 
     const { content: mdxContent } = await compileMDX({
         source: content,
+        components: mdxComponents,
         options: {
             parseFrontmatter: false,
             mdxOptions: {
@@ -70,6 +80,7 @@ export async function getLessonContent(courseSlug: string, lessonSlug: string) {
 
     const { content: mdxContent } = await compileMDX({
         source: content,
+        components: mdxComponents,
         options: {
             parseFrontmatter: false,
             mdxOptions: {
@@ -99,6 +110,7 @@ export async function getSectionContent(guideSlug: string, sectionSlug: string) 
 
     const { content: mdxContent } = await compileMDX({
         source: content,
+        components: mdxComponents,
         options: {
             parseFrontmatter: false,
             mdxOptions: {
