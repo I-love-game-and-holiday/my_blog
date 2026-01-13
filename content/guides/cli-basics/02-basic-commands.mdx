@@ -1,0 +1,93 @@
+---
+title: 基本コマンド
+order: 2
+description: 最初に覚えるべき基本コマンドを学ぼう
+---
+
+## ディレクトリ操作
+
+### 現在地を確認する: pwd
+
+`pwd`（Print Working Directory）は、今いるディレクトリのパスを表示します。
+
+```bash
+pwd
+# 出力例: /Users/tanaka/projects
+```
+
+### ファイル一覧を見る: ls
+
+`ls`（List）は、ディレクトリ内のファイルとフォルダを一覧表示します。
+
+```bash
+ls
+# 出力例: Documents  Downloads  Pictures
+
+ls -la  # 隠しファイルも含めて詳細表示
+```
+
+### ディレクトリを移動する: cd
+
+`cd`（Change Directory）は、作業ディレクトリを変更します。
+
+```bash
+cd Documents      # Documentsに移動
+cd ..             # 1つ上のディレクトリに移動
+cd ~              # ホームディレクトリに移動
+cd /              # ルートディレクトリに移動
+```
+
+## ファイル操作
+
+### ファイルの中身を見る: cat
+
+`cat`（Concatenate）は、ファイルの内容を表示します。
+
+```bash
+cat README.md
+```
+
+### ファイルをコピー: cp
+
+```bash
+cp original.txt copy.txt           # ファイルをコピー
+cp -r folder1 folder2              # フォルダを再帰的にコピー
+```
+
+### ファイルを移動/リネーム: mv
+
+```bash
+mv old.txt new.txt                 # リネーム
+mv file.txt Documents/             # 移動
+```
+
+### ファイル/フォルダを削除: rm
+
+```bash
+rm file.txt                        # ファイル削除
+rm -r folder                       # フォルダを再帰的に削除
+```
+
+**注意**: `rm` は取り消しできません。ゴミ箱に入らず完全に削除されます。
+
+## ディレクトリ作成
+
+### mkdir
+
+```bash
+mkdir new-folder                   # フォルダ作成
+mkdir -p path/to/deep/folder       # 深い階層も一度に作成
+```
+
+## まとめ
+
+| コマンド | 説明 |
+|----------|------|
+| `pwd` | 現在のディレクトリを表示 |
+| `ls` | ファイル一覧を表示 |
+| `cd` | ディレクトリを移動 |
+| `cat` | ファイル内容を表示 |
+| `cp` | コピー |
+| `mv` | 移動/リネーム |
+| `rm` | 削除 |
+| `mkdir` | ディレクトリ作成 |
