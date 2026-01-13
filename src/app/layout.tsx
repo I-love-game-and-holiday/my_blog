@@ -2,6 +2,7 @@ import { Head } from 'nextra/components'
 import '@/styles/globals.css'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
+import { DictionaryProvider } from '@/contexts/dictionary-context'
 import { Metadata } from 'next'
 import { Inter, Nunito } from 'next/font/google'
 
@@ -33,11 +34,13 @@ export default function RootLayout({
         <html lang="ja" className={`${inter.className} ${nunito.variable}`}>
             <Head backgroundColor={{ dark: '#171717', light: '#ffffff' }} />
             <body className="min-h-screen flex flex-col">
-                <SiteHeader />
-                <main className="flex-1">
-                    {children}
-                </main>
-                <SiteFooter />
+                <DictionaryProvider>
+                    <SiteHeader />
+                    <main className="flex-1">
+                        {children}
+                    </main>
+                    <SiteFooter />
+                </DictionaryProvider>
             </body>
         </html>
     )

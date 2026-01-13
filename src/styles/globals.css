@@ -111,3 +111,77 @@ pre code.nextra-code > span[data-highlighted-line] {
 .container {
     @apply max-w-4xl mx-auto px-4 sm:px-6;
 }
+
+/* Article Layout with Dictionary Panel */
+.article-layout {
+    @apply flex gap-6;
+}
+
+.article-content {
+    @apply flex-1 min-w-0;
+}
+
+/* Dictionary Panel */
+.dictionary-panel {
+    @apply w-80 shrink-0 transition-all duration-300;
+}
+
+.dictionary-panel-content {
+    @apply p-4 bg-secondary/30 rounded-lg border border-border;
+}
+
+.dictionary-panel-placeholder {
+    @apply p-4 bg-secondary/30 rounded-lg border border-border border-dashed flex flex-col items-center justify-center min-h-[200px];
+}
+
+/* Dictionary Term Link */
+.dictionary-term {
+    @apply inline cursor-pointer text-inherit;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-decoration-color: var(--muted-foreground);
+    text-underline-offset: 4px;
+}
+
+.dictionary-term:hover {
+    text-decoration-color: var(--primary);
+    background-color: var(--secondary);
+}
+
+.dictionary-term-active {
+    background-color: var(--secondary);
+    text-decoration-color: var(--primary);
+}
+
+/* Dictionary Panel Prose */
+.dictionary-panel .prose {
+    @apply text-sm;
+}
+
+.dictionary-panel .prose h2 {
+    @apply text-base font-semibold mt-4 mb-2;
+}
+
+.dictionary-panel .prose h3 {
+    @apply text-sm font-semibold mt-3 mb-1;
+}
+
+.dictionary-panel .prose p {
+    @apply leading-6 mb-3;
+}
+
+.dictionary-panel .prose pre {
+    @apply text-xs p-2;
+}
+
+.dictionary-panel .prose code {
+    @apply text-xs;
+}
+
+.dictionary-panel .prose ul, .dictionary-panel .prose ol {
+    @apply my-2 pl-4;
+}
+
+.dictionary-panel .prose li {
+    @apply mb-1;
+}
