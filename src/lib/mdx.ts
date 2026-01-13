@@ -84,3 +84,32 @@ export async function getLessonContent(courseSlug: string, lessonSlug: string) {
         headings,
     }
 }
+
+export async function getSectionContent(guideSlug: string, sectionSlug: string) {
+    const filePath = path.join(CONTENT_DIR, 'guides', guideSlug, `${sectionSlug}.mdx`)
+
+    if (!fs.existsSync(filePath)) {
+        return null
+    }
+
+    const fileContent = fs.readFileSync(filePath, 'utf-8')
+    const { data, content } = matter(fileContent)
+
+    const headings = extractHeadings(content)
+
+    const { content: mdxContent } = await compileMDX({
+        source: content,
+        options: {
+            parseFrontmatter: false,
+            mdxOptions: {
+                rehypePlugins: [rehypeSlug],
+            },
+        },
+    })
+
+    return {
+        metadata: data,
+        content: mdxContent,
+        headings,
+    }
+}

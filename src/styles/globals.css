@@ -56,14 +56,27 @@
 
 .prose h1 {
     @apply text-3xl font-bold tracking-tight mt-8 mb-4;
+    @apply border-l-4 border-blue-500 pl-4;
 }
 
 .prose h2 {
     @apply text-2xl font-semibold tracking-tight mt-8 mb-3;
+    @apply relative pb-2;
+}
+
+.prose h2::after {
+    content: '';
+    @apply absolute left-0 bottom-0 h-px w-full bg-border;
 }
 
 .prose h3 {
     @apply text-xl font-semibold tracking-tight mt-6 mb-2;
+    @apply relative pl-4;
+}
+
+.prose h3::before {
+    content: '';
+    @apply absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-blue-400;
 }
 
 .prose p {
