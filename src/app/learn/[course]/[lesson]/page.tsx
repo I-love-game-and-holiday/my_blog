@@ -6,6 +6,7 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { ArticleLayout } from '@/components/article-layout'
 import { MdxContentWrapper } from '@/components/mdx-components'
+import { CourseSidebar } from '@/components/course-sidebar'
 
 type PageParams = {
     course: string
@@ -83,18 +84,14 @@ export default async function LessonPage(props: PageProps) {
                     </span>
                 </nav>
 
-                {/* Progress indicator */}
-                <div className="mb-8 p-4 bg-secondary/50 rounded-lg">
-                    <div className="text-sm text-muted-foreground mb-2">
-                        レッスン {currentIndex + 1} / {course.lessons.length}
-                    </div>
-                    <div className="w-full h-1 bg-border rounded-full overflow-hidden">
-                        <div
-                            className="h-full bg-foreground transition-all"
-                            style={{ width: `${((currentIndex + 1) / course.lessons.length) * 100}%` }}
-                        />
-                    </div>
-                </div>
+                {/* Course sidebar */}
+                <CourseSidebar
+                    course={course}
+                    currentLessonSlug={params.lesson}
+                    currentIndex={currentIndex}
+                />
+
+
 
                 <article className="prose max-w-none">
                     <header className="mb-8 not-prose">
