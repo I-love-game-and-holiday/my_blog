@@ -5,13 +5,9 @@ export default function HomePage() {
         <div className="container py-16 md:py-24">
             {/* Hero Section */}
             <section className="text-center mb-16">
-                <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-                    tanaka101
-                </h1>
                 <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-                    プロゲートを終えた非エンジニア向け。
-                    <br className="hidden sm:block" />
-                    実践的なハンズオンで次のステップへ。
+                Progateを終えたあなたが、
+                自分でアプリを作れるようになるまで。
                 </p>
             </section>
 
