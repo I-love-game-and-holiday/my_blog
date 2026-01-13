@@ -3,6 +3,7 @@ import { getCourse, getCourseSlugs } from '@/lib/get-courses'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { CourseGoals } from '@/components/course-goals'
+import { ClickableCard } from '@/components/ui/clickable-card'
 
 type PageParams = {
     course: string
@@ -63,11 +64,7 @@ export default async function CoursePage(props: PageProps) {
             ) : (
                 <div className="space-y-3">
                     {course.lessons.map((lesson, index) => (
-                        <Link
-                            key={lesson.route}
-                            href={lesson.route}
-                            className="group flex items-center gap-4 p-4 border border-border rounded-lg hover:border-foreground/20 transition-colors"
-                        >
+                        <ClickableCard key={lesson.route} href={lesson.route}>
                             <span className="flex items-center justify-center w-8 h-8 text-sm font-medium bg-secondary rounded-full shrink-0">
                                 {index + 1}
                             </span>
@@ -81,7 +78,7 @@ export default async function CoursePage(props: PageProps) {
                                     </p>
                                 )}
                             </div>
-                        </Link>
+                        </ClickableCard>
                     ))}
                 </div>
             )}
