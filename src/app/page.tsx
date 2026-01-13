@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { CONTENT_MAX_WIDTH } from '@/lib/constants'
+import { ClickableCard } from '@/components/ui/clickable-card'
 
 export default function HomePage() {
     return (
@@ -35,10 +36,7 @@ export default function HomePage() {
 
             {/* Secondary - Blog */}
             <section className={`${CONTENT_MAX_WIDTH} mx-auto`}>
-                <Link
-                    href="/blog"
-                    className="group block p-6 border border-border rounded-lg hover:border-foreground/20 transition-colors"
-                >
+                <ClickableCard href="/blog" padding="none" className="p-6">
                     <div className="flex items-center justify-between">
                         <div>
                             <span className="text-xs text-muted-foreground">Blog</span>
@@ -48,7 +46,7 @@ export default function HomePage() {
                         </div>
                         <span className="text-muted-foreground text-sm">→</span>
                     </div>
-                </Link>
+                </ClickableCard>
             </section>
         </div>
     )
