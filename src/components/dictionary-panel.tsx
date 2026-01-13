@@ -40,7 +40,7 @@ export function DictionaryPanel() {
                     isOpen && 'dictionary-panel-open'
                 )}
             >
-                <div className="sticky top-20">
+                <div>
                     {isOpen && content ? (
                         <div className="dictionary-panel-content">
                             <div className="flex items-center justify-between mb-4">

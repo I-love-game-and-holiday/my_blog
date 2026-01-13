@@ -1,18 +1,19 @@
 import Link from 'next/link'
+import { CONTENT_MAX_WIDTH } from '@/lib/constants'
 
 export default function HomePage() {
     return (
         <div className="container py-16 md:py-24">
             {/* Hero Section */}
             <section className="text-center mb-16">
-                <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+                <p className={`text-lg md:text-xl text-muted-foreground ${CONTENT_MAX_WIDTH} mx-auto`}>
                 Progateを終えたあなたが、
                 自分でアプリを作れるようになるまで。
                 </p>
             </section>
 
             {/* Main CTA - Learn */}
-            <section className="max-w-2xl mx-auto mb-8">
+            <section className={`${CONTENT_MAX_WIDTH} mx-auto mb-8`}>
                 <Link
                     href="/learn"
                     className="group block p-8 md:p-10 bg-foreground text-background rounded-lg hover:bg-foreground/90 transition-colors"
@@ -33,7 +34,7 @@ export default function HomePage() {
             </section>
 
             {/* Secondary - Blog */}
-            <section className="max-w-2xl mx-auto">
+            <section className={`${CONTENT_MAX_WIDTH} mx-auto`}>
                 <Link
                     href="/blog"
                     className="group block p-6 border border-border rounded-lg hover:border-foreground/20 transition-colors"

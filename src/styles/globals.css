@@ -114,16 +114,32 @@ pre code.nextra-code > span[data-highlighted-line] {
 
 /* Article Layout with Dictionary Panel */
 .article-layout {
-    @apply flex gap-6;
+    @apply relative;
 }
 
 .article-content {
-    @apply flex-1 min-w-0;
+    @apply mx-auto;
 }
 
 /* Dictionary Panel */
 .dictionary-panel {
-    @apply w-80 shrink-0 transition-all duration-300;
+    @apply fixed top-20 right-4 w-80 transition-all duration-300 opacity-0 pointer-events-none;
+}
+
+.dictionary-panel-open {
+    @apply opacity-100 pointer-events-auto;
+}
+
+@media (min-width: 1280px) {
+    .dictionary-panel {
+        @apply right-8;
+    }
+}
+
+@media (min-width: 1536px) {
+    .dictionary-panel {
+        right: calc((100vw - 1280px) / 2 - 340px);
+    }
 }
 
 .dictionary-panel-content {
