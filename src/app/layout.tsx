@@ -3,7 +3,7 @@ import '@/styles/globals.css'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Nunito } from 'next/font/google'
 
 export const metadata: Metadata = {
     title: {
@@ -18,13 +18,19 @@ const inter = Inter({
     display: 'swap',
 })
 
+const nunito = Nunito({
+    subsets: ['latin'],
+    display: 'swap',
+    variable: '--font-nunito',
+})
+
 export default function RootLayout({
     children,
 }: {
     children: React.ReactNode
 }) {
     return (
-        <html lang="ja" className={inter.className}>
+        <html lang="ja" className={`${inter.className} ${nunito.variable}`}>
             <Head backgroundColor={{ dark: '#171717', light: '#ffffff' }} />
             <body className="min-h-screen flex flex-col">
                 <SiteHeader />

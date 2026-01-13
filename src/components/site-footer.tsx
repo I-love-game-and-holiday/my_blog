@@ -10,7 +10,7 @@ export function SiteFooter() {
                     </div>
                     <div className="flex items-center space-x-4">
                         <Link
-                            href="https://x.com/utu_engineer_"
+                            href="https://x.com/tanaka101com"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
