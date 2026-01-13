@@ -21,6 +21,7 @@ export type CourseItem = {
         title?: string
         description?: string
         order?: number
+        goals?: string[]
     }
     lessons: LessonItem[]
 }
@@ -51,10 +52,19 @@ export async function getCourses(): Promise<CourseItem[]> {
                 const titleMatch = metaContent.match(/title:\s*['"]([^'"]+)['"]/)
                 const descMatch = metaContent.match(/description:\s*['"]([^'"]+)['"]/)
                 const orderMatch = metaContent.match(/order:\s*(\d+)/)
+                // Parse goals array
+                const goalsMatch = metaContent.match(/goals:\s*\[([\s\S]*?)\]/)
+                let goals: string[] | undefined
+                if (goalsMatch) {
+                    goals = goalsMatch[1]
+                        .match(/['"]([^'"]+)['"]/g)
+                        ?.map(s => s.slice(1, -1))
+                }
                 courseMeta = {
                     title: titleMatch?.[1],
                     description: descMatch?.[1],
-                    order: orderMatch ? parseInt(orderMatch[1]) : undefined
+                    order: orderMatch ? parseInt(orderMatch[1]) : undefined,
+                    goals,
                 }
             }
 
