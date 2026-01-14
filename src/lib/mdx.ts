@@ -6,12 +6,14 @@ import rehypeSlug from 'rehype-slug'
 import GithubSlugger from 'github-slugger'
 import { ContentImage } from '@/components/content-image'
 import { ContentTable, BoxDiagram, FlowDiagram } from '@/components/content-table'
+import { SectionSummary } from '@/components/section-summary'
 
 const mdxComponents = {
     ContentImage,
     ContentTable,
     BoxDiagram,
     FlowDiagram,
+    SectionSummary,
 }
 
 const CONTENT_DIR = path.join(process.cwd(), 'content')
