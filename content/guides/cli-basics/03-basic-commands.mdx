@@ -6,88 +6,128 @@ description: 最初に覚えるべき基本コマンドを学ぼう
 
 ## ディレクトリ操作
 
-### 現在地を確認する: pwd
+### 現在地を確認する: pwd / Get-Location
 
-`pwd`（Print Working Directory）は、今いるディレクトリのパスを表示します。
+現在いるディレクトリのパスを表示します。
 
-```bash
-pwd
-# 出力例: /Users/tanaka/projects
-```
+<OsCodeBlock
+  mac={`pwd
+# 出力例: /Users/tanaka/projects`}
+  windows={`pwd
+# または
+Get-Location
+# 出力例: C:\\Users\\tanaka\\projects`}
+  title="現在のディレクトリを表示"
+/>
 
-### ファイル一覧を見る: ls
+### ファイル一覧を見る: ls / Get-ChildItem
 
-`ls`（List）は、ディレクトリ内のファイルとフォルダを一覧表示します。
+ディレクトリ内のファイルとフォルダを一覧表示します。
 
-```bash
-ls
+<OsCodeBlock
+  mac={`ls
 # 出力例: Documents  Downloads  Pictures
 
-ls -la  # 隠しファイルも含めて詳細表示
-```
+ls -la # 隠しファイルも含めて詳細表示`}
+  windows={`ls
+
+# または
+
+Get-ChildItem
+
+# 出力例: Documents Downloads Pictures
+
+ls -Force # 隠しファイルも含めて表示`}
+title="ファイル一覧を表示"
+/>
 
 ### ディレクトリを移動する: cd
 
-`cd`（Change Directory）は、作業ディレクトリを変更します。
+作業ディレクトリを変更します。
 
-```bash
-cd Documents      # Documentsに移動
+<OsCodeBlock
+  mac={`cd Documents      # Documentsに移動
 cd ..             # 1つ上のディレクトリに移動
 cd ~              # ホームディレクトリに移動
-cd /              # ルートディレクトリに移動
-```
+cd /              # ルートディレクトリに移動`}
+  windows={`cd Documents      # Documentsに移動
+cd ..             # 1つ上のディレクトリに移動
+cd ~              # ホームディレクトリに移動
+cd \\              # ルートディレクトリに移動`}
+  title="ディレクトリを移動"
+/>
 
 ## ファイル操作
 
-### ファイルの中身を見る: cat
+### ファイルをコピー: cp / Copy-Item
 
-`cat`（Concatenate）は、ファイルの内容を表示します。
+<OsCodeBlock
+  mac={`cp original.txt copy.txt           # ファイルをコピー
+cp -r folder1 folder2              # フォルダを再帰的にコピー`}
+  windows={`cp original.txt copy.txt           # ファイルをコピー
+# または
+Copy-Item original.txt copy.txt
 
-```bash
-cat README.md
-```
+cp -Recurse folder1 folder2 # フォルダを再帰的にコピー`}
+title="ファイル/フォルダをコピー"
+/>
 
-### ファイルをコピー: cp
+### ファイルを移動/リネーム: mv / Move-Item
 
-```bash
-cp original.txt copy.txt           # ファイルをコピー
-cp -r folder1 folder2              # フォルダを再帰的にコピー
-```
+<OsCodeBlock
+  mac={`mv old.txt new.txt                 # リネーム
+mv file.txt Documents/             # 移動`}
+  windows={`mv old.txt new.txt                 # リネーム
+# または
+Move-Item old.txt new.txt
 
-### ファイルを移動/リネーム: mv
+mv file.txt Documents/ # 移動`}
+title="ファイルを移動/リネーム"
+/>
 
-```bash
-mv old.txt new.txt                 # リネーム
-mv file.txt Documents/             # 移動
-```
+### ファイル/フォルダを削除: rm / Remove-Item
 
-### ファイル/フォルダを削除: rm
+<OsCodeBlock
+  mac={`rm file.txt                        # ファイル削除
+rm -r folder                       # フォルダを再帰的に削除`}
+  windows={`rm file.txt                        # ファイル削除
+# または
+Remove-Item file.txt
 
-```bash
-rm file.txt                        # ファイル削除
-rm -r folder                       # フォルダを再帰的に削除
-```
+rm -Recurse folder # フォルダを再帰的に削除`}
+title="ファイル/フォルダを削除"
+/>
 
 **注意**: `rm` は取り消しできません。ゴミ箱に入らず完全に削除されます。
 
 ## ディレクトリ作成
 
-### mkdir
+### mkdir / New-Item
 
-```bash
-mkdir new-folder                   # フォルダ作成
-mkdir -p path/to/deep/folder       # 深い階層も一度に作成
-```
+<OsCodeBlock
+  mac={`mkdir new-folder                   # フォルダ作成
+mkdir -p path/to/deep/folder       # 深い階層も一度に作成`}
+  windows={`mkdir new-folder                   # フォルダ作成
+# または
+New-Item -ItemType Directory -Name new-folder
+
+mkdir -p path\\to\\deep\\folder # 深い階層も一度に作成`}
+title="ディレクトリを作成"
+/>
 
 ## まとめ
 
-| コマンド | 説明 |
-|----------|------|
-| `pwd` | 現在のディレクトリを表示 |
-| `ls` | ファイル一覧を表示 |
-| `cd` | ディレクトリを移動 |
-| `cat` | ファイル内容を表示 |
-| `cp` | コピー |
-| `mv` | 移動/リネーム |
-| `rm` | 削除 |
-| `mkdir` | ディレクトリ作成 |
+コマンドは暗記するというよりも、必要になったときに検索して意味を理解して使いこなせたらそれで ok です
+
+<ContentTable
+  headers={["操作", "Mac (zsh)", "Windows (PowerShell)"]}
+  rows={[
+    ["現在のディレクトリを表示", "pwd", "pwd / Get-Location"],
+    ["ファイル一覧を表示", "ls", "ls / Get-ChildItem"],
+    ["ディレクトリを移動", "cd", "cd / Set-Location"],
+    ["コピー", "cp", "cp / Copy-Item"],
+    ["移動/リネーム", "mv", "mv / Move-Item"],
+    ["削除", "rm", "rm / Remove-Item"],
+    ["ディレクトリ作成", "mkdir", "mkdir / New-Item"],
+  ]}
+/>
