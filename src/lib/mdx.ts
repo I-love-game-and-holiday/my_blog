@@ -7,6 +7,7 @@ import GithubSlugger from 'github-slugger'
 import { ContentImage } from '@/components/content-image'
 import { ContentTable, BoxDiagram, FlowDiagram } from '@/components/content-table'
 import { SectionSummary } from '@/components/section-summary'
+import { OsCommandTabs, OsCodeBlock } from '@/components/os-command-tabs'
 
 const mdxComponents = {
     ContentImage,
@@ -14,6 +15,8 @@ const mdxComponents = {
     BoxDiagram,
     FlowDiagram,
     SectionSummary,
+    OsCommandTabs,
+    OsCodeBlock,
 }
 
 const CONTENT_DIR = path.join(process.cwd(), 'content')
