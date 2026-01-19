@@ -3,33 +3,44 @@ term: LTS
 aliases: ["Long Term Support", "長期サポート版"]
 ---
 
-**LTS**（Long Term Support）は、ライブラリ等の**長期サポート版**を指します。通常版より長い期間、セキュリティアップデートやバグ修正が提供されます。
+**LTS**（Long Term Support）は、ソフトウェア等の**長期サポート版**を指します。通常版より長い期間、セキュリティアップデートやバグ修正が提供されます。
 
-## LTSを選ぶべき理由
+<small>僕はそのまま『エルティーエス』と呼んでます。大体これで通じることが多い印象。</small>
+## バージョンの概念を理解する
+
+ソフトウェアは時代の変化に合わせて常に更新されています。
+サービス提供社は、同じソフトウェアでも複数種類のバージョンを同時進行で開発・保守している場合があります。
+
+その中で **ちゃんと面倒みるよ** という宣言が **LTS**です。
+ソフトウェアはリリースした後にバグが見つかったり、セキュリティ上の問題が発覚する場合があります。
+**LTS** の場合は修正したり、改善してくれる期間が長いです。
+
+nodeの場合を例に見てみましょう。下表のようなサイクルで開発されています。
+
+<FlowDiagram
+  steps={[
+    "Current",
+    "Active LTS",
+    "Maintenance LTS",
+    "End-of-life"
+  ]}
+/>
+
+ソフトウェアは最新機能を試せる**Current**から始まり、安定性が確認されると**Active LTS**へ移行します。
+その後、最小限のメンテナンスのみ行う**Maintenance LTS**を経て、最終的にサービス終了（**EOL**: End of Life）となります。EOL後も利用はできますが、一切のアップデートが行われません。
+
 
 <ContentImage
-  src="/guides/cli-basics/yahoo_home_page.jpg"
-  alt="Yahoo! JAPANのホームページ - GUIの例"
-  caption="Yahoo! JAPANのホームページ。マウスでクリックして操作するGUIの例"
+  src="/dictionary/lts/lts_image.jpg"
+  alt="Node.jsのLTSサイクル図"
+  caption="Node.js LTSライフサイクル図"
   width={500}
   height={450}
 />
-
-## Node.jsのLTS例
-
-```
-Node.js 20 LTS  → 2026年4月までサポート
-Node.js 22 LTS  → 2027年4月までサポート
-```
+[Node.js公式サイト](https://nodejs.org/en/about/previous-releases) より引用
 
 ## いつLTSを使うべき？
 
-| シーン | 推奨バージョン |
-|--------|----------------|
-| 本番環境・仕事 | LTS版 |
-| 学習・個人開発 | LTS版または最新版 |
-| 新機能を試したい | 最新版（Current） |
+**基本的にはLTS版を選びましょう。** Node.js、Ubuntu、Javaなど多くのソフトウェアがLTS版を提供しており、安定性とサポート期間の面で安心です。
 
-## 補足
-
-Node.js、Ubuntu、Javaなど多くのソフトウェアがLTS版を提供しています。特に理由がなければ**LTS版を選ぶのが安全**です。
+一方で、最新機能を試したい場合や、次期LTSへの移行準備として最新版（Current等）を使うこともあります。
