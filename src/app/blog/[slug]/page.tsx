@@ -3,8 +3,8 @@ import { getPostContent } from '@/lib/mdx'
 import { getDictionaryEntries } from '@/lib/get-dictionary'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { ArticleLayout } from '@/components/article-layout'
-import { MdxContentWrapper } from '@/components/mdx-components'
+import { ArticleLayout } from '@/components/layout/article-layout'
+import { MdxContentWrapper } from '@/components/dictionary/mdx-components'
 
 type PageParams = {
     slug: string

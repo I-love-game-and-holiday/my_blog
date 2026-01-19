@@ -1,5 +1,5 @@
 import { getDictionaryEntries } from '@/lib/get-dictionary'
-import { DictionarySearch } from '@/components/dictionary-search'
+import { DictionarySearch } from '@/components/dictionary/dictionary-search'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {

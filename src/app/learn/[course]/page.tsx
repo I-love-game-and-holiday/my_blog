@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { getCourse, getCourseSlugs } from '@/lib/get-courses'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { CourseGoals } from '@/components/course-goals'
+import { CourseGoals } from '@/components/content/course-goals'
 import { ClickableCard } from '@/components/ui/clickable-card'
 
 type PageParams = {
