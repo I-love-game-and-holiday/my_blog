@@ -1,6 +1,6 @@
 'use client'
 
-import { DictionaryPanel } from '@/components/dictionary-panel'
+import { DictionaryPanel } from '@/components/dictionary/dictionary-panel'
 import { type ReactNode } from 'react'
 
 type ArticleLayoutProps = {

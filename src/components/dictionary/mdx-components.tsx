@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, type ReactNode, type ReactElement, Children, isValidElement } from 'react'
-import { DictionaryTerm } from '@/components/dictionary-term'
+import { DictionaryTerm } from './dictionary-term'
 import type { DictionaryEntry } from '@/lib/get-dictionary'
 
 type TermMatch = {
