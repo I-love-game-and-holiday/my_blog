@@ -8,6 +8,7 @@ import { ContentImage } from '@/components/content-image'
 import { ContentTable, BoxDiagram, FlowDiagram } from '@/components/content-table'
 import { SectionSummary } from '@/components/section-summary'
 import { OsCommandTabs, OsCodeBlock } from '@/components/os-command-tabs'
+import { OsTable } from '@/components/os-table'
 
 const mdxComponents = {
     ContentImage,
@@ -17,6 +18,7 @@ const mdxComponents = {
     SectionSummary,
     OsCommandTabs,
     OsCodeBlock,
+    OsTable,
 }
 
 const CONTENT_DIR = path.join(process.cwd(), 'content')
