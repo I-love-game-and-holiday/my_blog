@@ -4,9 +4,9 @@ import { getSectionContent } from '@/lib/mdx'
 import { getDictionaryEntries } from '@/lib/get-dictionary'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { ArticleLayout } from '@/components/article-layout'
-import { MdxContentWrapper } from '@/components/mdx-components'
-import { GuideSidebar } from '@/components/guide-sidebar'
+import { ArticleLayout } from '@/components/layout/article-layout'
+import { MdxContentWrapper } from '@/components/dictionary/mdx-components'
+import { ContentSidebar } from '@/components/layout/content-sidebar'
 
 type PageParams = {
     guide: string
@@ -85,9 +85,13 @@ export default async function SectionPage(props: PageProps) {
                 </nav>
 
                 {/* Guide sidebar */}
-                <GuideSidebar
-                    guide={guide}
-                    currentSectionSlug={params.section}
+                <ContentSidebar
+                    title="ガイド内容"
+                    parentRoute={guide.route}
+                    parentTitle={guide.frontMatter?.title || guide.title}
+                    items={guide.sections}
+                    itemsLabel="セクション一覧"
+                    currentSlug={params.section}
                     currentIndex={currentIndex}
                     headings={headings}
                 />

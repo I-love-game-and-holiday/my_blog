@@ -4,9 +4,9 @@ import { getLessonContent } from '@/lib/mdx'
 import { getDictionaryEntries } from '@/lib/get-dictionary'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { ArticleLayout } from '@/components/article-layout'
-import { MdxContentWrapper } from '@/components/mdx-components'
-import { CourseSidebar } from '@/components/course-sidebar'
+import { ArticleLayout } from '@/components/layout/article-layout'
+import { MdxContentWrapper } from '@/components/dictionary/mdx-components'
+import { ContentSidebar } from '@/components/layout/content-sidebar'
 
 type PageParams = {
     course: string
@@ -85,11 +85,16 @@ export default async function LessonPage(props: PageProps) {
                 </nav>
 
                 {/* Course sidebar */}
-                <CourseSidebar
-                    course={course}
-                    currentLessonSlug={params.lesson}
+                <ContentSidebar
+                    title="コース内容"
+                    parentRoute={course.route}
+                    parentTitle={course.frontMatter?.title || course.title}
+                    items={course.lessons}
+                    itemsLabel="レッスン一覧"
+                    currentSlug={params.lesson}
                     currentIndex={currentIndex}
                     headings={headings}
+                    goals={course.frontMatter?.goals}
                 />
 
 
