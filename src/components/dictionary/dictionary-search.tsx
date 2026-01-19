@@ -74,11 +74,6 @@ export function DictionarySearch({ entries }: DictionarySearchProps) {
                                     className="block p-4 rounded-lg border border-border hover:border-foreground/20 hover:bg-secondary/50 transition-colors"
                                 >
                                     <h3 className="font-medium mb-1">{entry.term}</h3>
-                                    {entry.aliases.length > 0 && (
-                                        <p className="text-sm text-muted-foreground">
-                                            {entry.aliases.slice(0, 3).join(', ')}
-                                        </p>
-                                    )}
                                 </Link>
                             ))}
                         </div>
