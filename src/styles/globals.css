@@ -214,3 +214,68 @@ pre code.nextra-code > span[data-highlighted-line] {
 .dictionary-panel .prose li {
     @apply mb-1;
 }
+
+/* Common Figure Caption */
+.figure-caption {
+    @apply mt-2 text-center text-sm text-muted-foreground;
+}
+
+/* Table Styles */
+.content-table {
+    @apply w-full text-sm;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.content-table-wrapper {
+    @apply overflow-x-auto rounded-lg border border-border;
+}
+
+.content-table thead tr {
+    @apply bg-secondary;
+}
+
+.content-table th {
+    @apply border-b border-border px-4 py-3 text-left font-semibold text-foreground;
+}
+
+.content-table th:not(:last-child) {
+    @apply border-r border-border;
+}
+
+.content-table tbody tr {
+    @apply bg-background hover:bg-secondary/50;
+}
+
+.content-table td {
+    @apply px-4 py-3 text-muted-foreground;
+}
+
+.content-table td:not(:last-child) {
+    @apply border-r border-border;
+}
+
+.content-table tbody tr:not(:last-child) td {
+    @apply border-b border-border;
+}
+
+/* OS Tabs Styles */
+.os-tabs-header {
+    @apply flex items-center justify-between border-b border-border bg-secondary;
+}
+
+.os-tabs-button {
+    @apply flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors;
+}
+
+.os-tabs-button-active {
+    @apply bg-background text-primary border-b-2 border-primary -mb-px;
+}
+
+.os-tabs-button-inactive {
+    @apply text-muted-foreground hover:text-foreground;
+}
+
+.os-tabs-code-block {
+    @apply bg-[#1a1a1a];
+}

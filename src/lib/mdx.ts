@@ -4,11 +4,13 @@ import matter from 'gray-matter'
 import { compileMDX } from 'next-mdx-remote/rsc'
 import rehypeSlug from 'rehype-slug'
 import GithubSlugger from 'github-slugger'
-import { ContentImage } from '@/components/content-image'
-import { ContentTable, BoxDiagram, FlowDiagram } from '@/components/content-table'
-import { SectionSummary } from '@/components/section-summary'
-import { OsCommandTabs, OsCodeBlock } from '@/components/os-command-tabs'
-import { OsTable } from '@/components/os-table'
+import { ContentImage } from '@/components/content/content-image'
+import { ContentTable } from '@/components/content/content-table'
+import { BoxDiagram } from '@/components/content/box-diagram'
+import { FlowDiagram } from '@/components/content/flow-diagram'
+import { SectionSummary } from '@/components/content/section-summary'
+import { OsCommandTabs, OsCodeBlock } from '@/components/os/os-command-tabs'
+import { OsTable } from '@/components/os/os-table'
 
 const mdxComponents = {
     ContentImage,

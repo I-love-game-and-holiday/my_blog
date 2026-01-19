@@ -69,16 +69,16 @@ export function OsTabButtons({ rightContent }: OsTabButtonsProps) {
     const { activeOs, setActiveOs } = useOsTabs()
 
     return (
-        <div className="flex items-center justify-between border-b border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800">
+        <div className="os-tabs-header">
             <div className="flex">
                 {osTabs.map((tab) => (
                     <button
                         key={tab.os}
                         onClick={() => setActiveOs(tab.os)}
-                        className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors ${
+                        className={`os-tabs-button ${
                             activeOs === tab.os
-                                ? 'bg-white dark:bg-gray-900 text-blue-600 dark:text-blue-400 border-b-2 border-blue-500 -mb-px'
-                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                                ? 'os-tabs-button-active'
+                                : 'os-tabs-button-inactive'
                         }`}
                     >
                         {tab.icon}

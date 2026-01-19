@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { ChevronsRight, ChevronRight, BookOpen, Check } from 'lucide-react'
-import type { GuideItem, SectionItem } from '@/lib/get-guides'
+import { ChevronsRight, ChevronRight, Target, BookOpen, Check } from 'lucide-react'
 import { HEADER_HEIGHT } from '@/lib/constants'
 
 interface TableOfContentsItem {
@@ -12,14 +11,47 @@ interface TableOfContentsItem {
     level: number
 }
 
-interface GuideSidebarProps {
-    guide: GuideItem
-    currentSectionSlug: string
-    currentIndex: number
-    headings?: TableOfContentsItem[]
+interface SidebarItem {
+    slug: string
+    title: string
+    route: string
+    frontMatter?: {
+        title?: string
+    }
 }
 
-export function GuideSidebar({ guide, currentSectionSlug, currentIndex, headings = [] }: GuideSidebarProps) {
+interface ContentSidebarProps {
+    /** サイドバーのタイトル（例: "コース内容", "ガイド内容"） */
+    title: string
+    /** 親コンテンツへのリンク */
+    parentRoute: string
+    /** 親コンテンツのタイトル */
+    parentTitle: string
+    /** 子コンテンツ一覧（レッスン or セクション） */
+    items: SidebarItem[]
+    /** 子コンテンツ一覧のラベル（例: "レッスン一覧", "セクション一覧"） */
+    itemsLabel: string
+    /** 現在表示中のアイテムのslug */
+    currentSlug: string
+    /** 現在のインデックス（進捗表示用） */
+    currentIndex: number
+    /** 目次（現在のアイテムのheadings） */
+    headings?: TableOfContentsItem[]
+    /** 目標リスト（コース用、オプション） */
+    goals?: string[]
+}
+
+export function ContentSidebar({
+    title,
+    parentRoute,
+    parentTitle,
+    items,
+    itemsLabel,
+    currentSlug,
+    currentIndex,
+    headings = [],
+    goals = [],
+}: ContentSidebarProps) {
     const [isOpen, setIsOpen] = useState(true)
 
     return (
@@ -32,17 +64,21 @@ export function GuideSidebar({ guide, currentSectionSlug, currentIndex, headings
                 >
                     <div className="flex items-center gap-2">
                         <BookOpen className="h-4 w-4" />
-                        <span className="font-medium text-sm">ガイド内容</span>
+                        <span className="font-medium text-sm">{title}</span>
                     </div>
                     <ChevronRight className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-90' : ''}`} />
                 </button>
                 {isOpen && (
                     <div className="mt-2 p-4 bg-secondary/30 rounded-lg border border-border">
                         <SidebarContent
-                            guide={guide}
-                            currentSectionSlug={currentSectionSlug}
+                            parentRoute={parentRoute}
+                            parentTitle={parentTitle}
+                            items={items}
+                            itemsLabel={itemsLabel}
+                            currentSlug={currentSlug}
                             currentIndex={currentIndex}
                             headings={headings}
+                            goals={goals}
                         />
                     </div>
                 )}
@@ -60,7 +96,7 @@ export function GuideSidebar({ guide, currentSectionSlug, currentIndex, headings
                         transition-colors cursor-pointer z-40
                         ${isOpen ? 'pointer-events-none' : ''}
                     `}
-                    aria-label="ガイド内容を開く"
+                    aria-label={`${title}を開く`}
                 />
 
                 {/* Open indicator with chevrons */}
@@ -93,15 +129,19 @@ export function GuideSidebar({ guide, currentSectionSlug, currentIndex, headings
                         className="w-full flex items-center justify-between px-6 py-4 hover:bg-secondary transition-colors border-b border-border"
                         aria-label="閉じる"
                     >
-                        <h2 className="font-bold text-lg">ガイド内容</h2>
+                        <h2 className="font-bold text-lg">{title}</h2>
                         <ChevronRight className="h-5 w-5 rotate-180" />
                     </button>
                     <div className="p-6">
                         <SidebarContent
-                            guide={guide}
-                            currentSectionSlug={currentSectionSlug}
+                            parentRoute={parentRoute}
+                            parentTitle={parentTitle}
+                            items={items}
+                            itemsLabel={itemsLabel}
+                            currentSlug={currentSlug}
                             currentIndex={currentIndex}
                             headings={headings}
+                            goals={goals}
                         />
                     </div>
                 </div>
@@ -112,40 +152,71 @@ export function GuideSidebar({ guide, currentSectionSlug, currentIndex, headings
 }
 
 interface SidebarContentProps {
-    guide: GuideItem
-    currentSectionSlug: string
+    parentRoute: string
+    parentTitle: string
+    items: SidebarItem[]
+    itemsLabel: string
+    currentSlug: string
     currentIndex: number
     headings: TableOfContentsItem[]
+    goals: string[]
 }
 
-function SidebarContent({ guide, currentSectionSlug, currentIndex, headings }: SidebarContentProps) {
+function SidebarContent({
+    parentRoute,
+    parentTitle,
+    items,
+    itemsLabel,
+    currentSlug,
+    currentIndex,
+    headings,
+    goals,
+}: SidebarContentProps) {
     return (
         <div className="space-y-6">
-            {/* Guide title */}
+            {/* Parent title */}
             <div>
                 <Link
-                    href={guide.route}
+                    href={parentRoute}
                     className="text-sm font-semibold hover:text-foreground/80 transition-colors"
                 >
-                    {guide.frontMatter?.title || guide.title}
+                    {parentTitle}
                 </Link>
             </div>
 
-            {/* Section list */}
+            {/* Goals (optional) */}
+            {goals.length > 0 && (
+                <div>
+                    <div className="flex items-center gap-2 mb-3">
+                        <Target className="h-4 w-4 text-muted-foreground" />
+                        <h3 className="font-semibold text-sm">身につくスキル</h3>
+                    </div>
+                    <ul className="space-y-2">
+                        {goals.map((goal, index) => (
+                            <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
+                                <span className="text-foreground/60 mt-0.5">-</span>
+                                <span>{goal}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+
+            {/* Items list */}
             <div>
                 <div className="flex items-center gap-2 mb-3">
                     <BookOpen className="h-4 w-4 text-muted-foreground" />
-                    <h3 className="font-semibold text-sm">セクション一覧</h3>
+                    <h3 className="font-semibold text-sm">{itemsLabel}</h3>
                 </div>
                 <ul className="space-y-1">
-                    {guide.sections.map((section, index) => (
-                        <SectionLink
-                            key={section.slug}
-                            section={section}
+                    {items.map((item, index) => (
+                        <ItemLink
+                            key={item.slug}
+                            item={item}
                             index={index}
-                            isCurrent={section.slug === currentSectionSlug}
+                            isCurrent={item.slug === currentSlug}
                             isCompleted={index < currentIndex}
-                            headings={section.slug === currentSectionSlug ? headings : []}
+                            headings={item.slug === currentSlug ? headings : []}
                         />
                     ))}
                 </ul>
@@ -154,12 +225,12 @@ function SidebarContent({ guide, currentSectionSlug, currentIndex, headings }: S
             {/* Progress */}
             <div className="pt-4 border-t border-border">
                 <div className="text-xs text-muted-foreground mb-2">
-                    進捗: {currentIndex + 1} / {guide.sections.length}
+                    進捗: {currentIndex + 1} / {items.length}
                 </div>
                 <div className="w-full h-1.5 bg-border rounded-full overflow-hidden">
                     <div
                         className="h-full bg-foreground transition-all"
-                        style={{ width: `${((currentIndex + 1) / guide.sections.length) * 100}%` }}
+                        style={{ width: `${((currentIndex + 1) / items.length) * 100}%` }}
                     />
                 </div>
             </div>
@@ -167,19 +238,19 @@ function SidebarContent({ guide, currentSectionSlug, currentIndex, headings }: S
     )
 }
 
-interface SectionLinkProps {
-    section: SectionItem
+interface ItemLinkProps {
+    item: SidebarItem
     index: number
     isCurrent: boolean
     isCompleted: boolean
     headings: TableOfContentsItem[]
 }
 
-function SectionLink({ section, index, isCurrent, isCompleted, headings }: SectionLinkProps) {
+function ItemLink({ item, index, isCurrent, isCompleted, headings }: ItemLinkProps) {
     return (
         <li>
             <Link
-                href={section.route}
+                href={item.route}
                 className={`
                     flex items-center gap-2 px-2 py-1.5 rounded text-sm
                     transition-colors
@@ -200,9 +271,9 @@ function SectionLink({ section, index, isCurrent, isCompleted, headings }: Secti
                 `}>
                     {isCompleted ? <Check className="h-3 w-3" /> : index + 1}
                 </span>
-                <span className="truncate">{section.frontMatter?.title || section.title}</span>
+                <span className="truncate">{item.frontMatter?.title || item.title}</span>
             </Link>
-            {/* Table of contents for current section */}
+            {/* Table of contents for current item */}
             {isCurrent && headings.length > 0 && (
                 <ul className="ml-7 mt-1 space-y-0.5 border-l border-border pl-2">
                     {headings.map((heading) => (

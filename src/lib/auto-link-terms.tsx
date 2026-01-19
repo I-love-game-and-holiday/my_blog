@@ -1,4 +1,4 @@
-import { DictionaryTerm } from '@/components/dictionary-term'
+import { DictionaryTerm } from '@/components/dictionary/dictionary-term'
 import type { DictionaryEntry } from '@/lib/get-dictionary'
 
 type TermMatch = {

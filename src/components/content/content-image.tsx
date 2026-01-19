@@ -17,7 +17,7 @@ export function ContentImage({
 }: ContentImageProps) {
     return (
         <figure className="my-6" style={{ maxWidth: width }}>
-            <div className="overflow-hidden rounded-lg border-2 border-gray-300 dark:border-gray-600">
+            <div className="overflow-hidden rounded-lg border-2 border-border">
                 <Image
                     src={src}
                     alt={alt}
@@ -28,9 +28,7 @@ export function ContentImage({
                 />
             </div>
             {caption && (
-                <figcaption className="mt-2 text-center text-sm text-gray-500 dark:text-gray-400">
-                    {caption}
-                </figcaption>
+                <figcaption className="figure-caption">{caption}</figcaption>
             )}
         </figure>
     )
