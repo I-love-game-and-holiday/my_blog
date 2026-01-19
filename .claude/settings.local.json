@@ -11,7 +11,8 @@
       "Bash(dir \"D:\\\\cursor\\\\private\\\\blog\\\\nul\")",
       "Bash(powershell -Command \"Get-Content -Path ''D:\\\\cursor\\\\private\\\\blog\\\\nul'' -Encoding Default\")",
       "Bash(git -C \"D:/cursor/private/blog\" log --oneline --all -- nul)",
-      "Bash(xxd:*)"
+      "Bash(xxd:*)",
+      "Bash(wc:*)"
     ]
   }
 }
