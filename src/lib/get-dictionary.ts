@@ -2,6 +2,25 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 import { compileMDX } from 'next-mdx-remote/rsc'
+import rehypeSlug from 'rehype-slug'
+import { ContentImage } from '@/components/content/content-image'
+import { ContentTable } from '@/components/content/content-table'
+import { BoxDiagram } from '@/components/content/box-diagram'
+import { FlowDiagram } from '@/components/content/flow-diagram'
+import { SectionSummary } from '@/components/content/section-summary'
+import { OsCommandTabs, OsCodeBlock } from '@/components/os/os-command-tabs'
+import { OsTable } from '@/components/os/os-table'
+
+const mdxComponents = {
+    ContentImage,
+    ContentTable,
+    BoxDiagram,
+    FlowDiagram,
+    SectionSummary,
+    OsCommandTabs,
+    OsCodeBlock,
+    OsTable,
+}
 
 const DICTIONARY_DIR = path.join(process.cwd(), 'content', 'dictionary')
 
@@ -66,8 +85,12 @@ export async function getDictionaryEntry(slug: string): Promise<DictionaryEntryW
 
     const { content: mdxContent } = await compileMDX({
         source: content,
+        components: mdxComponents,
         options: {
             parseFrontmatter: false,
+            mdxOptions: {
+                rehypePlugins: [rehypeSlug],
+            },
         },
     })
 
