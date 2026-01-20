@@ -1,0 +1,173 @@
+---
+title: 基本操作
+order: 3
+description: VSCodeの基本的な操作を覚えよう
+---
+
+## ファイル操作
+
+### 新規ファイル作成
+
+- ショートカット: `Ctrl + N`（Mac: `Cmd + N`）
+- または、エクスプローラーでフォルダを右クリック →「新しいファイル」
+
+### ファイルを開く
+
+- ショートカット: `Ctrl + O`（Mac: `Cmd + O`）
+- または、エクスプローラーでファイルをクリック
+
+<Callout type="tip">
+**クイックオープン（超便利）**
+
+`Ctrl + P`（Mac: `Cmd + P`）でクイックオープンが開きます。
+ファイル名の一部を入力するだけで、プロジェクト内のファイルを素早く開けます。
+</Callout>
+
+### ファイルを保存
+
+- 保存: `Ctrl + S`（Mac: `Cmd + S`）
+- 名前を付けて保存: `Ctrl + Shift + S`（Mac: `Cmd + Shift + S`）
+- すべて保存: `Ctrl + K` → `S`（Mac: `Cmd + K` → `S`）
+
+### ファイルを閉じる
+
+- 現在のタブを閉じる: `Ctrl + W`（Mac: `Cmd + W`）
+- すべてのタブを閉じる: `Ctrl + K` → `W`
+
+## 編集操作
+
+### 基本的な編集
+
+<ContentTable
+  headers={["操作", "Windows", "Mac"]}
+  rows={[
+    ["元に戻す", "Ctrl + Z", "Cmd + Z"],
+    ["やり直す", "Ctrl + Y", "Cmd + Shift + Z"],
+    ["切り取り", "Ctrl + X", "Cmd + X"],
+    ["コピー", "Ctrl + C", "Cmd + C"],
+    ["貼り付け", "Ctrl + V", "Cmd + V"],
+    ["行を複製", "Shift + Alt + ↓", "Shift + Option + ↓"],
+    ["行を削除", "Ctrl + Shift + K", "Cmd + Shift + K"],
+    ["行を移動", "Alt + ↑/↓", "Option + ↑/↓"],
+  ]}
+/>
+
+### 選択
+
+<ContentTable
+  headers={["操作", "Windows", "Mac"]}
+  rows={[
+    ["単語を選択", "Ctrl + D", "Cmd + D"],
+    ["行を選択", "Ctrl + L", "Cmd + L"],
+    ["すべて選択", "Ctrl + A", "Cmd + A"],
+    ["矩形選択", "Shift + Alt + ドラッグ", "Shift + Option + ドラッグ"],
+  ]}
+/>
+
+### マルチカーソル
+
+複数の箇所を同時に編集できる強力な機能です。
+
+<ContentTable
+  headers={["操作", "Windows", "Mac"]}
+  rows={[
+    ["カーソルを追加", "Alt + クリック", "Option + クリック"],
+    ["同じ単語を選択して追加", "Ctrl + D", "Cmd + D"],
+    ["同じ単語をすべて選択", "Ctrl + Shift + L", "Cmd + Shift + L"],
+  ]}
+/>
+
+{/* TODO: マルチカーソルのGIF動画 */}
+
+## 検索と置換
+
+### ファイル内検索
+
+- 検索: `Ctrl + F`（Mac: `Cmd + F`）
+- 置換: `Ctrl + H`（Mac: `Cmd + H`）
+
+### プロジェクト全体検索
+
+- 検索: `Ctrl + Shift + F`（Mac: `Cmd + Shift + F`）
+- 置換: `Ctrl + Shift + H`（Mac: `Cmd + Shift + H`）
+
+<Callout type="tip">
+**検索オプション**
+
+検索ボックスの右側にあるアイコンで、以下のオプションを切り替えられます：
+- `Aa` : 大文字・小文字を区別
+- `Ab` : 単語単位で検索
+- `.*` : 正規表現を使用
+</Callout>
+
+## 移動
+
+### ファイル内の移動
+
+<ContentTable
+  headers={["操作", "Windows", "Mac"]}
+  rows={[
+    ["行頭に移動", "Home", "Cmd + ←"],
+    ["行末に移動", "End", "Cmd + →"],
+    ["ファイル先頭に移動", "Ctrl + Home", "Cmd + ↑"],
+    ["ファイル末尾に移動", "Ctrl + End", "Cmd + ↓"],
+    ["指定行に移動", "Ctrl + G", "Cmd + G"],
+  ]}
+/>
+
+### 定義へ移動
+
+関数や変数の定義元にジャンプできます。
+
+- `F12` : 定義へ移動
+- `Alt + F12`（Mac: `Option + F12`）: 定義をプレビュー表示
+- `Ctrl + クリック`（Mac: `Cmd + クリック`）: 定義へ移動
+
+{/* TODO: 定義へ移動のGIF */}
+
+## 統合ターミナル
+
+VSCode 内でターミナル（CLI）を使えます。
+
+### ターミナルを開く
+
+- ショートカット: `` Ctrl + ` ``（バッククォート）
+- または、メニューバーの「表示」→「ターミナル」
+
+### 複数のターミナル
+
+- 新しいターミナルを追加: `Ctrl + Shift + `` ` ``
+- ターミナルを切り替え: ターミナルパネル右上のドロップダウン
+
+<Callout type="info">
+**ターミナルの種類を選べる**
+
+Windows の場合、PowerShell、コマンドプロンプト、Git Bash などから選択できます。
+ターミナルパネル右上の「+」の横にある「∨」から選べます。
+</Callout>
+
+## コマンドパレット
+
+VSCode の全機能にアクセスできる万能ツールです。
+
+- ショートカット: `Ctrl + Shift + P`（Mac: `Cmd + Shift + P`）
+
+やりたいことを入力すると、関連するコマンドが表示されます。
+
+```
+例: 「format」と入力 → 「Format Document」が表示される
+```
+
+ショートカットを覚えていなくても、コマンドパレットから何でも実行できます。
+
+## セクションまとめ
+
+<SectionSummary
+  points={[
+    "Ctrl + P でファイルをすばやく開ける（クイックオープン）",
+    "Ctrl + D で同じ単語を複数選択できる（マルチカーソル）",
+    "Ctrl + Shift + F でプロジェクト全体を検索",
+    "Ctrl + ` でターミナルを開閉",
+    "困ったら Ctrl + Shift + P（コマンドパレット）",
+  ]}
+/>
