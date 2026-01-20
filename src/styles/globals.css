@@ -87,8 +87,12 @@
     @apply text-primary underline underline-offset-4 hover:text-primary/80 transition-colors;
 }
 
-.prose ul, .prose ol {
-    @apply my-4 pl-6;
+.prose ul {
+    @apply my-4 pl-6 list-disc;
+}
+
+.prose ol {
+    @apply my-4 pl-6 list-decimal;
 }
 
 .prose li {
