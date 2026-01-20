@@ -1,12 +1,13 @@
 import Link from 'next/link'
 import { getCourse, getCourses } from '@/lib/get-courses'
 import { getLessonContent } from '@/lib/mdx'
-import { getDictionaryEntries } from '@/lib/get-dictionary'
+import { getDictionaryEntries, findDictionaryTermsInContent } from '@/lib/get-dictionary'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { ArticleLayout } from '@/components/layout/article-layout'
 import { MdxContentWrapper } from '@/components/dictionary/mdx-components'
 import { ContentSidebar } from '@/components/layout/content-sidebar'
+import { DictionarySidebar } from '@/components/layout/dictionary-sidebar'
 
 type PageParams = {
     course: string
@@ -58,8 +59,9 @@ export default async function LessonPage(props: PageProps) {
         notFound()
     }
 
-    const { metadata, content, headings } = result
+    const { metadata, content, headings, rawContent } = result
     const dictionaryEntries = await getDictionaryEntries()
+    const pageTerms = findDictionaryTermsInContent(rawContent, dictionaryEntries)
 
     // Find current lesson index and navigation
     const currentIndex = course.lessons.findIndex(l => l.slug === params.lesson)
@@ -84,7 +86,7 @@ export default async function LessonPage(props: PageProps) {
                     </span>
                 </nav>
 
-                {/* Course sidebar */}
+                {/* Course sidebar (left) */}
                 <ContentSidebar
                     title="コース内容"
                     parentRoute={course.route}
@@ -96,6 +98,9 @@ export default async function LessonPage(props: PageProps) {
                     headings={headings}
                     goals={course.frontMatter?.goals}
                 />
+
+                {/* Dictionary sidebar (right) */}
+                <DictionarySidebar pageTerms={pageTerms} />
 
 
 

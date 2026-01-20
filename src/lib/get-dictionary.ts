@@ -165,3 +165,34 @@ export async function getAllTermsAndAliases(): Promise<Map<string, string>> {
 
     return termMap
 }
+
+/**
+ * MDXコンテンツ内で使用されている辞書用語を検出する
+ * @param mdxContent MDXの生テキスト（コンパイル前）
+ * @param entries 辞書エントリ一覧
+ * @returns ページ内で見つかった辞書エントリ（重複なし、term順でソート）
+ */
+export function findDictionaryTermsInContent(
+    mdxContent: string,
+    entries: DictionaryEntry[]
+): DictionaryEntry[] {
+    const foundSlugs = new Set<string>()
+    const lowerContent = mdxContent.toLowerCase()
+
+    for (const entry of entries) {
+        // term と aliases をチェック
+        const termsToCheck = [entry.term, ...entry.aliases]
+
+        for (const term of termsToCheck) {
+            if (lowerContent.includes(term.toLowerCase())) {
+                foundSlugs.add(entry.slug)
+                break // 1つのエントリで複数マッチしても1回だけ追加
+            }
+        }
+    }
+
+    // 見つかったエントリをterm順でソートして返す
+    return entries
+        .filter(entry => foundSlugs.has(entry.slug))
+        .sort((a, b) => a.term.localeCompare(b.term, 'ja'))
+}

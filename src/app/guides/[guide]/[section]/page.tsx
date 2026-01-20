@@ -1,12 +1,13 @@
 import Link from 'next/link'
 import { getGuide, getGuides } from '@/lib/get-guides'
 import { getSectionContent } from '@/lib/mdx'
-import { getDictionaryEntries } from '@/lib/get-dictionary'
+import { getDictionaryEntries, findDictionaryTermsInContent } from '@/lib/get-dictionary'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { ArticleLayout } from '@/components/layout/article-layout'
 import { MdxContentWrapper } from '@/components/dictionary/mdx-components'
 import { ContentSidebar } from '@/components/layout/content-sidebar'
+import { DictionarySidebar } from '@/components/layout/dictionary-sidebar'
 
 type PageParams = {
     guide: string
@@ -58,8 +59,9 @@ export default async function SectionPage(props: PageProps) {
         notFound()
     }
 
-    const { metadata, content, headings } = result
+    const { metadata, content, headings, rawContent } = result
     const dictionaryEntries = await getDictionaryEntries()
+    const pageTerms = findDictionaryTermsInContent(rawContent, dictionaryEntries)
 
     // Find current section index and navigation
     const currentIndex = guide.sections.findIndex(s => s.slug === params.section)
@@ -69,7 +71,7 @@ export default async function SectionPage(props: PageProps) {
     return (
         <ArticleLayout>
             <div className="container py-12">
-                {/* Breadcrumb */}
+                {/* パンくずリスト */}
                 <nav className="text-sm text-muted-foreground mb-6">
                     <Link href="/guides" className="hover:text-foreground transition-colors">
                         Guides
@@ -84,7 +86,7 @@ export default async function SectionPage(props: PageProps) {
                     </span>
                 </nav>
 
-                {/* Guide sidebar */}
+                {/* ガイドサイドバー(左) */}
                 <ContentSidebar
                     title="ガイド内容"
                     parentRoute={guide.route}
@@ -96,6 +98,10 @@ export default async function SectionPage(props: PageProps) {
                     headings={headings}
                 />
 
+                {/* 辞書サイドバー(右) */}
+                <DictionarySidebar pageTerms={pageTerms} />
+
+                {/* 記事本文 */}
                 <article className="prose max-w-none">
                     <header className="mb-8 not-prose">
                         <h1 className="text-3xl font-bold tracking-tight mb-2">

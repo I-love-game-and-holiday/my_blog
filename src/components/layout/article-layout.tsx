@@ -1,4 +1,3 @@
-import { DictionaryPanel } from '@/components/dictionary/dictionary-panel'
 import { getAllDictionaryContents } from '@/lib/get-dictionary'
 import { ArticleLayoutClient } from './article-layout-client'
 import { type ReactNode } from 'react'
@@ -20,12 +19,7 @@ export async function ArticleLayout({ children }: ArticleLayoutProps) {
 
     return (
         <ArticleLayoutClient contents={contents}>
-            <div className="article-layout">
-                <div className="article-content">
-                    {children}
-                </div>
-                <DictionaryPanel />
-            </div>
+            {children}
         </ArticleLayoutClient>
     )
 }

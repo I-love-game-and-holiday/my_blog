@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { ChevronsRight, ChevronRight, Target, BookOpen, Check } from 'lucide-react'
-import { HEADER_HEIGHT } from '@/lib/constants'
+import { Target, BookOpen, Check } from 'lucide-react'
+import { SlidePanel } from './slide-panel'
+import { MobileCollapseSection } from './mobile-collapse-section'
 
 interface TableOfContentsItem {
     id: string
@@ -41,6 +42,13 @@ interface ContentSidebarProps {
     goals?: string[]
 }
 
+/**
+ * コンテンツサイドバー
+ *
+ * learn/guides ページで使用するサイドバー。
+ * デスクトップ: 左側スライドパネル（初期表示）
+ * モバイル: トップバー展開式
+ */
 export function ContentSidebar({
     title,
     parentRoute,
@@ -54,104 +62,49 @@ export function ContentSidebar({
 }: ContentSidebarProps) {
     const [isOpen, setIsOpen] = useState(true)
 
+    const content = (
+        <ContentSidebarBody
+            parentRoute={parentRoute}
+            parentTitle={parentTitle}
+            items={items}
+            itemsLabel={itemsLabel}
+            currentSlug={currentSlug}
+            currentIndex={currentIndex}
+            headings={headings}
+            goals={goals}
+        />
+    )
+
     return (
         <>
-            {/* Mobile: Top bar */}
-            <div className="lg:hidden mb-6">
-                <button
-                    onClick={() => setIsOpen(!isOpen)}
-                    className="w-full flex items-center justify-between p-4 bg-secondary/50 rounded-lg border border-border"
-                >
-                    <div className="flex items-center gap-2">
-                        <BookOpen className="h-4 w-4" />
-                        <span className="font-medium text-sm">{title}</span>
-                    </div>
-                    <ChevronRight className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-90' : ''}`} />
-                </button>
-                {isOpen && (
-                    <div className="mt-2 p-4 bg-secondary/30 rounded-lg border border-border">
-                        <SidebarContent
-                            parentRoute={parentRoute}
-                            parentTitle={parentTitle}
-                            items={items}
-                            itemsLabel={itemsLabel}
-                            currentSlug={currentSlug}
-                            currentIndex={currentIndex}
-                            headings={headings}
-                            goals={goals}
-                        />
-                    </div>
-                )}
-            </div>
+            {/* モバイル */}
+            <MobileCollapseSection
+                title={title}
+                icon={<BookOpen className="h-4 w-4" />}
+                isOpen={isOpen}
+                onOpenChange={setIsOpen}
+            >
+                {content}
+            </MobileCollapseSection>
 
-            {/* Desktop: Left edge trigger area */}
-            <div className="hidden lg:block">
-                {/* Full-height clickable area on left edge */}
-                <button
-                    onClick={() => setIsOpen(true)}
-                    style={{ top: HEADER_HEIGHT }}
-                    className={`
-                        fixed left-0 h-[calc(100%-56px)] w-12
-                        bg-transparent hover:bg-muted-foreground/20
-                        transition-colors cursor-pointer z-40
-                        ${isOpen ? 'pointer-events-none' : ''}
-                    `}
-                    aria-label={`${title}を開く`}
-                />
-
-                {/* Open indicator with chevrons */}
-                <div
-                    style={{ top: HEADER_HEIGHT + 12 }}
-                    className={`
-                        fixed left-2 z-40
-                        pointer-events-none
-                        transition-opacity
-                        ${isOpen ? 'opacity-0' : 'opacity-100'}
-                    `}
-                >
-                    <ChevronsRight className="h-5 w-5 text-muted-foreground" />
-                </div>
-
-                {/* Slide-out panel */}
-                <div
-                    style={{ top: HEADER_HEIGHT }}
-                    className={`
-                        fixed left-0 h-[calc(100%-56px)] w-80 z-50
-                        bg-background border-r border-border shadow-xl
-                        transform transition-transform duration-300 ease-in-out
-                        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-                        overflow-y-auto
-                    `}
-                >
-                    {/* Close button - full width bar at top */}
-                    <button
-                        onClick={() => setIsOpen(false)}
-                        className="w-full flex items-center justify-between px-6 py-4 hover:bg-secondary transition-colors border-b border-border"
-                        aria-label="閉じる"
-                    >
-                        <h2 className="font-bold text-lg">{title}</h2>
-                        <ChevronRight className="h-5 w-5 rotate-180" />
-                    </button>
-                    <div className="p-6">
-                        <SidebarContent
-                            parentRoute={parentRoute}
-                            parentTitle={parentTitle}
-                            items={items}
-                            itemsLabel={itemsLabel}
-                            currentSlug={currentSlug}
-                            currentIndex={currentIndex}
-                            headings={headings}
-                            goals={goals}
-                        />
-                    </div>
-                </div>
-
-            </div>
+            {/* デスクトップ */}
+            <SlidePanel
+                position="left"
+                isOpen={isOpen}
+                onOpenChange={setIsOpen}
+                title={title}
+            >
+                {content}
+            </SlidePanel>
         </>
     )
 }
 
-interface SidebarContentProps {
+// ============================================================
+// サブコンポーネント
+// ============================================================
+
+interface ContentSidebarBodyProps {
     parentRoute: string
     parentTitle: string
     items: SidebarItem[]
@@ -162,7 +115,7 @@ interface SidebarContentProps {
     goals: string[]
 }
 
-function SidebarContent({
+function ContentSidebarBody({
     parentRoute,
     parentTitle,
     items,
@@ -171,10 +124,10 @@ function SidebarContent({
     currentIndex,
     headings,
     goals,
-}: SidebarContentProps) {
+}: ContentSidebarBodyProps) {
     return (
         <div className="space-y-6">
-            {/* Parent title */}
+            {/* 親タイトル */}
             <div>
                 <Link
                     href={parentRoute}
@@ -184,7 +137,7 @@ function SidebarContent({
                 </Link>
             </div>
 
-            {/* Goals (optional) */}
+            {/* 目標（オプション） */}
             {goals.length > 0 && (
                 <div>
                     <div className="flex items-center gap-2 mb-3">
@@ -202,7 +155,7 @@ function SidebarContent({
                 </div>
             )}
 
-            {/* Items list */}
+            {/* アイテム一覧 */}
             <div>
                 <div className="flex items-center gap-2 mb-3">
                     <BookOpen className="h-4 w-4 text-muted-foreground" />
@@ -222,7 +175,7 @@ function SidebarContent({
                 </ul>
             </div>
 
-            {/* Progress */}
+            {/* 進捗 */}
             <div className="pt-4 border-t border-border">
                 <div className="text-xs text-muted-foreground mb-2">
                     進捗: {currentIndex + 1} / {items.length}
@@ -273,7 +226,8 @@ function ItemLink({ item, index, isCurrent, isCompleted, headings }: ItemLinkPro
                 </span>
                 <span className="truncate">{item.frontMatter?.title || item.title}</span>
             </Link>
-            {/* Table of contents for current item */}
+
+            {/* 現在のアイテムの目次 */}
             {isCurrent && headings.length > 0 && (
                 <ul className="ml-7 mt-1 space-y-0.5 border-l border-border pl-2">
                     {headings.map((heading) => (
