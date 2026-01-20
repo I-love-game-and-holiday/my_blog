@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import { BookMarked, BookOpen, X } from 'lucide-react'
 import { SlidePanel } from './slide-panel'
 import { MobileBottomSheet } from './mobile-bottom-sheet'
@@ -20,7 +19,6 @@ interface DictionarySidebarProps {
  * モバイル: 用語クリック時にボトムシート表示
  */
 export function DictionarySidebar({ pageTerms }: DictionarySidebarProps) {
-    const [isOpen, setIsOpen] = useState(false)
     const { selectedTerm, isOpen: isPanelOpen, openDictionary, closeDictionary, getContent } = useDictionary()
 
     const content = selectedTerm ? getContent(selectedTerm) : undefined
@@ -35,6 +33,12 @@ export function DictionarySidebar({ pageTerms }: DictionarySidebarProps) {
             closeDictionary()
         } else {
             openDictionary(slug)
+        }
+    }
+
+    const handlePanelOpenChange = (open: boolean) => {
+        if (!open) {
+            closeDictionary()
         }
     }
 
@@ -59,8 +63,8 @@ export function DictionarySidebar({ pageTerms }: DictionarySidebarProps) {
             {/* デスクトップ: 右側スライドパネル */}
             <SlidePanel
                 position="right"
-                isOpen={isOpen}
-                onOpenChange={setIsOpen}
+                isOpen={isPanelOpen}
+                onOpenChange={handlePanelOpenChange}
                 title="辞書"
                 width="lg:w-80 xl:w-96 2xl:w-120"
             >
