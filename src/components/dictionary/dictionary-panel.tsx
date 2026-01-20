@@ -1,35 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { useDictionary } from '@/contexts/dictionary-context'
 import { X, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-type DictionaryContent = {
-    term: string
-    content: string
-}
-
 export function DictionaryPanel() {
-    const { selectedTerm, isOpen, closeDictionary } = useDictionary()
-    const [content, setContent] = useState<DictionaryContent | null>(null)
-    const [isLoading, setIsLoading] = useState(false)
+    const { selectedTerm, isOpen, closeDictionary, getContent } = useDictionary()
 
-    useEffect(() => {
-        if (selectedTerm && isOpen) {
-            setIsLoading(true)
-            fetch(`/api/dictionary/${selectedTerm}`)
-                .then(res => res.json())
-                .then(data => {
-                    setContent(data)
-                    setIsLoading(false)
-                })
-                .catch(() => {
-                    setContent(null)
-                    setIsLoading(false)
-                })
-        }
-    }, [selectedTerm, isOpen])
+    const content = selectedTerm ? getContent(selectedTerm) : undefined
 
     return (
         <>
@@ -57,12 +35,11 @@ export function DictionaryPanel() {
                                     <X className="w-5 h-5" />
                                 </button>
                             </div>
-                            <div
-                                className="prose prose-sm"
-                                dangerouslySetInnerHTML={{ __html: content.content }}
-                            />
+                            <div className="prose prose-sm">
+                                {content.content}
+                            </div>
                         </div>
-                    ) : isOpen && isLoading ? (
+                    ) : isOpen && !content ? (
                         <div className="dictionary-panel-content">
                             <div className="animate-pulse space-y-3">
                                 <div className="h-6 bg-muted rounded w-1/3" />
@@ -105,10 +82,9 @@ export function DictionaryPanel() {
                         </div>
                         <div className="p-4">
                             {content ? (
-                                <div
-                                    className="prose prose-sm"
-                                    dangerouslySetInnerHTML={{ __html: content.content }}
-                                />
+                                <div className="prose prose-sm">
+                                    {content.content}
+                                </div>
                             ) : (
                                 <div className="animate-pulse space-y-3">
                                     <div className="h-4 bg-muted rounded w-full" />

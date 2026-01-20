@@ -120,6 +120,20 @@ export function getDictionarySlugs(): string[] {
     }
 }
 
+export async function getAllDictionaryContents(): Promise<Map<string, DictionaryEntryWithContent>> {
+    const slugs = getDictionarySlugs()
+    const contents = new Map<string, DictionaryEntryWithContent>()
+
+    for (const slug of slugs) {
+        const entry = await getDictionaryEntry(slug)
+        if (entry) {
+            contents.set(slug, entry)
+        }
+    }
+
+    return contents
+}
+
 export async function findDictionaryEntryByTerm(term: string): Promise<DictionaryEntry | null> {
     const entries = await getDictionaryEntries()
     const lowerTerm = term.toLowerCase()

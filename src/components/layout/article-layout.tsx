@@ -1,19 +1,31 @@
-'use client'
-
 import { DictionaryPanel } from '@/components/dictionary/dictionary-panel'
+import { getAllDictionaryContents } from '@/lib/get-dictionary'
+import { ArticleLayoutClient } from './article-layout-client'
 import { type ReactNode } from 'react'
 
 type ArticleLayoutProps = {
     children: ReactNode
 }
 
-export function ArticleLayout({ children }: ArticleLayoutProps) {
+export async function ArticleLayout({ children }: ArticleLayoutProps) {
+    const contentsMap = await getAllDictionaryContents()
+
+    // Map を React で渡せる形式に変換
+    const contents = Array.from(contentsMap.entries()).map(([slug, entry]) => ({
+        slug,
+        term: entry.term,
+        aliases: entry.aliases,
+        content: entry.content,
+    }))
+
     return (
-        <div className="article-layout">
-            <div className="article-content">
-                {children}
+        <ArticleLayoutClient contents={contents}>
+            <div className="article-layout">
+                <div className="article-content">
+                    {children}
+                </div>
+                <DictionaryPanel />
             </div>
-            <DictionaryPanel />
-        </div>
+        </ArticleLayoutClient>
     )
 }
