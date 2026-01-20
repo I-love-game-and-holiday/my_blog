@@ -14,9 +14,7 @@ export default async function GuidesPage() {
             <div className="mb-8">
                 <h1 className="text-3xl font-bold tracking-tight mb-2">Guides</h1>
                 <p className="text-muted-foreground">
-                    開発に必要な基礎知識を体系的に学ぶガイド。
-                    <br />
-                    読んで理解する、知識のインプット。
+                    開発に必要な基礎知識を読んで理解するガイド。
                 </p>
             </div>
 
