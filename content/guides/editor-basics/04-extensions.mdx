@@ -1,0 +1,127 @@
+---
+title: おすすめ拡張機能
+order: 4
+description: 開発を効率化する拡張機能を導入しよう
+---
+
+## 拡張機能とは
+
+VSCode の機能を追加・拡張できるプラグインです。
+拡張機能を入れることで、VSCode を自分好みの開発環境にカスタマイズできます。
+
+### インストール方法
+
+1. `Ctrl + Shift + X`（Mac: `Cmd + Shift + X`）で拡張機能パネルを開く
+2. 検索欄に拡張機能名を入力
+3. 「インストール」をクリック
+
+{/* TODO: 拡張機能インストールの画像 */}
+
+## 最初に入れるべき拡張機能
+
+開発言語に関係なく、入れておくと便利な拡張機能です。
+
+### Japanese Language Pack for Visual Studio Code
+
+VSCode を日本語化する拡張機能（前セクションで紹介済み）。
+
+### Prettier - Code formatter
+
+コードを自動で整形してくれます。インデントや改行を統一してくれるので、コードが読みやすくなります。
+
+```json
+// settings.json に追加すると保存時に自動整形
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true
+}
+```
+
+### ESLint
+
+JavaScript / TypeScript のコードをチェックして、問題があれば警告してくれます。
+チーム開発では必須の拡張機能です。
+
+### GitLens
+
+Git の履歴を視覚的に確認できます。「この行を誰がいつ変更したか」がすぐに分かります。
+
+{/* TODO: GitLensの画像 */}
+
+### Auto Rename Tag
+
+HTML/JSX のタグ名を変更すると、対応する閉じタグも自動で変更してくれます。
+
+```html
+<!-- <div> を <section> に変えると、</div> も </section> に自動変更 -->
+<section>
+  <p>内容</p>
+</section>
+```
+
+## 言語別の拡張機能
+
+使用する言語に応じて追加でインストールしましょう。
+
+### HTML / CSS
+
+<ContentTable
+  headers={["拡張機能", "説明"]}
+  rows={[
+    ["Live Server", "ローカルサーバーを立てて、保存時に自動リロード"],
+    ["HTML CSS Support", "HTMLでCSSクラス名を自動補完"],
+    ["CSS Peek", "HTMLからCSSの定義にジャンプ"],
+  ]}
+/>
+
+### JavaScript / TypeScript
+
+<ContentTable
+  headers={["拡張機能", "説明"]}
+  rows={[
+    ["ES7+ React/Redux/React-Native snippets", "React用のスニペット集"],
+    ["Path Intellisense", "ファイルパスを自動補完"],
+    ["Import Cost", "インポートのファイルサイズを表示"],
+  ]}
+/>
+
+### Python
+
+<ContentTable
+  headers={["拡張機能", "説明"]}
+  rows={[
+    ["Python", "Python開発の基本機能（Microsoft製）"],
+    ["Pylance", "高速な型チェックと自動補完"],
+    ["Python Indent", "Pythonのインデントを自動調整"],
+  ]}
+/>
+
+## 拡張機能の管理
+
+### 無効化・アンインストール
+
+1. 拡張機能パネルを開く
+2. インストール済みの拡張機能を選択
+3. 「無効にする」または「アンインストール」をクリック
+
+<Callout type="tip">
+**入れすぎ注意**
+
+拡張機能を入れすぎると VSCode の起動が遅くなることがあります。
+使わなくなった拡張機能は無効化またはアンインストールしましょう。
+</Callout>
+
+### ワークスペース単位で管理
+
+プロジェクトごとに必要な拡張機能が異なる場合は、ワークスペース単位で有効/無効を切り替えられます。
+
+## セクションまとめ
+
+<SectionSummary
+  points={[
+    "拡張機能で VSCode の機能を追加できる",
+    "Prettier, ESLint, GitLens は入れておくと便利",
+    "言語に応じた拡張機能を追加する",
+    "使わない拡張機能は無効化して軽量化",
+  ]}
+/>
