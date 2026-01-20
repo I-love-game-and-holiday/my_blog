@@ -88,15 +88,12 @@ export function SlidePanel({
                 {/* ヘッダー（閉じるボタン） */}
                 <button
                     onClick={() => onOpenChange(false)}
-                    className={`
-                        w-full flex items-center justify-between px-6 py-4
-                        hover:bg-secondary transition-colors border-b border-border
-                        ${isLeft ? '' : 'flex-row-reverse'}
-                    `}
+                    className="w-full flex items-center justify-between px-6 py-4
+                        hover:bg-secondary transition-colors border-b border-border"
                     aria-label="閉じる"
                 >
                     <h2 className="font-bold text-lg">{title}</h2>
-                    <CloseIcon className="h-5 w-5 rotate-180" />
+                    <CloseIcon className={`h-5 w-5 ${isLeft ? 'rotate-180' : ''}`} />
                 </button>
 
                 {/* コンテンツ */}
