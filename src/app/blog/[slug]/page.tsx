@@ -1,10 +1,11 @@
 import { getPostSlugs, getPosts } from '@/lib/get-posts'
 import { getPostContent } from '@/lib/mdx'
-import { getDictionaryEntries } from '@/lib/get-dictionary'
+import { getDictionaryEntries, findDictionaryTermsInContent } from '@/lib/get-dictionary'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { ArticleLayout } from '@/components/layout/article-layout'
 import { MdxContentWrapper } from '@/components/dictionary/mdx-components'
+import { DictionarySidebar } from '@/components/layout/dictionary-sidebar'
 
 type PageParams = {
     slug: string
@@ -38,12 +39,16 @@ export default async function BlogPostPage(props: PageProps) {
         notFound()
     }
 
-    const { metadata, content } = result
+    const { metadata, content, rawContent } = result
     const dictionaryEntries = await getDictionaryEntries()
+    const pageTerms = findDictionaryTermsInContent(rawContent, dictionaryEntries)
 
     return (
         <ArticleLayout>
             <div className="container py-12">
+                {/* Dictionary sidebar (right) */}
+                <DictionarySidebar pageTerms={pageTerms} />
+
                 <article className="prose max-w-none">
                     <header className="mb-8 not-prose">
                         <h1 className="text-3xl font-bold tracking-tight mb-2">

@@ -72,6 +72,7 @@ export async function getPostContent(slug: string) {
     return {
         metadata: data,
         content: mdxContent,
+        rawContent: content,
     }
 }
 
@@ -102,6 +103,7 @@ export async function getLessonContent(courseSlug: string, lessonSlug: string) {
         metadata: data,
         content: mdxContent,
         headings,
+        rawContent: content,
     }
 }
 
@@ -132,5 +134,6 @@ export async function getSectionContent(guideSlug: string, sectionSlug: string) 
         metadata: data,
         content: mdxContent,
         headings,
+        rawContent: content,
     }
 }
