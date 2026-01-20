@@ -1,5 +1,5 @@
 export default {
-    title: 'エディター（コードエディター）',
-    description: 'コードエディターの基礎を学ぶ。VSCodeの使い方から便利な機能まで。',
+    title: 'エディター',
+    description: 'vscodeを例にエディターの基本を学びましょう',
     order: 2,
 }
