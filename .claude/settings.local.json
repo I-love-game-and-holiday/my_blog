@@ -12,7 +12,9 @@
       "Bash(powershell -Command \"Get-Content -Path ''D:\\\\cursor\\\\private\\\\blog\\\\nul'' -Encoding Default\")",
       "Bash(git -C \"D:/cursor/private/blog\" log --oneline --all -- nul)",
       "Bash(xxd:*)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(timeout:*)",
+      "Bash(npm run dev:*)"
     ]
   }
 }
