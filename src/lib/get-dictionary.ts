@@ -28,10 +28,12 @@ const DICTIONARY_DIR = path.join(process.cwd(), 'content', 'dictionary')
 export type DictionaryEntry = {
     slug: string
     term: string
+    reading: string
     aliases: string[]
     route: string
     frontMatter: {
         term: string
+        reading?: string
         aliases?: string[]
     }
 }
@@ -57,10 +59,12 @@ export async function getDictionaryEntries(): Promise<DictionaryEntry[]> {
             return {
                 slug,
                 term: data.term || slug,
+                reading: data.reading || data.term || slug,
                 aliases: data.aliases || [],
                 route: `/dictionary/${slug}`,
                 frontMatter: {
                     term: data.term || slug,
+                    reading: data.reading,
                     aliases: data.aliases || [],
                 }
             }
@@ -98,10 +102,12 @@ export async function getDictionaryEntry(slug: string): Promise<DictionaryEntryW
     return {
         slug,
         term: data.term || slug,
+        reading: data.reading || data.term || slug,
         aliases: data.aliases || [],
         route: `/dictionary/${slug}`,
         frontMatter: {
             term: data.term || slug,
+            reading: data.reading,
             aliases: data.aliases || [],
         },
         content: mdxContent,
