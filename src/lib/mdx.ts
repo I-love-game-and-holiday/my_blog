@@ -3,6 +3,7 @@ import path from 'path'
 import matter from 'gray-matter'
 import { compileMDX } from 'next-mdx-remote/rsc'
 import rehypeSlug from 'rehype-slug'
+import rehypePrettyCode from 'rehype-pretty-code'
 import GithubSlugger from 'github-slugger'
 import { ContentImage } from '@/components/content/content-image'
 import { ContentTable } from '@/components/content/content-table'
@@ -66,7 +67,7 @@ export async function getPostContent(slug: string) {
         options: {
             parseFrontmatter: false,
             mdxOptions: {
-                rehypePlugins: [rehypeSlug],
+                rehypePlugins: [rehypeSlug, [rehypePrettyCode, { theme: 'github-dark' }]],
             },
         },
     })
@@ -96,7 +97,7 @@ export async function getLessonContent(courseSlug: string, lessonSlug: string) {
         options: {
             parseFrontmatter: false,
             mdxOptions: {
-                rehypePlugins: [rehypeSlug],
+                rehypePlugins: [rehypeSlug, [rehypePrettyCode, { theme: 'github-dark' }]],
             },
         },
     })
@@ -127,7 +128,7 @@ export async function getSectionContent(guideSlug: string, sectionSlug: string) 
         options: {
             parseFrontmatter: false,
             mdxOptions: {
-                rehypePlugins: [rehypeSlug],
+                rehypePlugins: [rehypeSlug, [rehypePrettyCode, { theme: 'github-dark' }]],
             },
         },
     })

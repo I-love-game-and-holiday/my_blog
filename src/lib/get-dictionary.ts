@@ -3,6 +3,7 @@ import path from 'path'
 import matter from 'gray-matter'
 import { compileMDX } from 'next-mdx-remote/rsc'
 import rehypeSlug from 'rehype-slug'
+import rehypePrettyCode from 'rehype-pretty-code'
 import { ContentImage } from '@/components/content/content-image'
 import { ContentTable } from '@/components/content/content-table'
 import { BoxDiagram } from '@/components/content/box-diagram'
@@ -89,7 +90,7 @@ export async function getDictionaryEntry(slug: string): Promise<DictionaryEntryW
         options: {
             parseFrontmatter: false,
             mdxOptions: {
-                rehypePlugins: [rehypeSlug],
+                rehypePlugins: [rehypeSlug, [rehypePrettyCode, { theme: 'github-dark' }]],
             },
         },
     })
