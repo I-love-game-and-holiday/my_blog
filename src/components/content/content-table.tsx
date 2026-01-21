@@ -1,6 +1,10 @@
+import type { ReactNode } from 'react'
+
+type CellContent = ReactNode
+
 interface ContentTableProps {
     headers: string[]
-    rows: string[][]
+    rows: CellContent[][]
     caption?: string
 }
 
