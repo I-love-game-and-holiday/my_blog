@@ -37,7 +37,13 @@ export function DictionarySidebar({ pageTerms }: DictionarySidebarProps) {
     }
 
     const handlePanelOpenChange = (open: boolean) => {
-        if (!open) {
+        if (open) {
+            // パネルを開く際、最初の用語を選択
+            const termToOpen = pageTerms[0]?.slug
+            if (termToOpen) {
+                openDictionary(termToOpen)
+            }
+        } else {
             closeDictionary()
         }
     }
@@ -143,13 +149,6 @@ function DictionarySidebarBody({
                                 {content?.term || '読み込み中...'}
                             </h3>
                         </div>
-                        <button
-                            onClick={onClose}
-                            className="p-1 hover:bg-muted rounded-md transition-colors"
-                            aria-label="辞書を閉じる"
-                        >
-                            <X className="h-4 w-4" />
-                        </button>
                     </div>
                     {content ? (
                         <div className="prose prose-sm text-sm">

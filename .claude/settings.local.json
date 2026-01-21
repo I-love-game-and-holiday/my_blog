@@ -14,7 +14,8 @@
       "Bash(xxd:*)",
       "Bash(wc:*)",
       "Bash(timeout:*)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Bash(git checkout:*)"
     ]
   }
 }
