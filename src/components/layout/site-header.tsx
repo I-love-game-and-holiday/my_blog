@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 const navigation = [
     { name: 'Learn', href: '/learn' },
@@ -26,6 +27,7 @@ export function SiteHeader() {
                 </Link>
 
                 <nav className="flex items-center space-x-6">
+                    <ThemeToggle />
                     {navigation.map((item) => (
                         <Link
                             key={item.href}
