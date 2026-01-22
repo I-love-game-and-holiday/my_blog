@@ -11,6 +11,7 @@ import { BoxDiagram } from '@/components/content/box-diagram'
 import { FlowDiagram } from '@/components/content/flow-diagram'
 import { SectionSummary } from '@/components/content/section-summary'
 import { Callout } from '@/components/content/callout'
+import { HtmlPreview } from '@/components/content/html-preview'
 import { CollapsibleCode, OsCommandTabs, OsCodeBlock } from '@/components/code'
 import { OsTable } from '@/components/os/os-table'
 import { FileTree, FileTreeFolder, FileTreeFile } from '@/components/content/file-tree'
@@ -29,6 +30,7 @@ const mdxComponents = {
     FileTree,
     FileTreeFolder,
     FileTreeFile,
+    HtmlPreview,
 }
 
 const CONTENT_DIR = path.join(process.cwd(), 'content')
