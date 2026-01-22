@@ -13,6 +13,7 @@ import { SectionSummary } from '@/components/content/section-summary'
 import { Callout } from '@/components/content/callout'
 import { CollapsibleCode, OsCommandTabs, OsCodeBlock } from '@/components/code'
 import { OsTable } from '@/components/os/os-table'
+import { FileTree, FileTreeFolder, FileTreeFile } from '@/components/content/file-tree'
 
 const mdxComponents = {
     ContentImage,
@@ -25,6 +26,9 @@ const mdxComponents = {
     OsCommandTabs,
     OsCodeBlock,
     OsTable,
+    FileTree,
+    FileTreeFolder,
+    FileTreeFile,
 }
 
 const CONTENT_DIR = path.join(process.cwd(), 'content')
