@@ -1,0 +1,74 @@
+---
+term: DOM
+reading: どむ
+aliases: ["Document Object Model", "ドキュメントオブジェクトモデル"]
+---
+
+**DOM**（Document Object Model）は、HTMLをJavaScriptから操作するための仕組みです。
+
+ブラウザがHTMLを読み込むと、その内容を「オブジェクト」として扱えるようにしてくれます。<br />
+このオブジェクトを通じて、JavaScriptからページの内容を変更できます。
+
+## 身近な例で理解する
+
+HTMLを「家の設計図」だとすると、DOMは「実際に建てられた家」です。
+
+<ContentTable
+  headers={["例え", "説明"]}
+  rows={[
+    ["HTML", "家の設計図（テキストファイル）"],
+    ["DOM", "設計図をもとに建てられた家（操作できるオブジェクト）"],
+    ["JavaScript", "家を改装する大工さん"],
+  ]}
+/>
+
+設計図（HTML）を直接書き換えなくても、建てられた家（DOM）を改装（操作）できるというイメージです。
+
+## DOMでできること
+
+JavaScriptでDOMを操作すると、ページを動的に変更できます。
+
+<ContentTable
+  headers={["操作", "例"]}
+  rows={[
+    ["要素を取得する", "document.getElementById('btn')"],
+    ["テキストを変更する", "element.textContent = '新しいテキスト'"],
+    ["要素を追加する", "parent.appendChild(newElement)"],
+    ["要素を削除する", "element.remove()"],
+    ["スタイルを変更する", "element.style.color = 'red'"],
+  ]}
+/>
+
+```js
+// ボタン要素を取得
+const button = document.getElementById('my-button');
+
+// テキストを変更
+button.textContent = 'クリックしてね';
+
+// クリックされたときの処理を追加
+button.addEventListener('click', () => {
+  alert('クリックされました！');
+});
+```
+
+## DOM要素とは
+
+「DOM要素」とは、HTMLの各パーツ（タグ）をJavaScriptで扱えるようにしたものです。
+
+```html
+<button id="my-button">送信</button>
+```
+
+このHTMLの `<button>` タグは、DOMでは「要素（Element）」というオブジェクトになります。<br />
+このオブジェクトには、テキストを変える機能やクリックを検知する機能などが備わっています。
+
+## まとめ
+
+<SectionSummary
+  points={[
+    "DOMはHTMLをJavaScriptから操作するための仕組み",
+    "ブラウザがHTMLを読み込むとDOMが作られる",
+    "DOM要素を通じてページの内容を動的に変更できる",
+  ]}
+/>

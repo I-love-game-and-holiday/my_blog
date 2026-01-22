@@ -40,6 +40,7 @@ let todos = [];
 
 <Callout type="info">
 `document.getElementById()` は、HTMLの `id` 属性を使って要素を取得するメソッドです。
+<a href="https://developer.mozilla.org/ja/docs/Web/API/Document/getElementById" target="_blank" rel="noopener noreferrer">(参考)</a>
 </Callout>
 
 ## Step 2: タスクを表示する関数を作る
@@ -68,13 +69,17 @@ function renderTodos() {
 
 ### ポイント
 
-- `innerHTML = ''` でリストを空にしてから再描画します
+- `innerHTML = ''` でリストを空にしてから再描画します。(なぜ再描画の必要があるか考えてみましょう)
 - `forEach` で配列の要素を1つずつ処理します
 - `createElement` で新しいHTML要素を作成します
 
 ## Step 3: タスクを追加する処理を作る
 
 ここからが本番です。フォームが送信されたときの処理を書きます。
+
+### イベントリスナーについて
+
+`addEventListener()`はDOM要素が持つメソッドで、イベント（クリックやフォーム送信など）が発生したときの処理を登録できます。
 
 ```js title="main.js"
 // フォーム送信時の処理
@@ -83,7 +88,7 @@ form.addEventListener('submit', (e) => {
   e.preventDefault();
 
   // ========================================
-  // 🤔 ここを自分で考えて実装してみよう！
+  // ここを自分で考えて実装してみよう！
   // ========================================
   // やること:
   // 1. 入力欄の値を取得する（input.value）
@@ -106,25 +111,27 @@ form.addEventListener('submit', (e) => {
 
 ### ヒント
 
-<CollapsibleCode title="ヒント1: 入力値の取得" defaultOpen={false}>
+<CollapsibleCode title="ヒント1: 入力値の取得と空白除去" defaultOpen={false}>
 ```js
-const text = input.value;
+const text = input.value.trim();
 ```
+`trim()` は前後の空白を除去します。
 </CollapsibleCode>
 
 <CollapsibleCode title="ヒント2: 空欄チェック" defaultOpen={false}>
 ```js
-if (!text.trim()) {
+if (!text) {
   return;
 }
 ```
-`trim()` は前後の空白を除去します。空白だけの入力を防げます。
+空白除去後に空文字なら何もしません。
 </CollapsibleCode>
 
 <CollapsibleCode title="ヒント3: 配列への追加" defaultOpen={false}>
 ```js
-todos.push({ text: text });
+todos.push({ text });
 ```
+`{ text }` は `{ text: text }` の省略記法（ES6）です。
 </CollapsibleCode>
 
 ### 答え
@@ -134,16 +141,16 @@ todos.push({ text: text });
 form.addEventListener('submit', (e) => {
   e.preventDefault();
 
-  // 1. 入力欄の値を取得
-  const text = input.value;
+  // 1. 入力欄の値を取得（前後の空白を除去）
+  const text = input.value.trim();
 
   // 2. 空欄チェック
-  if (!text.trim()) {
+  if (!text) {
     return;
   }
 
   // 3. todosに新しいタスクを追加
-  todos.push({ text: text });
+  todos.push({ text });
 
   // 4. 画面を更新
   renderTodos();
@@ -198,18 +205,26 @@ function renderTodos() {
 form.addEventListener('submit', (e) => {
   e.preventDefault();
 
-  const text = input.value;
+  const text = input.value.trim();
 
-  if (!text.trim()) {
+  if (!text) {
     return;
   }
 
-  todos.push({ text: text });
+  todos.push({ text });
   renderTodos();
   input.value = '';
 });
 ```
 </CollapsibleCode>
+
+<Callout type="info">
+**セキュリティについて**
+
+今回は学習用に `innerHTML` を使っていますが、本番環境では注意が必要です。ユーザーの入力をそのまま `innerHTML` に渡すと、悪意のあるスクリプトが実行される可能性があります（XSS攻撃）。
+
+安全な方法として `textContent` や `createElement` を使う方法がありますが、詳しくは別のレッスンで解説します。
+</Callout>
 
 ## 次のステップ
 
