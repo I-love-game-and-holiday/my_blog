@@ -1,0 +1,218 @@
+---
+title: タスクを追加する
+order: 3
+description: JavaScriptでタスクの追加機能を実装します。
+---
+
+## このレッスンで作るもの
+
+入力欄にテキストを入れて「追加」ボタンを押すと、タスクが一覧に表示される機能を作ります。
+
+{/* TODO: 動作GIFを追加 */}
+
+## JavaScriptファイルを作成する
+
+現在のフォルダ構造を確認しましょう。
+
+<FileTree>
+  <FileTreeFolder name="to-do-app" defaultOpen>
+    <FileTreeFile name="index.html" />
+    <FileTreeFile name="style.css" />
+    <FileTreeFile name="main.js" active />
+  </FileTreeFolder>
+</FileTree>
+
+`main.js`（ハイライトされているファイル）を作成してください。HTMLで読み込む設定は既に済んでいます。
+
+## Step 1: 要素を取得する
+
+まず、HTMLの要素をJavaScriptから操作できるようにします。
+
+```js title="main.js"
+// HTML要素を取得
+const form = document.getElementById('todo-form');
+const input = document.getElementById('todo-input');
+const list = document.getElementById('todo-list');
+
+// タスクを保存する配列
+let todos = [];
+```
+
+<Callout type="info">
+`document.getElementById()` は、HTMLの `id` 属性を使って要素を取得するメソッドです。
+</Callout>
+
+## Step 2: タスクを表示する関数を作る
+
+配列 `todos` の中身を画面に表示する関数を作ります。
+
+```js title="main.js"
+// タスクを画面に表示する関数
+function renderTodos() {
+  // 一旦リストを空にする
+  list.innerHTML = '';
+
+  // todos配列の中身を1つずつ処理
+  todos.forEach((todo, index) => {
+    const li = document.createElement('li');
+    li.className = 'todo-item';
+    li.innerHTML = `
+      <input type="checkbox">
+      <span>${todo.text}</span>
+      <button type="button">削除</button>
+    `;
+    list.appendChild(li);
+  });
+}
+```
+
+### ポイント
+
+- `innerHTML = ''` でリストを空にしてから再描画します
+- `forEach` で配列の要素を1つずつ処理します
+- `createElement` で新しいHTML要素を作成します
+
+## Step 3: タスクを追加する処理を作る
+
+ここからが本番です。フォームが送信されたときの処理を書きます。
+
+```js title="main.js"
+// フォーム送信時の処理
+form.addEventListener('submit', (e) => {
+  // ページのリロードを防ぐ
+  e.preventDefault();
+
+  // ========================================
+  // 🤔 ここを自分で考えて実装してみよう！
+  // ========================================
+  // やること:
+  // 1. 入力欄の値を取得する（input.value）
+  // 2. 空欄チェック（空なら何もしないで return）
+  // 3. todosに新しいタスクを追加する
+  //    → { text: 入力値 } というオブジェクトで追加
+  // 4. renderTodos() を呼んで画面を更新
+  // 5. 入力欄を空にする（input.value = ''）
+  // ========================================
+
+
+});
+```
+
+<Callout type="warning">
+**まずは自分で考えてみましょう！**
+
+5〜10分ほど試してみて、分からなければ下のヒントを見てください。
+</Callout>
+
+### ヒント
+
+<CollapsibleCode title="ヒント1: 入力値の取得" defaultOpen={false}>
+```js
+const text = input.value;
+```
+</CollapsibleCode>
+
+<CollapsibleCode title="ヒント2: 空欄チェック" defaultOpen={false}>
+```js
+if (!text.trim()) {
+  return;
+}
+```
+`trim()` は前後の空白を除去します。空白だけの入力を防げます。
+</CollapsibleCode>
+
+<CollapsibleCode title="ヒント3: 配列への追加" defaultOpen={false}>
+```js
+todos.push({ text: text });
+```
+</CollapsibleCode>
+
+### 答え
+
+<CollapsibleCode title="答えを見る" defaultOpen={false}>
+```js
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  // 1. 入力欄の値を取得
+  const text = input.value;
+
+  // 2. 空欄チェック
+  if (!text.trim()) {
+    return;
+  }
+
+  // 3. todosに新しいタスクを追加
+  todos.push({ text: text });
+
+  // 4. 画面を更新
+  renderTodos();
+
+  // 5. 入力欄を空にする
+  input.value = '';
+});
+```
+</CollapsibleCode>
+
+## 動作確認
+
+ブラウザで確認してみましょう。
+
+1. 入力欄にテキストを入力
+2. 「追加」ボタンをクリック（またはEnterキー）
+3. タスクが一覧に表示されればOK！
+
+{/* TODO: 動作確認のスクリーンショット */}
+
+## 完成コード
+
+ここまでの `main.js` の全体像です。
+
+<CollapsibleCode title="main.js 全体" defaultOpen={false}>
+```js
+// HTML要素を取得
+const form = document.getElementById('todo-form');
+const input = document.getElementById('todo-input');
+const list = document.getElementById('todo-list');
+
+// タスクを保存する配列
+let todos = [];
+
+// タスクを画面に表示する関数
+function renderTodos() {
+  list.innerHTML = '';
+
+  todos.forEach((todo, index) => {
+    const li = document.createElement('li');
+    li.className = 'todo-item';
+    li.innerHTML = `
+      <input type="checkbox">
+      <span>${todo.text}</span>
+      <button type="button">削除</button>
+    `;
+    list.appendChild(li);
+  });
+}
+
+// フォーム送信時の処理
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const text = input.value;
+
+  if (!text.trim()) {
+    return;
+  }
+
+  todos.push({ text: text });
+  renderTodos();
+  input.value = '';
+});
+```
+</CollapsibleCode>
+
+## 次のステップ
+
+タスクの追加ができるようになりました！
+
+しかし、まだ「削除」ボタンを押しても何も起きません。次のレッスンでは削除機能を実装します。

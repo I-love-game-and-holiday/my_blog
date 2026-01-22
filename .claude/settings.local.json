@@ -16,7 +16,12 @@
       "Bash(timeout:*)",
       "Bash(npm run dev:*)",
       "Bash(git checkout:*)",
-      "Bash(del \"D:\\\\cursor\\\\private\\\\blog\\\\src\\\\components\\\\code\\\\os-code-block.tsx\")"
+      "Bash(del \"D:\\\\cursor\\\\private\\\\blog\\\\src\\\\components\\\\code\\\\os-code-block.tsx\")",
+      "Bash(ping:*)",
+      "Bash(npx tsc:*)",
+      "Bash(curl:*)",
+      "Bash(taskkill:*)",
+      "Bash(powershell -Command:*)"
     ]
   }
 }
