@@ -63,7 +63,8 @@ blog/
 │   ├── lib/             # ユーティリティ関数
 │   │   ├── get-posts.ts # ブログ記事取得
 │   │   ├── get-courses.ts # コース取得
-│   │   └── mdx.ts       # MDXコンパイル
+│   │   ├── mdx.ts       # MDXコンパイル
+│   │   └── highlight.ts # コードハイライト（shiki）
 │   └── styles/          # グローバルスタイル
 ├── public/              # 静的ファイル
 └── .github/
