@@ -22,7 +22,7 @@ description: JavaScriptでタスクの追加機能を実装します。
   </FileTreeFolder>
 </FileTree>
 
-`main.js`（ハイライトされているファイル）を作成してください。HTMLで読み込む設定は既に済んでいます。
+`main.js`ファイルを作成してください。HTMLで読み込む設定は既に済んでいます。
 
 ## Step 1: 要素を取得する
 
@@ -39,7 +39,7 @@ let todos = [];
 ```
 
 <Callout type="info">
-`document.getElementById()` は、HTMLの `id` 属性を使って要素を取得するメソッドです。
+`.getElementById()` は、HTMLの `id` 属性を使って要素を取得するメソッドです。
 <a href="https://developer.mozilla.org/ja/docs/Web/API/Document/getElementById" target="_blank" rel="noopener noreferrer">(参考)</a>
 </Callout>
 
@@ -79,7 +79,11 @@ function renderTodos() {
 
 ### イベントリスナーについて
 
-`addEventListener()`はDOM要素が持つメソッドで、イベント（クリックやフォーム送信など）が発生したときの処理を登録できます。
+`addEventListener()`を使うと、「このボタンがクリックされたら〇〇する」のような処理を設定できます。
+
+<LearnMore>
+`addEventListener()`はDOM要素が持つメソッドで、イベント（クリックやフォーム送信など）が発生したときの処理を登録できます。第1引数にイベント名（`'click'`、`'submit'`など）、第2引数にコールバック関数を渡します。
+</LearnMore>
 
 ```js title="main.js"
 // フォーム送信時の処理
