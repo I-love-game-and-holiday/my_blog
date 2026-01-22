@@ -33,7 +33,7 @@ export const CodeBlockContent = forwardRef<HTMLDivElement, CodeBlockContentProps
                 ref={ref}
                 className={cn(
                     'code-block-content',
-                    '[&>pre]:my-0 [&>pre]:rounded-none [&>pre]:border-0',
+                    '[&_pre]:!my-0 [&_pre]:!rounded-none [&_pre]:!border-0',
                     className
                 )}
             >
