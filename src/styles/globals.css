@@ -281,7 +281,7 @@ pre code.nextra-code > span[data-highlighted-line] {
 
 /* Code Block Styles */
 .code-block-header {
-    @apply border-b border-border bg-secondary;
+    @apply border-b border-border;
 }
 
 .code-block-dark {
