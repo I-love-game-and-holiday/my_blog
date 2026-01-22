@@ -11,7 +11,7 @@ import { BoxDiagram } from '@/components/content/box-diagram'
 import { FlowDiagram } from '@/components/content/flow-diagram'
 import { SectionSummary } from '@/components/content/section-summary'
 import { Callout } from '@/components/content/callout'
-import { OsCommandTabs, OsCodeBlock } from '@/components/os/os-command-tabs'
+import { CollapsibleCode, OsCommandTabs, OsCodeBlock } from '@/components/code'
 import { OsTable } from '@/components/os/os-table'
 
 const mdxComponents = {
@@ -21,6 +21,7 @@ const mdxComponents = {
     FlowDiagram,
     SectionSummary,
     Callout,
+    CollapsibleCode,
     OsCommandTabs,
     OsCodeBlock,
     OsTable,

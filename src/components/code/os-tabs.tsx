@@ -1,6 +1,10 @@
 'use client'
 
 import { createContext, useContext, useState, type ReactNode } from 'react'
+import { cn } from '@/lib/utils'
+import {
+    INTERACTIVE_TRANSITION,
+} from '@/lib/constants'
 
 export type OsType = 'mac' | 'windows'
 
@@ -69,17 +73,19 @@ export function OsTabButtons({ rightContent }: OsTabButtonsProps) {
     const { activeOs, setActiveOs } = useOsTabs()
 
     return (
-        <div className="os-tabs-header">
+        <div className="code-block-header flex items-center justify-between">
             <div className="flex">
                 {osTabs.map((tab) => (
                     <button
                         key={tab.os}
                         onClick={() => setActiveOs(tab.os)}
-                        className={`os-tabs-button ${
+                        className={cn(
+                            'flex items-center gap-2 px-4 py-2 text-sm font-medium',
+                            INTERACTIVE_TRANSITION,
                             activeOs === tab.os
-                                ? 'os-tabs-button-active'
-                                : 'os-tabs-button-inactive'
-                        }`}
+                                ? 'bg-background text-primary border-b-2 border-primary -mb-px'
+                                : 'text-muted-foreground hover:text-foreground'
+                        )}
                     >
                         {tab.icon}
                         {tab.label}

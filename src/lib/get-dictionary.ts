@@ -9,7 +9,7 @@ import { ContentTable } from '@/components/content/content-table'
 import { BoxDiagram } from '@/components/content/box-diagram'
 import { FlowDiagram } from '@/components/content/flow-diagram'
 import { SectionSummary } from '@/components/content/section-summary'
-import { OsCommandTabs, OsCodeBlock } from '@/components/os/os-command-tabs'
+import { OsCommandTabs, OsCodeBlock } from '@/components/code'
 import { OsTable } from '@/components/os/os-table'
 
 const mdxComponents = {

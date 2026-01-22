@@ -1,6 +1,6 @@
 'use client'
 
-import { OsTabsProvider, OsTabButtons, useOsTabs, type OsType } from './os-tabs'
+import { OsTabsProvider, OsTabButtons, useOsTabs } from '@/components/code'
 
 interface OsTableProps {
     headers: string[]
