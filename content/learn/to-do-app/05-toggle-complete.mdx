@@ -1,0 +1,276 @@
+---
+title: 完了/未完了を切り替える
+order: 5
+description: チェックボックスでタスクの完了状態を切り替える機能を実装します。
+---
+
+## このレッスンで作るもの
+
+チェックボックスをクリックすると、タスクの完了/未完了が切り替わる機能を作ります。完了したタスクには打ち消し線が表示されます。
+
+{/* TODO: 動作GIFを追加 */}
+
+## 現在の問題点
+
+チェックボックスは表示されていますが、クリックしても見た目が変わりません。また、タスクが「完了したかどうか」を記録していません。
+
+## 完了機能を作るために必要なこと
+
+1. **タスクに完了状態を追加** - `completed` プロパティで管理
+2. **チェックボックスのイベント処理** - クリック時に状態を切り替える
+3. **完了時のスタイル** - 打ち消し線を表示する
+
+## Step 1: タスクに完了状態を追加する
+
+タスク追加時に `completed: false` を設定します。
+
+```js title="main.js" {10}
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const text = input.value.trim();
+
+  if (!text) {
+    return;
+  }
+
+  // completedプロパティを追加
+  todos.push({ id: nextId, text, completed: false });
+  nextId++;
+
+  renderTodos();
+  input.value = '';
+});
+```
+
+これでタスクのデータ構造が以下のようになります。
+
+```js
+{ id: 1, text: "買い物に行く", completed: false }
+```
+
+## Step 2: 切り替え関数を作成する
+
+指定したIDのタスクの完了状態を反転させる関数を作ります。
+
+```js title="main.js"
+// 完了状態を切り替える関数
+function toggleComplete(id) {
+  todos = todos.map((todo) => {
+    if (todo.id === id) {
+      return { ...todo, completed: !todo.completed };
+    }
+    return todo;
+  });
+  renderTodos();
+}
+```
+
+### `map()` メソッドについて
+
+`map()` は配列の各要素を変換して、新しい配列を作るメソッドです。
+
+<LearnMore>
+`map()` は各要素に対して関数を実行し、その戻り値を集めた新しい配列を返します。
+
+```js
+const numbers = [1, 2, 3];
+const doubled = numbers.map((n) => n * 2);
+// doubled は [2, 4, 6]
+```
+
+今回は、IDが一致するタスクだけ `completed` を反転させています。
+</LearnMore>
+
+### スプレッド構文について
+
+`{ ...todo, completed: !todo.completed }` の `...` はスプレッド構文です。
+
+<LearnMore>
+スプレッド構文は、オブジェクトの中身を展開します。
+
+```js
+const todo = { id: 1, text: "買い物", completed: false };
+
+// todoの中身を展開して、completedだけ上書き
+const updated = { ...todo, completed: true };
+// { id: 1, text: "買い物", completed: true }
+```
+
+元のオブジェクトを変更せず、新しいオブジェクトを作成できます。
+</LearnMore>
+
+## Step 3: チェックボックスにイベントを設定する
+
+`renderTodos()` 関数を修正します。
+
+```js title="main.js" {8,15-18}
+function renderTodos() {
+  list.innerHTML = '';
+
+  todos.forEach((todo) => {
+    const li = document.createElement('li');
+    li.className = 'todo-item';
+
+    // completedがtrueならchecked属性を追加
+    li.innerHTML = `
+      <input type="checkbox" ${todo.completed ? 'checked' : ''}>
+      <span>${todo.text}</span>
+      <button type="button">削除</button>
+    `;
+
+    // チェックボックスにイベントを設定
+    const checkbox = li.querySelector('input[type="checkbox"]');
+    checkbox.addEventListener('change', () => {
+      toggleComplete(todo.id);
+    });
+
+    // 削除ボタンにイベントを設定
+    const deleteButton = li.querySelector('button');
+    deleteButton.addEventListener('click', () => {
+      deleteTodo(todo.id);
+    });
+
+    list.appendChild(li);
+  });
+}
+```
+
+### ポイント
+
+- `${todo.completed ? 'checked' : ''}` - 三項演算子で条件分岐。`completed` が `true` なら `checked` 属性を追加
+- `change` イベント - チェックボックスの状態が変わったときに発火
+
+## Step 4: 完了時のスタイルを追加する
+
+CSSで完了したタスクに打ち消し線を追加します。
+
+```css title="style.css"
+/* 完了したタスクのスタイル */
+.todo-item input[type="checkbox"]:checked + span {
+  text-decoration: line-through;
+  color: #888;
+}
+```
+
+### CSSセレクタの解説
+
+`input[type="checkbox"]:checked + span` を分解すると：
+
+| 部分 | 意味 |
+|------|------|
+| `input[type="checkbox"]` | チェックボックス要素 |
+| `:checked` | チェックされている状態 |
+| `+ span` | 直後の兄弟要素の `span` |
+
+つまり「チェックされたチェックボックスの直後にある `span`」にスタイルを適用します。
+
+## 動作確認
+
+ブラウザで確認してみましょう。
+
+1. タスクを追加する
+2. チェックボックスをクリック
+3. 打ち消し線が表示されればOK！
+4. もう一度クリックして、元に戻ることも確認
+
+{/* TODO: 動作確認のスクリーンショット */}
+
+## 完成コード
+
+ここまでの `main.js` の全体像です。
+
+<CollapsibleCode title="main.js 全体" defaultOpen={false}>
+```js
+// HTML要素を取得
+const form = document.getElementById('todo-form');
+const input = document.getElementById('todo-input');
+const list = document.getElementById('todo-list');
+
+// タスクを保存する配列
+let todos = [];
+
+// 次のタスクに割り当てるID
+let nextId = 1;
+
+// タスクを削除する関数
+function deleteTodo(id) {
+  todos = todos.filter((todo) => todo.id !== id);
+  renderTodos();
+}
+
+// 完了状態を切り替える関数
+function toggleComplete(id) {
+  todos = todos.map((todo) => {
+    if (todo.id === id) {
+      return { ...todo, completed: !todo.completed };
+    }
+    return todo;
+  });
+  renderTodos();
+}
+
+// タスクを画面に表示する関数
+function renderTodos() {
+  list.innerHTML = '';
+
+  todos.forEach((todo) => {
+    const li = document.createElement('li');
+    li.className = 'todo-item';
+
+    li.innerHTML = `
+      <input type="checkbox" ${todo.completed ? 'checked' : ''}>
+      <span>${todo.text}</span>
+      <button type="button">削除</button>
+    `;
+
+    // チェックボックスにイベントを設定
+    const checkbox = li.querySelector('input[type="checkbox"]');
+    checkbox.addEventListener('change', () => {
+      toggleComplete(todo.id);
+    });
+
+    // 削除ボタンにイベントを設定
+    const deleteButton = li.querySelector('button');
+    deleteButton.addEventListener('click', () => {
+      deleteTodo(todo.id);
+    });
+
+    list.appendChild(li);
+  });
+}
+
+// フォーム送信時の処理
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const text = input.value.trim();
+
+  if (!text) {
+    return;
+  }
+
+  todos.push({ id: nextId, text, completed: false });
+  nextId++;
+
+  renderTodos();
+  input.value = '';
+});
+```
+</CollapsibleCode>
+
+<CollapsibleCode title="style.css に追加するコード" defaultOpen={false}>
+```css
+/* 完了したタスクのスタイル */
+.todo-item input[type="checkbox"]:checked + span {
+  text-decoration: line-through;
+  color: #888;
+}
+```
+</CollapsibleCode>
+
+## 次のステップ
+
+完了/未完了の切り替えができるようになりました！
+
+しかし、ページをリロードするとタスクが全部消えてしまいます。次のレッスンでは、`localStorage` を使ってデータを保存する機能を実装します。

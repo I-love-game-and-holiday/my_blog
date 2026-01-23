@@ -1,0 +1,254 @@
+---
+title: タスクを削除する
+order: 4
+description: 削除ボタンをクリックしてタスクを削除する機能を実装します。
+---
+
+## このレッスンで作るもの
+
+タスクの「削除」ボタンをクリックすると、そのタスクが一覧から消える機能を作ります。
+
+{/* TODO: 動作GIFを追加 */}
+
+## 現在の問題点
+
+前回のレッスンで削除ボタンは表示されていますが、クリックしても何も起きません。
+
+```js
+li.innerHTML = `
+  <input type="checkbox">
+  <span>${todo.text}</span>
+  <button type="button">削除</button>  // ← クリックしても動かない
+`;
+```
+
+ボタンに「クリックしたら〇〇する」という処理を追加する必要があります。
+
+## 削除機能を作るために必要なこと
+
+削除機能を実装するには、以下の2つが必要です。
+
+1. **各タスクを識別するID** - どのタスクを削除するか特定する
+2. **削除ボタンのイベント処理** - クリック時に該当タスクを削除する
+
+## Step 1: タスクにIDを追加する
+
+現在、タスクは `{ text: "タスク内容" }` というシンプルな形式です。
+
+これを `{ id: 1, text: "タスク内容" }` のように、各タスクに固有のIDを持たせます。
+
+```js title="main.js" {6,9-10}
+// HTML要素を取得
+const form = document.getElementById('todo-form');
+const input = document.getElementById('todo-input');
+const list = document.getElementById('todo-list');
+
+// タスクを保存する配列
+let todos = [];
+
+// 次のタスクに割り当てるID
+let nextId = 1;
+```
+
+次に、タスク追加時にIDを割り当てます。
+
+```js title="main.js" {9-10}
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const text = input.value.trim();
+
+  if (!text) {
+    return;
+  }
+
+  // IDを追加して保存
+  todos.push({ id: nextId, text });
+  nextId++;
+
+  renderTodos();
+  input.value = '';
+});
+```
+
+<Callout type="info">
+`nextId++` は「現在の値を使った後に1を足す」という意味です。
+
+1つ目のタスクは `id: 1`、2つ目は `id: 2`... と連番になります。
+</Callout>
+
+## Step 2: 削除関数を作成する
+
+指定したIDのタスクを配列から削除する関数を作ります。
+
+```js title="main.js"
+// タスクを削除する関数
+function deleteTodo(id) {
+  todos = todos.filter((todo) => todo.id !== id);
+  renderTodos();
+}
+```
+
+### `filter()` メソッドについて
+
+`filter()` は配列から条件に合う要素だけを抽出して、新しい配列を作るメソッドです。
+
+<LearnMore>
+`filter()` は各要素に対して関数を実行し、`true` を返した要素だけを集めた新しい配列を返します。
+
+```js
+const numbers = [1, 2, 3, 4, 5];
+const evenNumbers = numbers.filter((n) => n % 2 === 0);
+// evenNumbers は [2, 4]
+```
+
+今回の場合、`todo.id !== id` が `true` のもの（= 削除対象以外）だけを残しています。
+</LearnMore>
+
+## Step 3: 削除ボタンにイベントを設定する
+
+`renderTodos()` 関数を修正して、削除ボタンにクリックイベントを追加します。
+
+```js title="main.js" {6,14-17}
+function renderTodos() {
+  list.innerHTML = '';
+
+  todos.forEach((todo) => {
+    const li = document.createElement('li');
+    li.className = 'todo-item';
+
+    li.innerHTML = `
+      <input type="checkbox">
+      <span>${todo.text}</span>
+      <button type="button">削除</button>
+    `;
+
+    // 削除ボタンを取得してイベントを設定
+    const deleteButton = li.querySelector('button');
+    deleteButton.addEventListener('click', () => {
+      deleteTodo(todo.id);
+    });
+
+    list.appendChild(li);
+  });
+}
+```
+
+### ポイント
+
+- `li.querySelector('button')` で、その `li` 要素内の削除ボタンを取得
+- `addEventListener` でクリック時の処理を設定
+- アロー関数 `() => { deleteTodo(todo.id) }` で、そのタスクのIDを渡して削除
+
+## 動作確認
+
+ブラウザで確認してみましょう。
+
+1. タスクをいくつか追加する
+2. 削除ボタンをクリック
+3. 該当タスクが消えればOK！
+
+{/* TODO: 動作確認のスクリーンショット */}
+
+## 完成コード
+
+ここまでの `main.js` の全体像です。
+
+<CollapsibleCode title="main.js 全体" defaultOpen={false}>
+```js
+// HTML要素を取得
+const form = document.getElementById('todo-form');
+const input = document.getElementById('todo-input');
+const list = document.getElementById('todo-list');
+
+// タスクを保存する配列
+let todos = [];
+
+// 次のタスクに割り当てるID
+let nextId = 1;
+
+// タスクを削除する関数
+function deleteTodo(id) {
+  todos = todos.filter((todo) => todo.id !== id);
+  renderTodos();
+}
+
+// タスクを画面に表示する関数
+function renderTodos() {
+  list.innerHTML = '';
+
+  todos.forEach((todo) => {
+    const li = document.createElement('li');
+    li.className = 'todo-item';
+
+    li.innerHTML = `
+      <input type="checkbox">
+      <span>${todo.text}</span>
+      <button type="button">削除</button>
+    `;
+
+    // 削除ボタンにイベントを設定
+    const deleteButton = li.querySelector('button');
+    deleteButton.addEventListener('click', () => {
+      deleteTodo(todo.id);
+    });
+
+    list.appendChild(li);
+  });
+}
+
+// フォーム送信時の処理
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const text = input.value.trim();
+
+  if (!text) {
+    return;
+  }
+
+  todos.push({ id: nextId, text });
+  nextId++;
+
+  renderTodos();
+  input.value = '';
+});
+```
+</CollapsibleCode>
+
+## チャレンジ問題
+
+余裕がある方は、削除ボタンを押したときに本当に削除してよいか確認する機能を追加してみましょう。
+
+<CollapsibleCode title="ヒント: confirmメソッドの利用" defaultOpen={false}>
+`confirm()` はブラウザ標準の確認ダイアログを表示するメソッドです。
+
+```js
+const isConfirmed = confirm('本当に削除しますか？');
+// OK → true, キャンセル → false
+```
+
+この戻り値を使って、`true` の場合のみ削除処理を実行すればOKです。
+</CollapsibleCode>
+
+<CollapsibleCode title="答え" defaultOpen={false}>
+```js
+function deleteTodo(id) {
+  // 確認ダイアログを表示
+  const isConfirmed = confirm('本当に削除しますか？');
+
+  if (isConfirmed) {
+    todos = todos.filter((todo) => todo.id !== id);
+    renderTodos();
+  }
+}
+```
+
+`confirm()` はブラウザ標準の確認ダイアログを表示します。「OK」を押すと `true`、「キャンセル」を押すと `false` が返ります。
+</CollapsibleCode>
+
+## 次のステップ
+
+タスクの削除ができるようになりました！
+
+次のレッスンでは、チェックボックスでタスクの完了/未完了を切り替える機能を実装します。
