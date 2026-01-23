@@ -54,7 +54,7 @@ function renderTodos() {
   list.innerHTML = '';
 
   // todos配列の中身を1つずつ処理
-  todos.forEach((todo, index) => {
+  todos.forEach((todo) => {
     const li = document.createElement('li');
     li.className = 'todo-item';
     li.innerHTML = `
@@ -69,7 +69,7 @@ function renderTodos() {
 
 ### ポイント
 
-- `innerHTML = ''` でリストを空にしてから再描画します。(なぜ再描画の必要があるか考えてみましょう)
+- `innerHTML = ''` でリストを空にしてから再描画します（なぜ再描画の必要があるか考えてみましょう）
 - `forEach` で配列の要素を1つずつ処理します
 - `createElement` で新しいHTML要素を作成します
 
@@ -81,8 +81,13 @@ function renderTodos() {
 
 `addEventListener()`を使うと、「このボタンがクリックされたら〇〇する」のような処理を設定できます。
 
+
 <LearnMore>
-`addEventListener()`はDOM要素が持つメソッドで、イベント（クリックやフォーム送信など）が発生したときの処理を登録できます。第1引数にイベント名（`'click'`、`'submit'`など）、第2引数にコールバック関数を渡します。
+`addEventListener()`はDOM要素が持つメソッドです。
+
+第1引数にイベント名（`'click'`、`'submit'`など）、第2引数に実行したい関数を渡します。
+
+今回はHTMLのフォームでsubmitイベントが発火すると、第2引数の関数が実行されます。
 </LearnMore>
 
 ```js title="main.js"
@@ -135,7 +140,7 @@ if (!text) {
 ```js
 todos.push({ text });
 ```
-`{ text }` は `{ text: text }` の省略記法（ES6）です。
+`{ text }` は `{ text: text }` の省略記法です。プロパティ名と変数名が同じ場合に使えます。
 </CollapsibleCode>
 
 ### 答え
@@ -193,7 +198,7 @@ let todos = [];
 function renderTodos() {
   list.innerHTML = '';
 
-  todos.forEach((todo, index) => {
+  todos.forEach((todo) => {
     const li = document.createElement('li');
     li.className = 'todo-item';
     li.innerHTML = `
@@ -225,13 +230,13 @@ form.addEventListener('submit', (e) => {
 <Callout type="info">
 **セキュリティについて**
 
-今回は学習用に `innerHTML` を使っていますが、本番環境では注意が必要です。ユーザーの入力をそのまま `innerHTML` に渡すと、悪意のあるスクリプトが実行される可能性があります（XSS攻撃）。
+今回は `innerHTML` を使っていますが、このTodoアプリはデータベースがなく、自分の入力を自分で見るだけなので問題ありません。
 
-安全な方法として `textContent` や `createElement` を使う方法がありますが、詳しくは別のレッスンで解説します。
+ただし、他のユーザーの入力を表示するアプリ（掲示板、SNSなど）では、悪意あるスクリプトが実行される危険があります（XSS攻撃）。今後の開発では気をつけましょう。
 </Callout>
 
 ## 次のステップ
 
 タスクの追加ができるようになりました！
 
-しかし、まだ「削除」ボタンを押しても何も起きません。次のレッスンでは削除機能を実装します。
+ただ、「削除」ボタンを押しても何も起きませんね。次のレッスンで削除機能を実装しましょう。
