@@ -4,13 +4,13 @@ order: 2
 description: HTMLとCSSでToDoアプリの見た目を作ります。
 ---
 
-## 完成イメージ
+## このレッスンで作るもの
 
-このレッスンで作るものはこちらです。
+HTMLとCSSを書いて、以下の見た目を作ります。まだタスクの追加や削除はできませんが、アプリの骨組みが完成します。
 
 <HtmlPreview
-  height={350}
-  title="完成イメージ"
+  height={400}
+  title="このレッスンのゴール"
   html={`
     <div class="container">
       <h1>ToDo</h1>
@@ -19,21 +19,7 @@ description: HTMLとCSSでToDoアプリの見た目を作ります。
         <button type="submit">追加</button>
       </form>
       <ul id="todo-list">
-        <li class="todo-item">
-          <input type="checkbox">
-          <span>牛乳を買う</span>
-          <button>削除</button>
-        </li>
-        <li class="todo-item completed">
-          <input type="checkbox" checked>
-          <span>メールを送る</span>
-          <button>削除</button>
-        </li>
-        <li class="todo-item">
-          <input type="checkbox">
-          <span>レポートを書く</span>
-          <button>削除</button>
-        </li>
+        <!-- まだタスクはありません -->
       </ul>
     </div>
   `}
@@ -86,42 +72,10 @@ description: HTMLとCSSでToDoアプリの見た目を作ります。
     #todo-list {
       list-style: none;
     }
-    .todo-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px;
-      border-bottom: 1px solid #eee;
-    }
-    .todo-item:last-child {
-      border-bottom: none;
-    }
-    .todo-item input[type="checkbox"] {
-      width: 20px;
-      height: 20px;
-      cursor: pointer;
-    }
-    .todo-item span {
-      flex: 1;
-      font-size: 16px;
-    }
-    .todo-item.completed span {
-      text-decoration: line-through;
-      color: #999;
-    }
-    .todo-item button {
-      padding: 4px 8px;
-      font-size: 14px;
-      background: none;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      cursor: pointer;
-      color: #666;
-    }
   `}
 />
 
-まだボタンを押しても何も起きませんが、見た目は完成します。
+ボタンを押しても何も起きませんが、見た目の土台はこれで完成です。
 
 ## HTMLを作成する
 

@@ -3,6 +3,7 @@
 interface HtmlPreviewProps {
     html: string
     css?: string
+    js?: string
     height?: number
     title?: string
 }
@@ -10,6 +11,7 @@ interface HtmlPreviewProps {
 export function HtmlPreview({
     html,
     css = '',
+    js = '',
     height = 400,
     title,
 }: HtmlPreviewProps) {
@@ -25,6 +27,7 @@ export function HtmlPreview({
 </head>
 <body>
     ${html}
+    ${js ? `<script>${js}</script>` : ''}
 </body>
 </html>
     `.trim()
@@ -43,7 +46,7 @@ export function HtmlPreview({
                 <iframe
                     srcDoc={fullHtml}
                     className="w-full h-full"
-                    sandbox="allow-scripts"
+                    sandbox="allow-scripts allow-forms"
                     title={title || 'HTML Preview'}
                 />
             </div>
