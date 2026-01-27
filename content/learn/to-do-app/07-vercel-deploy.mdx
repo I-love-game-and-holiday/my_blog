@@ -14,7 +14,19 @@ description: 作ったToDoアプリをVercelにデプロイして、誰でもア
 
 ## Vercelとは
 
-Vercel は、Webアプリを簡単にデプロイできるホスティングサービスです。
+<a href="https://vercel.com/" target="_blank" rel="noopener noreferrer">Vercel</a> は、Webアプリを簡単にデプロイできるホスティングサービスです。<br/>
+ホームページは結構オシャレな見た目してます！
+
+<ContentImage
+  src="/learn/todo-app/vercel.jpg"
+  alt="Vercelホームページ"
+  caption="Vercelのホームページ"
+  width={700}
+  height={450}
+/>
+
+Vercelは商用レベルでの使用もできますが、個人が気軽にアプリを公開したい場合にも利用できます。<br/>
+**tanaka101**もVercelを利用して公開しています。
 
 <ContentTable
   headers={["特徴", "説明"]}
@@ -47,18 +59,29 @@ GitHubにログインし、新しいリポジトリを作成します。
 
 1. GitHubの右上にある **「+」** ボタンをクリック
 2. **「New repository」** を選択
-3. 以下のように設定:
+3. リポジトリ名に**「todo-app」**を入力
+4. visibilityは「Private」を選択
+5. **「Create repository」** をクリック
 
-<ContentTable
-  headers={["項目", "設定値"]}
-  rows={[
-    ["Repository name", "todo-app"],
-    ["公開設定", "Public（公開）"],
-    ["Initialize this repository", "チェックしない"],
-  ]}
+<ContentImage
+  src="/learn/todo-app/new_repo1.jpg"
+  alt="新しいリポジトリの作成"
+  caption="Vercelのホームページ"
+  width={700}
+  height={450}
 />
 
-4. **「Create repository」** をクリック
+<Callout type="info">
+**公開の前にソースを確認する癖をつけよう**
+
+今回のアプリはソースコードを公開しても全く問題ありません。<br/>
+ただ、ソースコードに機密情報を載せた状態で公開してしまい、
+セキュリティ事故になるケースが世界中で報告されています。
+
+手癖として、とりあえず **『Private』** にしておくと安全です。
+</Callout>
+
+
 
 ## Step 2: ローカルのコードをGitHubにプッシュする
 
@@ -87,13 +110,27 @@ git remote add origin https://github.com/あなたのユーザー名/todo-app.gi
 git push -u origin main
 ```
 
-<Callout type="warning">
-`あなたのユーザー名` の部分は、自分のGitHubユーザー名に置き換えてください。
+下画像のように、このコマンドを使ってソースコードをプッシュしましょうと促されるので
+コピペしてつかいましょう。
 
-GitHubのリポジトリ作成後の画面に表示されるコマンドをそのままコピペするのが確実です。
-</Callout>
+<ContentImage
+  src="/learn/todo-app/git_repo.jpg"
+  alt="リポジトリホームページ"
+  caption="リポジトリを作成した際の初期ページ"
+  width={700}
+  height={450}
+/>
 
-プッシュが完了したら、GitHubのリポジトリページをリロードして、ファイルが表示されていることを確認しましょう。
+プッシュが完了したら、GitHubのリポジトリページをリロードして、<br/>
+ファイルが表示されていることを確認しましょう。
+
+<ContentImage
+  src="/learn/todo-app/src-repo.jpg"
+  alt="ソースをプッシュしたリポページ"
+  caption="htmlやjavascriptファイルを確認できる"
+  width={700}
+  height={450}
+/>
 
 ## Step 3: Vercelにサインアップする
 
@@ -107,17 +144,31 @@ GitHubアカウントでログインすれば、新たにパスワードを設�
 
 1. Vercelのダッシュボードで **「Add New...」** → **「Project」** をクリック
 2. **「Import Git Repository」** で、先ほど作成した `todo-app` リポジトリを選択
+
+<Callout type="info">
+vercelが読み取れるリポジトリは明示的に指定する必要があります。<br/>
+githubにログインした後に、**『Only select repositories』** を選択肢して、
+**『todo-app』** を指定しましょう。
+<ContentImage
+  src="/learn/todo-app/permission.jpg"
+  alt="vercelが読み取れるリポジトリを指定"
+  caption="vercelが読み取れるリポジトリを指定"
+  width={700}
+  height={450}
+/>
+</Callout>
+
 3. 設定画面が表示されます。今回は **そのままデフォルト設定でOK** です
 4. **「Deploy」** をクリック
 
-<Callout type="info">
-今回のToDoアプリはHTML/CSS/JavaScriptだけで作られているため、
-ビルドコマンドやフレームワークの設定は不要です。
-
-Vercelが自動で静的サイトとして認識してくれます。
-</Callout>
-
-デプロイが完了すると、画面に紙吹雪のアニメーションが表示されます。
+静的なサイトですので、直ぐにデプロイが完了するはずです。
+<ContentImage
+  src="/learn/todo-app/deploy_success.jpg"
+  alt="vercelが読み取れるリポジトリを指定"
+  caption="vercelが読み取れるリポジトリを指定"
+  width={700}
+  height={450}
+/>
 
 ## Step 5: 公開URLを確認する
 
@@ -130,8 +181,6 @@ https://todo-app-xxxxx.vercel.app
 （`xxxxx` の部分はランダムな文字列です）
 
 このURLをブラウザで開いて、ToDoアプリが表示されることを確認しましょう。
-
-**このURLを友人に送れば、誰でもあなたのToDoアプリにアクセスできます。**
 
 <Callout type="info">
 `localhost` で動いていたアプリと違い、このURLはインターネットに接続していれば誰でもアクセスできます。
