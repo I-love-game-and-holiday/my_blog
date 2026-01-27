@@ -17,7 +17,8 @@ export default async function DictionaryPage() {
                     用語辞典
                 </h1>
                 <p className="text-muted-foreground">
-                    プログラミング学習に役立つ用語集です。記事内でハイライトされた用語をクリックすると、ここにある解説が表示されます。
+                    プログラミング学習に役立つ用語集です。<br />
+                    記事内でハイライトされた用語をクリックすると、ここにある解説が表示されます。
                 </p>
             </header>
 
