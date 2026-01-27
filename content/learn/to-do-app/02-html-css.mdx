@@ -1,0 +1,273 @@
+---
+title: 見た目を作る
+order: 2
+description: HTMLとCSSでToDoアプリの見た目を作ります。
+---
+
+## このレッスンで作るもの
+
+HTMLとCSSを書いて、以下の見た目を作ります。まだタスクの追加や削除はできませんが、アプリの骨組みが完成します。
+
+<HtmlPreview
+  height={400}
+  title="このレッスンのゴール"
+  html={`
+    <div class="container">
+      <h1>ToDo</h1>
+      <form id="todo-form">
+        <input type="text" id="todo-input" placeholder="タスクを入力..." required>
+        <button type="submit">追加</button>
+      </form>
+      <ul id="todo-list">
+        <!-- まだタスクはありません -->
+      </ul>
+    </div>
+  `}
+  css={`
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f5f5f5;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    #todo-form {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    #todo-input {
+      flex: 1;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    #todo-form button {
+      padding: 12px 20px;
+      font-size: 16px;
+      background-color: #0066ff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #todo-list {
+      list-style: none;
+    }
+  `}
+/>
+
+ボタンを押しても何も起きませんが、見た目の土台はこれで完成です。
+
+## HTMLを作成する
+
+`index.html` を作成し、以下をコピペしてください。
+
+<CollapsibleCode title="index.html" defaultOpen={false}>
+```html
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ToDo App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>ToDo</h1>
+
+    <form id="todo-form">
+      <input
+        type="text"
+        id="todo-input"
+        placeholder="タスクを入力..."
+        required
+      >
+      <button type="submit">追加</button>
+    </form>
+
+    <ul id="todo-list">
+      <!-- ここにタスクが追加される -->
+    </ul>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>
+```
+</CollapsibleCode>
+
+### ポイント
+
+- **`form`** を使うことで、Enterキーでも送信できます
+- **`id`** はJavaScriptから要素を取得するために付けています
+- **`required`** で空の入力を防ぎます
+
+## CSSを作成する
+
+`style.css` を作成し、以下をコピペしてください。
+
+<CollapsibleCode title="style.css" defaultOpen={false}>
+```css
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.container {
+  max-width: 480px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* フォーム */
+#todo-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+#todo-input {
+  flex: 1;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+#todo-input:focus {
+  outline: none;
+  border-color: #0066ff;
+}
+
+#todo-form button {
+  padding: 12px 20px;
+  font-size: 16px;
+  background-color: #0066ff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#todo-form button:hover {
+  background-color: #0052cc;
+}
+
+/* タスク一覧 */
+#todo-list {
+  list-style: none;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.todo-item:last-child {
+  border-bottom: none;
+}
+
+.todo-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.todo-item span {
+  flex: 1;
+  font-size: 16px;
+}
+
+.todo-item.completed span {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.todo-item button {
+  padding: 4px 8px;
+  font-size: 14px;
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #666;
+}
+
+.todo-item button:hover {
+  background-color: #fee;
+  border-color: #f66;
+  color: #c00;
+}
+```
+</CollapsibleCode>
+
+<Callout type="info">
+CSSやHTMLの細かい意味が分からなくても大丈夫です。<br/>
+全部勉強してたらアプリ作る前に何年もかかります。<br/>
+今回の主役はJavaScriptなので、見た目はコピペで済ませましょう。
+</Callout>
+
+## ブラウザで確認
+
+### Live Server拡張機能の追加
+htmlの編集をリアルタイムで反映してブラウザで確認しながら開発するための拡張機能です。
+<ContentImage
+  src="/learn/todo-app/liveServer.jpg"
+  alt="Live Server拡張機能の追加"
+  caption=""
+  width={600}
+  height={450}
+/>
+
+### ブラウザで確認
+vscodeエディタ右下に『go live』という項目があるはずですので、クリックしてhtmlを確認しましょう。
+<ContentImage
+  src="/learn/todo-app/goLive.jpg"
+  alt="Live Server拡張機能の追加"
+  caption=""
+  width={600}
+  height={450}
+/>
+
+確認できましたか？<br/>
+次のレッスンでは、JavaScriptを書いてタスクを追加できるようにしていきます。

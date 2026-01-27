@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(node -e:*)",
+      "Bash(cat:*)",
+      "Bash(find:*)",
+      "Bash(npm install:*)",
+      "Bash(tree:*)",
+      "Bash(rm:*)",
+      "Bash(dir \"D:\\\\cursor\\\\private\\\\blog\\\\nul\")",
+      "Bash(powershell -Command \"Get-Content -Path ''D:\\\\cursor\\\\private\\\\blog\\\\nul'' -Encoding Default\")",
+      "Bash(git -C \"D:/cursor/private/blog\" log --oneline --all -- nul)",
+      "Bash(xxd:*)",
+      "Bash(wc:*)",
+      "Bash(timeout:*)",
+      "Bash(npm run dev:*)",
+      "Bash(git checkout:*)",
+      "Bash(del \"D:\\\\cursor\\\\private\\\\blog\\\\src\\\\components\\\\code\\\\os-code-block.tsx\")",
+      "Bash(ping:*)",
+      "Bash(npx tsc:*)",
+      "Bash(curl:*)",
+      "Bash(taskkill:*)",
+      "Bash(powershell -Command:*)"
+    ]
+  }
+}

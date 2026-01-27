@@ -1,0 +1,179 @@
+---
+title: はじめに
+order: 1
+description: ToDoアプリを作る意義と、このコースの前提条件を確認します。
+---
+
+## なぜ ToDo アプリを作るのか
+
+「またToDoアプリか...」と思った方もいるかもしれません。正直、ToDoアプリは面白いものではありません。
+
+しかし、ToDoアプリには**Webアプリの基本が詰まっています**。
+
+- データの追加・表示・削除（CRUD操作）
+- ユーザー入力の処理
+- 状態の管理
+- DOMの操作
+
+派手なアプリを作る前に、まずはこの「つまらないけど大事な基礎」を身につけましょう。
+
+## 前提条件
+
+このコースを始める前に、以下のガイドを完了してください。
+
+<ContentTable
+  headers={["ガイド", "内容"]}
+  rows={[
+    [<a href="/guides/editor-basics">エディタ入門</a>, "VSCodeのインストールと基本操作"],
+    [<a href="/guides/nodejs-basics">Node.js入門</a>, "Node.jsのインストールと確認方法"],
+    [<a href="/guides/cli-basics">CLI入門</a>, "ターミナルの基本的な使い方"],
+  ]}
+/>
+
+すでに環境構築が済んでいる方は、次のセクションに進んでください。
+
+## プロジェクトフォルダの作成
+
+ターミナルを開いて、お好きな場所にフォルダを作成します。
+(手動で作成しても問題ないです)
+```bash
+mkdir todo-app
+cd todo-app
+```
+<Callout type="info">
+**フォルダー名は英語で作りましょう**
+
+日本語で『趣味』や『管理アプリ』のようなフォルダー名にすると、
+ツールやライブラリが日本語のパスを正しく認識できず、
+エラーの原因になることがあります。
+
+英数字、ハイフン（`-`）やアンダーバー（`_`）で命名するのが安全です。
+</Callout>
+
+
+VSCode でフォルダを開きます。
+
+```bash
+code .
+```
+
+## 完成イメージ
+
+このコースで作るものはこちらです。
+
+<HtmlPreview
+  height={450}
+  title="完成イメージ"
+  html={`
+    <div class="container">
+      <h1>ToDo</h1>
+      <form id="todo-form">
+        <input type="text" id="todo-input" placeholder="タスクを入力..." required>
+        <button type="submit">追加</button>
+      </form>
+      <ul id="todo-list">
+        <li class="todo-item">
+          <input type="checkbox">
+          <span>牛乳を買う</span>
+          <button>削除</button>
+        </li>
+        <li class="todo-item completed">
+          <input type="checkbox" checked>
+          <span>メールを送る</span>
+          <button>削除</button>
+        </li>
+        <li class="todo-item">
+          <input type="checkbox">
+          <span>レポートを書く</span>
+          <button>削除</button>
+        </li>
+      </ul>
+    </div>
+  `}
+  css={`
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f5f5f5;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    #todo-form {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    #todo-input {
+      flex: 1;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    #todo-form button {
+      padding: 12px 20px;
+      font-size: 16px;
+      background-color: #0066ff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #todo-list {
+      list-style: none;
+    }
+    .todo-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+    }
+    .todo-item:last-child {
+      border-bottom: none;
+    }
+    .todo-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+    .todo-item span {
+      flex: 1;
+      font-size: 16px;
+    }
+    .todo-item.completed span {
+      text-decoration: line-through;
+      color: #999;
+    }
+    .todo-item button {
+      padding: 4px 8px;
+      font-size: 14px;
+      background: none;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+      color: #666;
+    }
+  `}
+/>
+
+## 次のステップ
+
+準備ができました。次のレッスンでは HTML と CSS でアプリの見た目を作っていきます。

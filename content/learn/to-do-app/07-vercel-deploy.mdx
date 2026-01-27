@@ -1,0 +1,242 @@
+---
+title: Vercelにデプロイする
+order: 7
+description: 作ったToDoアプリをVercelにデプロイして、誰でもアクセスできる状態にします。
+---
+
+## このレッスンで学ぶこと
+
+ここまでのレッスンで、ToDoアプリはローカル環境で完成しました。
+
+しかし、今のままでは自分のPCでしか動きません。友人に見せたり、ポートフォリオとして公開するには、**インターネット上にアプリを公開（デプロイ）** する必要があります。
+
+このレッスンでは **Vercel** を使って、無料でアプリを公開します。
+
+## Vercelとは
+
+<a href="https://vercel.com/" target="_blank" rel="noopener noreferrer">Vercel</a> は、Webアプリを簡単にデプロイできるホスティングサービスです。<br/>
+ホームページは結構オシャレな見た目してます！
+
+<ContentImage
+  src="/learn/todo-app/vercel.jpg"
+  alt="Vercelホームページ"
+  caption="Vercelのホームページ"
+  width={700}
+  height={450}
+/>
+
+Vercelは商用レベルでの使用もできますが、個人が気軽にアプリを公開したい場合にも利用できます。<br/>
+**tanaka101**もVercelを利用して公開しています。
+
+<ContentTable
+  headers={["特徴", "説明"]}
+  rows={[
+    ["料金", "個人利用は無料（Hobbyプラン）"],
+    ["デプロイ方法", "GitHubリポジトリと連携するだけ"],
+    ["自動デプロイ", "コードをpushすると自動で更新される"],
+    ["HTTPS対応", "SSL証明書が自動で設定される"],
+    ["URL発行", "公開用のURLが自動で発行される"],
+  ]}
+/>
+
+## 事前準備
+
+以下のアカウントが必要です。
+
+<ContentTable
+  headers={["サービス", "用途"]}
+  rows={[
+    ["GitHub", "ソースコードの管理・Vercelとの連携"],
+    ["Vercel", "アプリのデプロイ（GitHubアカウントでログイン可能）"],
+  ]}
+/>
+
+GitHubアカウントをまだ持っていない方は、<a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a> でアカウントを作成してください。
+
+## Step 1: GitHubにリポジトリを作成する
+
+GitHubにログインし、新しいリポジトリを作成します。
+
+1. GitHubの右上にある **「+」** ボタンをクリック
+2. **「New repository」** を選択
+3. リポジトリ名に**「todo-app」**を入力
+4. visibilityは「Private」を選択
+5. **「Create repository」** をクリック
+
+<ContentImage
+  src="/learn/todo-app/new_repo1.jpg"
+  alt="新しいリポジトリの作成"
+  caption="Vercelのホームページ"
+  width={700}
+  height={450}
+/>
+
+<Callout type="info">
+**公開の前にソースを確認する癖をつけよう**
+
+今回のアプリはソースコードを公開しても全く問題ありません。<br/>
+ただ、ソースコードに機密情報を載せた状態で公開してしまい、
+セキュリティ事故になるケースが世界中で報告されています。
+
+手癖として、とりあえず **『Private』** にしておくと安全です。
+</Callout>
+
+
+
+## Step 2: ローカルのコードをGitHubにプッシュする
+
+ターミナルで `todo-app` フォルダに移動し、以下のコマンドを順番に実行します。
+
+### Gitを初期化してコミットする
+
+```bash
+git init
+git add .
+git commit -m "ToDoアプリ完成"
+```
+
+<Callout type="info">
+`git init` はフォルダをGitリポジトリとして初期化するコマンドです。<br/>
+`git add .` は全ファイルをステージングし、`git commit` で変更を記録します。
+</Callout>
+
+### GitHubにプッシュする
+
+GitHubでリポジトリを作成すると、プッシュ用のコマンドが表示されます。それをそのまま実行してください。
+
+```bash
+git branch -M main
+git remote add origin https://github.com/あなたのユーザー名/todo-app.git
+git push -u origin main
+```
+
+下画像のように、このコマンドを使ってソースコードをプッシュしましょうと促されるので
+コピペして使いましょう。
+
+<ContentImage
+  src="/learn/todo-app/git_repo.jpg"
+  alt="リポジトリホームページ"
+  caption="リポジトリを作成した際の初期ページ"
+  width={700}
+  height={450}
+/>
+
+プッシュが完了したら、GitHubのリポジトリページをリロードして、<br/>
+ファイルが表示されていることを確認しましょう。
+
+<ContentImage
+  src="/learn/todo-app/src-repo.jpg"
+  alt="ソースをプッシュしたリポページ"
+  caption="htmlやjavascriptファイルを確認できる"
+  width={700}
+  height={450}
+/>
+
+## Step 3: Vercelにサインアップする
+
+1. <a href="https://vercel.com" target="_blank" rel="noopener noreferrer">Vercel</a> にアクセス
+2. **「Sign Up」** をクリック
+3. **「Continue with GitHub」** を選択してGitHubアカウントでログイン
+
+GitHubアカウントでログインすれば、新たにパスワードを設定する必要はありません。
+
+## Step 4: プロジェクトをデプロイする
+
+1. Vercelのダッシュボードで **「Add New...」** → **「Project」** をクリック
+2. **「Import Git Repository」** で、先ほど作成した `todo-app` リポジトリを選択
+
+<Callout type="info">
+vercelが読み取れるリポジトリは明示的に指定する必要があります。<br/>
+githubにログインした後に、**『Only select repositories』** を選択肢して、
+**『todo-app』** を指定しましょう。
+<ContentImage
+  src="/learn/todo-app/permission.jpg"
+  alt="vercelが読み取れるリポジトリを指定"
+  caption="vercelが読み取れるリポジトリを指定"
+  width={700}
+  height={450}
+/>
+</Callout>
+
+3. 設定画面が表示されます。今回は **そのままデフォルト設定でOK** です
+4. **「Deploy」** をクリック
+
+静的なサイトですので、直ぐにデプロイが完了するはずです。
+<ContentImage
+  src="/learn/todo-app/deploy_success.jpg"
+  alt="デプロイ完了画面"
+  caption=""
+  width={700}
+  height={450}
+/>
+
+## Step 5: 公開URLを確認する
+
+デプロイが完了すると、自動でURLが発行されます。
+
+```
+https://todo-app-xxxxx.vercel.app
+```
+
+（`xxxxx` の部分はランダムな文字列です）
+
+このURLをブラウザで開いて、ToDoアプリが表示されることを確認しましょう。
+
+<Callout type="info">
+`localhost` で動いていたアプリと違い、このURLはインターネットに接続していれば誰でもアクセスできます。
+
+ただし `localStorage` はブラウザごとに保存されるため、あなたが保存したタスクが友人のブラウザに表示されることはありません。
+</Callout>
+
+## Step 6: コードを更新してみる（自動デプロイ）
+
+Vercelの便利な点は、GitHubにコードをプッシュするだけで自動的に再デプロイされることです。
+
+試しに、`index.html` のタイトルを変更してプッシュしてみましょう。
+
+```html title="index.html"
+<h1>My ToDo</h1>
+```
+
+```bash
+git add .
+git commit -m "タイトルを変更"
+git push
+```
+
+しばらくするとVercelが自動でデプロイを実行し、公開URLに変更が反映されます。
+
+Vercelのダッシュボードで **「Deployments」** タブを開くと、デプロイの履歴を確認できます。
+
+## まとめ
+
+ToDoアプリをインターネット上に公開できました。
+
+<ContentTable
+  headers={["やったこと", "学んだこと"]}
+  rows={[
+    ["GitHubにプッシュ", "Gitによるソースコード管理"],
+    ["Vercelと連携", "ホスティングサービスの使い方"],
+    ["自動デプロイ", "pushするだけでサイトが更新される仕組み"],
+  ]}
+/>
+
+## コース全体の振り返り
+
+このコースを通して、Webアプリ開発の基礎を一通り体験しました。
+
+<ContentTable
+  headers={["レッスン", "学んだこと"]}
+  rows={[
+    ["HTML/CSSで見た目を作る", "HTML構造、CSSスタイリング"],
+    ["タスクを追加する", "DOM操作、イベントリスナー、配列操作"],
+    ["タスクを削除する", "filter()、IDによるデータ管理"],
+    ["完了/未完了を切り替える", "map()、スプレッド構文、CSSセレクタ"],
+    ["データを保存する", "localStorage、JSON変換"],
+    ["Vercelにデプロイする", "Git、GitHub、Vercelによる公開"],
+  ]}
+/>
+
+ここで学んだ **CRUD操作**（作成・読取・更新・削除）、**データの永続化**、そして **デプロイ** は、あらゆるWebアプリの基本です。
+
+次のステップとして、ReactやNext.jsなどのフレームワークを使ったアプリ開発に挑戦してみましょう。

@@ -45,17 +45,21 @@ const iconMap = {
 export interface AlertProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof alertVariants> {
+  title?: string
+  hideIcon?: boolean
 }
 
 function Alert({
   className,
   variant = "tip",
+  title: customTitle,
+  hideIcon = false,
   children,
   ...props
 }: AlertProps) {
   const currentVariant = variant || "tip"
   const icon = iconMap[currentVariant]
-  const title = titleMap[currentVariant]
+  const title = customTitle ?? titleMap[currentVariant]
 
   return (
     <div
@@ -64,13 +68,15 @@ function Alert({
       {...props}
     >
       <div className="flex items-start gap-3">
-        <div className="flex-shrink-0" aria-hidden="true">
-          {currentVariant === "note" ? (
-            <TipsAndUpdatesIcon className="h-2.5 w-2.5" />
-          ) : (
-            <span className="text-xl leading-none mt-0.5">{icon}</span>
-          )}
-        </div>
+        {!hideIcon && (
+          <div className="flex-shrink-0" aria-hidden="true">
+            {currentVariant === "note" ? (
+              <TipsAndUpdatesIcon className="h-2.5 w-2.5" />
+            ) : (
+              <span className="text-xl leading-none mt-0.5">{icon}</span>
+            )}
+          </div>
+        )}
         <div className="flex-1 min-w-0">
           <div className="font-semibold mb-1.5 text-foreground">
             {title}

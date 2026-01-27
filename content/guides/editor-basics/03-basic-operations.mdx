@@ -1,0 +1,114 @@
+---
+title: 基本操作
+order: 3
+description: VSCodeの基本的な操作を覚えよう
+---
+
+## エディターの基本操作
+
+このセクションではよく使うショートカットをまとめています。
+
+## ファイル操作
+
+<ContentTable
+  headers={["操作", "Windows", "Mac"]}
+  rows={[
+    ["新規ファイル作成", "Ctrl + N", "Cmd + N"],
+    ["ファイルを開く", "Ctrl + O", "Cmd + O"],
+    ["保存", "Ctrl + S", "Cmd + S"],
+    ["現在のタブを閉じる", "Ctrl + W", "Cmd + W"],
+    ["すべてのタブを閉じる", "Ctrl + K → W", "Ctrl + K → W"],
+  ]}
+/>
+
+``Ctrl + S``だけでも覚えましょう。エンジニアでなくてもよく使います！
+
+## 編集操作
+
+### 基本的な編集
+
+<ContentTable
+  headers={["操作", "Windows", "Mac"]}
+  rows={[
+    ["元に戻す", "Ctrl + Z", "Cmd + Z"],
+    ["やり直す", "Ctrl + Y", "Cmd + Shift + Z"],
+    ["切り取り", "Ctrl + X", "Cmd + X"],
+    ["コピー", "Ctrl + C", "Cmd + C"],
+    ["貼り付け", "Ctrl + V", "Cmd + V"],
+    ["行を複製", "Shift + Alt + ↓", "Shift + Option + ↓"],
+    ["行を削除", "Ctrl + Shift + K", "Cmd + Shift + K"],
+    ["行を移動", "Alt + ↑/↓", "Option + ↑/↓"],
+  ]}
+/>
+
+エクセルでよく使うコピーなどのコマンドはエディターでもよく使います
+
+### 選択
+
+<ContentTable
+  headers={["操作", "Windows", "Mac"]}
+  rows={[
+    ["単語を選択", "Ctrl + D", "Cmd + D"],
+    ["行を選択", "Ctrl + L", "Cmd + L"],
+    ["すべて選択", "Ctrl + A", "Cmd + A"],
+    ["矩形選択", "Shift + Alt + ドラッグ", "Shift + Option + ドラッグ"],
+  ]}
+/>
+
+``Ctrl + A``をよく使います。エラー内容のコピー、ドキュメントのコピーなど
+(``Ctrl + A``+``Ctrl + C``)
+
+## 検索と置換
+
+<ContentTable
+  headers={["操作", "Windows", "Mac"]}
+  rows={[
+    ["検索", "Ctrl + F", "Cmd + F"],
+    ["置換", "Ctrl + H", "Cmd + H"]
+  ]}
+/>
+
+**検索は必ず使えるようになりましょう** <br />
+ソースコードの流れを追跡したり、ドキュメントで目的の単語を調べる、ログの調査などで使用します。<br />
+(エディタ限定ではなく、ブラウザやメモ帳でも使えます)
+
+全体検索、置換はショートカットではなく、エディターの機能を利用することが多いです。
+
+## ファイル内の移動
+
+<ContentTable
+  headers={["操作", "Windows", "Mac"]}
+  rows={[
+    ["行頭に移動", "Home", "Cmd + ←"],
+    ["行末に移動", "End", "Cmd + →"],
+    ["ファイル先頭に移動", "Ctrl + Home", "Cmd + ↑"],
+    ["ファイル末尾に移動", "Ctrl + End", "Cmd + ↓"],
+    ["指定行に移動", "Ctrl + G", "Cmd + G"],
+  ]}
+/>
+
+
+## コマンドパレット
+
+VSCode の全機能にアクセスできる万能ツールです。
+
+- ショートカット: `Ctrl + Shift + P`（Mac: `Cmd + Shift + P`）
+
+やりたいことを入力すると、関連するコマンドが表示されます。
+
+```
+例: 「format」と入力 → 「Format Document」が表示される
+```
+
+ショートカットを覚えていなくても、コマンドパレットから何でも実行できます。
+
+## セクションまとめ
+
+<SectionSummary
+  points={[
+    "Ctrl + S で保存する",
+    "Ctrl + A で全範囲選択",
+    "Ctrl + F でファイル内検索ができる",
+    "困ったら Ctrl + Shift + P（コマンドパレット）",
+  ]}
+/>
