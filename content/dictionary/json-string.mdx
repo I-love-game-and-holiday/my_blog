@@ -1,0 +1,126 @@
+---
+term: JSON文字列
+reading: じぇいそんもじれつ
+aliases: ["JSON String", "JSON文字列化", "シリアライズ"]
+---
+
+JSON文字列とは、**プログラム上のデータ構造（オブジェクトや配列、辞書など）をJSON形式の「文字列」に変換したもの**です。<br/>
+データを保存したりサーバーへ送信するときに必要になる形式の一つです。
+
+JSON（JavaScript Object Notation）はもともとJavaScriptの構文を元にした形式ですが、現在では**言語に依存しない汎用的なデータ交換フォーマット**として、Python・Java・Go・PHP など多くの言語で広く利用されています。
+
+## なぜJSON文字列に変換する必要があるのか
+
+プログラム内のオブジェクトや辞書などのデータ構造は、そのままではファイルに保存したり、ネットワークで送信したりできません。<br/>
+保存や通信では、データを **1本の文字列（テキスト）** にする必要があります。
+
+```js
+// プログラム内のデータ構造（例：JavaScriptのオブジェクト）
+const user = { name: "田中", age: 30 };
+
+// このまま保存や送信はできない
+// → 文字列に変換する必要がある
+```
+
+この「データ構造を文字列に変換する」処理を**シリアライズ**（serialize）と呼びます。<br/>
+逆に「文字列をデータ構造に戻す」処理を**デシリアライズ**（deserialize）と呼びます。
+
+## 変換の方法
+
+ここではJavaScriptを例に説明します。JavaScriptでは `JSON.stringify()` と `JSON.parse()` という2つのメソッドを使います。
+
+### オブジェクト → JSON文字列（stringify）
+
+```js
+const user = { name: "田中", age: 30 };
+
+const jsonString = JSON.stringify(user);
+console.log(jsonString);
+// '{"name":"田中","age":30}'
+
+console.log(typeof jsonString);
+// "string"
+```
+
+`JSON.stringify()` を使うと、オブジェクトが**ただの文字列**になります。<br/>
+見た目は似ていますが、もう `.name` や `.age` でアクセスすることはできません。
+
+### JSON文字列 → オブジェクト（parse）
+
+```js
+const jsonString = '{"name":"田中","age":30}';
+
+const user = JSON.parse(jsonString);
+console.log(user.name);
+// "田中"
+
+console.log(typeof user);
+// "object"
+```
+
+`JSON.parse()` を使うと、文字列がオブジェクトに戻り、再びプロパティにアクセスできるようになります。
+
+## データ構造とJSON文字列の違い
+
+以下はJavaScriptでの比較です。他の言語でも「プログラム内のデータ構造」と「JSON文字列」の関係は同様です。
+
+<ContentTable
+  headers={["項目", "データ構造（オブジェクト）", "JSON文字列"]}
+  rows={[
+    ["型", "object", "string"],
+    ["プロパティアクセス", "user.name でアクセスできる", "できない（ただの文字列）"],
+    ["保存・通信", "そのままではできない", "そのまま保存・送信できる"],
+    ["見た目", "{ name: \"田中\" }", "{\"name\":\"田中\"}"],
+    ["用途", "プログラム内でデータを扱う", "保存・送信のためにデータを運ぶ"],
+  ]}
+/>
+
+## 実際の利用場面
+
+### ローカルストレージへの保存
+
+ローカルストレージは**文字列しか保存できない**ため、オブジェクトを保存するにはJSON文字列に変換する必要があります。
+
+```js
+// 保存するとき
+const settings = { theme: "dark", fontSize: 16 };
+localStorage.setItem("settings", JSON.stringify(settings));
+
+// 取り出すとき
+const saved = localStorage.getItem("settings");
+const parsed = JSON.parse(saved);
+console.log(parsed.theme);
+// "dark"
+```
+
+### APIとの通信
+
+サーバーにデータを送るときも、JSON文字列に変換します。
+
+```js
+const data = { email: "tanaka@example.com", password: "secret" };
+
+fetch("/api/login", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(data),
+});
+```
+
+サーバーからのレスポンスを受け取るときは、`response.json()` が内部的に `JSON.parse()` を行ってくれます。
+
+```js
+const response = await fetch("/api/user");
+const user = await response.json(); // JSON文字列 → オブジェクトに変換
+console.log(user.name);
+```
+
+## まとめ
+
+<SectionSummary
+  points={[
+    "JSON文字列は、プログラム上のデータ構造をJSON形式の文字列に変換したもの",
+    "JSONは言語に依存しない汎用的なデータ交換フォーマットで、多くの言語で利用されている",
+    "ローカルストレージへの保存やAPI通信など、データの保存・送受信で広く使われている",
+  ]}
+/>

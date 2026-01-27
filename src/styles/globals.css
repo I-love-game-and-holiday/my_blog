@@ -3,166 +3,287 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@layer utilities {
-    .bg-polka {
-        --dot-color:rgba(0, 0, 0, 0.1);
-        --dot-space:30px;
-        --dot-size:1px;
-        background-image:radial-gradient(var(--dot-color) var(--dot-size), transparent var(--dot-size)),
-        radial-gradient(var(--dot-color) var(--dot-size), transparent var(--dot-size));
-        background-size:var(--dot-space) var(--dot-space);
-        background-position:0 0, calc(var(--dot-space) / 2) calc(var(--dot-space) / 2);
-    }
-
-    .dark .bg-polka {
-        --dot-color:rgba(255, 255, 255, 0.05);
-    }
-}
-
 @theme inline {
-    --radius-sm:calc(var(--radius) - 4px);
-    --radius-md:calc(var(--radius) - 2px);
-    --radius-lg:var(--radius);
-    --radius-xl:calc(var(--radius) + 4px);
-    --color-background:var(--background);
-    --color-foreground:var(--foreground);
-    --color-card:var(--card);
-    --color-card-foreground:var(--card-foreground);
-    --color-popover:var(--popover);
-    --color-popover-foreground:var(--popover-foreground);
-    --color-primary:var(--primary);
-    --color-primary-foreground:var(--primary-foreground);
-    --color-secondary:var(--secondary);
-    --color-secondary-foreground:var(--secondary-foreground);
-    --color-muted:var(--muted);
-    --color-muted-foreground:var(--muted-foreground);
-    --color-accent:var(--accent);
-    --color-accent-foreground:var(--accent-foreground);
-    --color-destructive:var(--destructive);
-    --color-border:var(--border);
-    --color-input:var(--input);
-    --color-ring:var(--ring);
-    --color-chart-1:var(--chart-1);
-    --color-chart-2:var(--chart-2);
-    --color-chart-3:var(--chart-3);
-    --color-chart-4:var(--chart-4);
-    --color-chart-5:var(--chart-5);
-    --color-sidebar:var(--sidebar);
-    --color-sidebar-foreground:var(--sidebar-foreground);
-    --color-sidebar-primary:var(--sidebar-primary);
-    --color-sidebar-primary-foreground:var(--sidebar-primary-foreground);
-    --color-sidebar-accent:var(--sidebar-accent);
-    --color-sidebar-accent-foreground:var(--sidebar-accent-foreground);
-    --color-sidebar-border:var(--sidebar-border);
-    --color-sidebar-ring:var(--sidebar-ring);
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-border: var(--border);
 }
 
 :root {
-    --radius:0.625rem;
-    --background:oklch(1 0 0);
-    --foreground:oklch(0.145 0 0);
-    --card:oklch(1 0 0);
-    --card-foreground:oklch(0.145 0 0);
-    --popover:oklch(1 0 0);
-    --popover-foreground:oklch(0.145 0 0);
-    --primary:oklch(0.205 0 0);
-    --primary-foreground:oklch(0.985 0 0);
-    --secondary:oklch(0.97 0 0);
-    --secondary-foreground:oklch(0.205 0 0);
-    --muted:oklch(0.97 0 0);
-    --muted-foreground:oklch(0.556 0 0);
-    --accent:oklch(0.97 0 0);
-    --accent-foreground:oklch(0.205 0 0);
-    --destructive:oklch(0.577 0.245 27.325);
-    --border:oklch(0.922 0 0);
-    --input:oklch(0.922 0 0);
-    --ring:oklch(0.708 0 0);
-    --chart-1:oklch(0.646 0.222 41.116);
-    --chart-2:oklch(0.6 0.118 184.704);
-    --chart-3:oklch(0.398 0.07 227.392);
-    --chart-4:oklch(0.828 0.189 84.429);
-    --chart-5:oklch(0.769 0.188 70.08);
-    --sidebar:oklch(0.985 0 0);
-    --sidebar-foreground:oklch(0.145 0 0);
-    --sidebar-primary:oklch(0.205 0 0);
-    --sidebar-primary-foreground:oklch(0.985 0 0);
-    --sidebar-accent:oklch(0.97 0 0);
-    --sidebar-accent-foreground:oklch(0.205 0 0);
-    --sidebar-border:oklch(0.922 0 0);
-    --sidebar-ring:oklch(0.708 0 0);
+    --radius: 0.5rem;
+    --background: #ffffff;
+    --foreground: #171717;
+    --card: #ffffff;
+    --card-foreground: #171717;
+    --primary: #171717;
+    --primary-foreground: #fafafa;
+    --secondary: #f5f5f5;
+    --secondary-foreground: #171717;
+    --muted: #f5f5f5;
+    --muted-foreground: #737373;
+    --accent: #f5f5f5;
+    --accent-foreground: #171717;
+    --border: #e5e5e5;
 }
 
 .dark {
-    --background:oklch(0.145 0 0);
-    --foreground:oklch(0.985 0 0);
-    --card:oklch(0.205 0 0);
-    --card-foreground:oklch(0.985 0 0);
-    --popover:oklch(0.205 0 0);
-    --popover-foreground:oklch(0.985 0 0);
-    --primary:oklch(0.922 0 0);
-    --primary-foreground:oklch(0.205 0 0);
-    --secondary:oklch(0.269 0 0);
-    --secondary-foreground:oklch(0.985 0 0);
-    --muted:oklch(0.269 0 0);
-    --muted-foreground:oklch(0.708 0 0);
-    --accent:oklch(0.269 0 0);
-    --accent-foreground:oklch(0.985 0 0);
-    --destructive:oklch(0.704 0.191 22.216);
-    --border:oklch(1 0 0 / 10%);
-    --input:oklch(1 0 0 / 15%);
-    --ring:oklch(0.556 0 0);
-    --chart-1:oklch(0.488 0.243 264.376);
-    --chart-2:oklch(0.696 0.17 162.48);
-    --chart-3:oklch(0.769 0.188 70.08);
-    --chart-4:oklch(0.627 0.265 303.9);
-    --chart-5:oklch(0.645 0.246 16.439);
-    --sidebar:oklch(0.205 0 0);
-    --sidebar-foreground:oklch(0.985 0 0);
-    --sidebar-primary:oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground:oklch(0.985 0 0);
-    --sidebar-accent:oklch(0.269 0 0);
-    --sidebar-accent-foreground:oklch(0.985 0 0);
-    --sidebar-border:oklch(1 0 0 / 10%);
-    --sidebar-ring:oklch(0.556 0 0);
+    --background: #171717;
+    --foreground: #fafafa;
+    --card: #1f1f1f;
+    --card-foreground: #fafafa;
+    --primary: #fafafa;
+    --primary-foreground: #171717;
+    --secondary: #262626;
+    --secondary-foreground: #fafafa;
+    --muted: #262626;
+    --muted-foreground: #a3a3a3;
+    --accent: #262626;
+    --accent-foreground: #fafafa;
+    --border: #404040;
 }
 
 @layer base {
     * {
-        @apply border-border outline-ring/50;
+        @apply border-border;
     }
     body {
-        @apply bg-background text-foreground;
-    }
-
-    .x\:container {
-        @apply !max-w-[700px];
+        @apply bg-background text-foreground antialiased;
     }
 }
 
-/* Nextra のコードブロック行（data-highlighted-line付き）を赤く強調 */
+/* Typography */
+.prose {
+    @apply max-w-none;
+}
+
+.prose h1 {
+    @apply text-3xl font-bold tracking-tight mt-8 mb-4;
+    @apply border-l-4 border-blue-500 pl-4;
+}
+
+.prose h2 {
+    @apply text-2xl font-semibold tracking-tight mt-8 mb-3;
+    @apply relative pb-2;
+}
+
+.prose h2::after {
+    content: '';
+    @apply absolute left-0 bottom-0 h-px w-full bg-border;
+}
+
+.prose h3 {
+    @apply text-xl font-semibold tracking-tight mt-6 mb-2;
+    @apply relative pl-4;
+}
+
+.prose h3::before {
+    content: '';
+    @apply absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-blue-400;
+}
+
+.prose p {
+    @apply leading-7 mb-4;
+}
+
+.prose a {
+    @apply text-primary underline underline-offset-4 hover:text-primary/80 transition-colors;
+}
+
+.prose ul {
+    @apply my-4 pl-6 list-disc;
+}
+
+.prose ol {
+    @apply my-4 pl-6 list-decimal;
+}
+
+.prose li {
+    @apply mb-2;
+}
+
+.prose code {
+    @apply bg-muted px-1.5 py-0.5 rounded text-sm font-mono;
+}
+
+.prose pre {
+    @apply bg-[#1a1a1a] text-[#e5e5e5] p-4 rounded-lg overflow-x-auto my-4;
+}
+
+.prose pre code {
+    @apply bg-transparent p-0;
+}
+
+.prose blockquote {
+    @apply border-l-4 border-border pl-4 italic my-4 text-muted-foreground;
+}
+
+/* Code highlighting */
 pre code.nextra-code > span[data-highlighted-line] {
-    display: block;                 /* 行として扱う */
-    background: rgba(255, 0, 0, 0.08)!important;
-    border-left: 3px solid #ff3b30;
+    display: block;
+    background: rgba(99, 102, 241, 0.1);
+    border-left: 3px solid #6366f1;
     padding-left: 0.75rem;
-    margin-left: -0.75rem;          /* 左ライン分を揃える */
-  }
-
-/* ハイライト行 + その中身の文字色も強制 */
-pre code.nextra-code > span[data-highlighted-line],
-pre code.nextra-code > span[data-highlighted-line] * {
-  color: #b00020;
+    margin-left: -0.75rem;
 }
 
-/* ダークモード対応 */
-.dark pre code.nextra-code > span[data-highlighted-line] {
-    background: rgba(255, 100, 100, 0.15)!important;
-    border-left-color: #ff6b6b;
+/* Container */
+.container {
+    @apply max-w-4xl mx-auto px-4 sm:px-6;
 }
 
-.dark pre code.nextra-code > span[data-highlighted-line],
-.dark pre code.nextra-code > span[data-highlighted-line] * {
-  color: #ff6b6b;
+/* Article Layout with Dictionary Panel */
+.article-layout {
+    @apply relative;
 }
 
-   
+.article-content {
+    @apply mx-auto;
+}
+
+/* Dictionary Panel */
+.dictionary-panel {
+    @apply fixed top-20 right-4 w-80 transition-all duration-300 opacity-0 pointer-events-none;
+}
+
+.dictionary-panel-open {
+    @apply opacity-100 pointer-events-auto;
+}
+
+@media (min-width: 1280px) {
+    .dictionary-panel {
+        @apply right-8;
+    }
+}
+
+@media (min-width: 1536px) {
+    .dictionary-panel {
+        right: calc((100vw - 896px) / 2 - 340px);
+    }
+}
+
+.dictionary-panel-content {
+    @apply p-4 bg-secondary/30 rounded-lg border border-border;
+}
+
+.dictionary-panel-placeholder {
+    @apply p-4 bg-secondary/30 rounded-lg border border-border border-dashed flex flex-col items-center justify-center min-h-[200px];
+}
+
+/* Dictionary Term Link */
+.dictionary-term {
+    @apply inline cursor-pointer text-inherit;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-decoration-color: var(--muted-foreground);
+    text-underline-offset: 4px;
+}
+
+.dictionary-term:hover {
+    text-decoration-color: var(--primary);
+    background-color: var(--secondary);
+}
+
+.dictionary-term-active {
+    background-color: var(--secondary);
+    text-decoration-color: var(--primary);
+}
+
+/* Dictionary Panel Prose */
+.dictionary-panel .prose {
+    @apply text-sm;
+}
+
+.dictionary-panel .prose h2 {
+    @apply text-base font-semibold mt-4 mb-2;
+}
+
+.dictionary-panel .prose h3 {
+    @apply text-sm font-semibold mt-3 mb-1;
+}
+
+.dictionary-panel .prose p {
+    @apply leading-6 mb-3;
+}
+
+.dictionary-panel .prose pre {
+    @apply text-xs p-2;
+}
+
+.dictionary-panel .prose code {
+    @apply text-xs;
+}
+
+.dictionary-panel .prose ul, .dictionary-panel .prose ol {
+    @apply my-2 pl-4;
+}
+
+.dictionary-panel .prose li {
+    @apply mb-1;
+}
+
+/* Common Figure Caption */
+.figure-caption {
+    @apply mt-2 text-center text-sm text-muted-foreground;
+}
+
+/* Table Styles */
+.content-table {
+    @apply w-full text-sm;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.content-table-wrapper {
+    @apply overflow-x-auto rounded-lg border border-border;
+}
+
+.content-table thead tr {
+    @apply bg-secondary;
+}
+
+.content-table th {
+    @apply border-b border-border px-4 py-3 text-left font-semibold text-foreground;
+}
+
+.content-table th:not(:last-child) {
+    @apply border-r border-border;
+}
+
+.content-table tbody tr {
+    @apply bg-background hover:bg-secondary/50;
+}
+
+.content-table td {
+    @apply px-4 py-3 text-muted-foreground;
+}
+
+.content-table td:not(:last-child) {
+    @apply border-r border-border;
+}
+
+.content-table tbody tr:not(:last-child) td {
+    @apply border-b border-border;
+}
+
+/* Code Block Styles */
+.code-block-header {
+    @apply border-b border-border;
+}
+
+.code-block-dark {
+    @apply bg-[#1a1a1a];
+}

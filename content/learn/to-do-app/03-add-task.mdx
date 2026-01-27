@@ -1,0 +1,325 @@
+---
+title: タスクを追加する
+order: 3
+description: JavaScriptでタスクの追加機能を実装します。
+---
+
+## このレッスンで作るもの
+
+入力欄にテキストを入れて「追加」ボタンを押すと、タスクが一覧に表示される機能を作ります。
+
+<HtmlPreview
+  height={400}
+  title="このレッスンのゴール"
+  html={`
+    <div class="container">
+      <h1>ToDo</h1>
+      <form id="todo-form">
+        <input type="text" id="todo-input" placeholder="タスクを入力..." required>
+        <button type="submit">追加</button>
+      </form>
+      <ul id="todo-list"></ul>
+    </div>
+  `}
+  css={`
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f5f5f5;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    h1 { font-size: 24px; margin-bottom: 20px; color: #333; }
+    #todo-form { display: flex; gap: 8px; margin-bottom: 24px; }
+    #todo-input {
+      flex: 1; padding: 12px; font-size: 16px;
+      border: 1px solid #ddd; border-radius: 4px;
+    }
+    #todo-input:focus { outline: none; border-color: #0066ff; }
+    #todo-form button {
+      padding: 12px 20px; font-size: 16px;
+      background-color: #0066ff; color: #fff;
+      border: none; border-radius: 4px; cursor: pointer;
+    }
+    #todo-form button:hover { background-color: #0052cc; }
+    #todo-list { list-style: none; }
+    .todo-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px; border-bottom: 1px solid #eee;
+    }
+    .todo-item:last-child { border-bottom: none; }
+    .todo-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+    .todo-item span { flex: 1; font-size: 16px; }
+    .todo-item button {
+      padding: 4px 8px; font-size: 14px; background: none;
+      border: 1px solid #ddd; border-radius: 4px; cursor: pointer; color: #666;
+    }
+  `}
+  js={`
+    const form = document.getElementById('todo-form');
+    const input = document.getElementById('todo-input');
+    const list = document.getElementById('todo-list');
+    let todos = [];
+
+    function renderTodos() {
+      list.innerHTML = '';
+      todos.forEach(function(todo) {
+        const li = document.createElement('li');
+        li.className = 'todo-item';
+        li.innerHTML =
+          '<input type="checkbox">' +
+          '<span>' + todo.text + '</span>' +
+          '<button type="button">削除</button>';
+        list.appendChild(li);
+      });
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (!text) return;
+      todos.push({ text: text });
+      renderTodos();
+      input.value = '';
+    });
+  `}
+/>
+
+削除の機能はレッスン04で実装します
+
+## JavaScriptファイルを作成する
+
+現在のフォルダ構造を確認しましょう。
+
+<FileTree>
+  <FileTreeFolder name="to-do-app" defaultOpen>
+    <FileTreeFile name="index.html" />
+    <FileTreeFile name="style.css" />
+    <FileTreeFile name="main.js" active />
+  </FileTreeFolder>
+</FileTree>
+
+`main.js`ファイルを作成してください。HTMLで読み込む設定は既に済んでいます。
+
+## Step 1: 要素を取得する
+
+まず、HTMLの要素をJavaScriptから操作できるようにします。
+
+```js title="main.js"
+// HTML要素を取得
+const form = document.getElementById('todo-form');
+const input = document.getElementById('todo-input');
+const list = document.getElementById('todo-list');
+
+// タスクを保存する配列
+let todos = [];
+```
+
+<Callout type="info">
+`.getElementById()` は、HTMLの `id` 属性を使って要素を取得するメソッドです。
+<a href="https://developer.mozilla.org/ja/docs/Web/API/Document/getElementById" target="_blank" rel="noopener noreferrer">(参考)</a>
+</Callout>
+
+## Step 2: タスクを表示する関数を作る
+
+配列 `todos` の中身を画面に表示する関数を作ります。
+
+```js title="main.js"
+// タスクを画面に表示する関数
+function renderTodos() {
+  // 一旦リストを空にする
+  list.innerHTML = '';
+
+  // todos配列の中身を1つずつ処理
+  todos.forEach((todo) => {
+    const li = document.createElement('li');
+    li.className = 'todo-item';
+    li.innerHTML = `
+      <input type="checkbox">
+      <span>${todo.text}</span>
+      <button type="button">削除</button>
+    `;
+    list.appendChild(li);
+  });
+}
+```
+
+### ポイント
+
+- `innerHTML = ''` でリストを空にしてから再描画します（なぜ再描画の必要があるか考えてみましょう）
+- `forEach` で配列の要素を1つずつ処理します
+- `createElement` で新しいHTML要素を作成します
+
+## Step 3: タスクを追加する処理を作る
+
+ここからが本番です。フォームが送信されたときの処理を書きます。
+
+### イベントリスナーについて
+
+`addEventListener()`を使うと、「このボタンがクリックされたら〇〇する」のような処理を設定できます。
+
+
+<LearnMore>
+`addEventListener()`はDOM要素が持つメソッドです。
+
+第1引数にイベント名（`'click'`、`'submit'`など）、第2引数に実行したい関数を渡します。
+
+今回はHTMLのフォームでsubmitイベントが発火すると、第2引数の関数が実行されます。
+</LearnMore>
+
+```js title="main.js"
+// フォーム送信時の処理
+form.addEventListener('submit', (e) => {
+  // ページのリロードを防ぐ
+  e.preventDefault();
+
+  // ========================================
+  // ここを自分で考えて実装してみよう！
+  // ========================================
+  // やること:
+  // 1. 入力欄の値を取得する（input.value）
+  // 2. 空欄チェック（空なら何もしないで return）
+  // 3. todosに新しいタスクを追加する
+  //    → { text: 入力値 } というオブジェクトで追加
+  // 4. renderTodos() を呼んで画面を更新
+  // 5. 入力欄を空にする（input.value = ''）
+  // ========================================
+
+
+});
+```
+
+<Callout type="warning">
+**まずは自分で考えてみましょう！**
+
+5〜10分ほど試してみて、分からなければ下のヒントを見てください。
+</Callout>
+
+### ヒント
+
+<CollapsibleCode title="ヒント1: 入力値の取得と空白除去" defaultOpen={false}>
+```js
+const text = input.value.trim();
+```
+`trim()` は前後の空白を除去します。
+</CollapsibleCode>
+
+<CollapsibleCode title="ヒント2: 空欄チェック" defaultOpen={false}>
+```js
+if (!text) {
+  return;
+}
+```
+空白除去後に空文字なら何もしません。
+</CollapsibleCode>
+
+<CollapsibleCode title="ヒント3: 配列への追加" defaultOpen={false}>
+```js
+todos.push({ text });
+```
+`{ text }` は `{ text: text }` の省略記法です。プロパティ名と変数名が同じ場合に使えます。
+</CollapsibleCode>
+
+### 答え
+
+<CollapsibleCode title="答えを見る" defaultOpen={false}>
+```js
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  // 1. 入力欄の値を取得（前後の空白を除去）
+  const text = input.value.trim();
+
+  // 2. 空欄チェック
+  if (!text) {
+    return;
+  }
+
+  // 3. todosに新しいタスクを追加
+  todos.push({ text });
+
+  // 4. 画面を更新
+  renderTodos();
+
+  // 5. 入力欄を空にする
+  input.value = '';
+});
+```
+</CollapsibleCode>
+
+## 動作確認
+
+ブラウザで確認してみましょう。
+
+1. 入力欄にテキストを入力
+2. 「追加」ボタンをクリック（またはEnterキー）
+3. タスクが一覧に表示されればOK！
+
+## 完成コード
+
+ここまでの `main.js` の全体像です。
+
+<CollapsibleCode title="main.js 全体" defaultOpen={false}>
+```js
+// HTML要素を取得
+const form = document.getElementById('todo-form');
+const input = document.getElementById('todo-input');
+const list = document.getElementById('todo-list');
+
+// タスクを保存する配列
+let todos = [];
+
+// タスクを画面に表示する関数
+function renderTodos() {
+  list.innerHTML = '';
+
+  todos.forEach((todo) => {
+    const li = document.createElement('li');
+    li.className = 'todo-item';
+    li.innerHTML = `
+      <input type="checkbox">
+      <span>${todo.text}</span>
+      <button type="button">削除</button>
+    `;
+    list.appendChild(li);
+  });
+}
+
+// フォーム送信時の処理
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const text = input.value.trim();
+
+  if (!text) {
+    return;
+  }
+
+  todos.push({ text });
+  renderTodos();
+  input.value = '';
+});
+```
+</CollapsibleCode>
+
+<Callout type="info">
+**セキュリティについて**
+
+今回は `innerHTML` を使っていますが、このTodoアプリはデータベースがなく、自分の入力を自分で見るだけなので問題ありません。
+
+ただし、他のユーザーの入力を表示するアプリ（掲示板、SNSなど）では、悪意あるスクリプトが実行される危険があります（XSS攻撃）。今後の開発では気をつけましょう。
+</Callout>
+
+## 次のステップ
+
+タスクの追加ができるようになりました！
+
+ただ、「削除」ボタンを押しても何も起きませんね。次のレッスンで削除機能を実装しましょう。
