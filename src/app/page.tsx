@@ -8,8 +8,8 @@ export default function HomePage() {
             {/* Hero Section */}
             <section className="text-center mb-16">
                 <p className={`text-lg md:text-xl text-muted-foreground ${CONTENT_MAX_WIDTH} mx-auto`}>
-                Progateを終えたあなたが、
-                自分でアプリを作れるようになるまで。
+                    基礎を学んだあなたが、
+                    自分でアプリを作れるようになるまで。
                 </p>
             </section>
 
@@ -28,8 +28,8 @@ export default function HomePage() {
                         学習コースを始める
                     </h2>
                     <p className="text-background/80">
-                        ステップバイステップで実践スキルを身につける。
-                        プロゲートの次に進むためのハンズオン教材。
+                        ステップバイステップで実践スキルを身につける。<br />
+                        基礎の次に進むためのハンズオン教材。
                     </p>
                 </Link>
             </section>
@@ -41,7 +41,7 @@ export default function HomePage() {
                         <div>
                             <span className="text-xs text-muted-foreground">Blog</span>
                             <h3 className="font-medium group-hover:underline">
-                                技術ブログ
+                                雑記ブログ
                             </h3>
                         </div>
                         <span className="text-muted-foreground text-sm">→</span>
