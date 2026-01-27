@@ -3,7 +3,7 @@ import { ClickableCard } from '@/components/ui/clickable-card'
 
 export const metadata = {
     title: 'Learn',
-    description: 'プロゲートを終えた人のための実践的なハンズオンコース',
+    description: '基礎を学んだ次に進むためのハンズオンコース',
 }
 
 export default async function LearnPage() {
@@ -14,9 +14,9 @@ export default async function LearnPage() {
             <div className="mb-8">
                 <h1 className="text-3xl font-bold tracking-tight mb-2">Learn</h1>
                 <p className="text-muted-foreground">
-                    プロゲートを終えた人のための実践的なハンズオンコース。
+                    基礎を学んだあなたが、次に進むためのハンズオンコース。
                     <br />
-                    ステップバイステップで次のレベルへ。
+                    ステップバイステップで実践スキルを身につけましょう。
                 </p>
             </div>
 
