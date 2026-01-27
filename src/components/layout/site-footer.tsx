@@ -6,7 +6,13 @@ export function SiteFooter() {
             <div className="container py-8">
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
                     <div className="text-sm text-muted-foreground">
-                        {new Date().getFullYear()} tanaka101
+                        &copy; {new Date().getFullYear()}{' '}
+                        <Link
+                            href="/about"
+                            className="hover:text-foreground transition-colors"
+                        >
+                            tanaka101
+                        </Link>
                     </div>
                     <div className="flex items-center space-x-4">
                         <Link
