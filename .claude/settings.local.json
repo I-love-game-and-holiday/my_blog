@@ -21,7 +21,8 @@
       "Bash(npx tsc:*)",
       "Bash(curl:*)",
       "Bash(taskkill:*)",
-      "Bash(powershell -Command:*)"
+      "Bash(powershell -Command:*)",
+      "Bash(del \"D:\\\\cursor\\\\private\\\\blog\\\\content\\\\guides\\\\typescript-basics\\\\02-setup.mdx\")"
     ]
   }
 }
