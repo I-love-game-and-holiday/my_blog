@@ -127,7 +127,7 @@ formatClockOut(null);     // "未退勤"
 
 ## typeof で判定できる型
 
-`typeof` で判定できるのは以下の型です。
+`typeof` で判定できる代表的な型は以下です。
 
 <ContentTable
   headers={["typeof の結果", "対応する型"]}
@@ -163,7 +163,6 @@ function example(value: string | null): void {
   points={[
     "Union型は | で複数の型を組み合わせる（例: string | number）",
     "null を許容する型や、特定の値だけ許可するリテラル型に使う",
-    "typeof や === null で型を絞り込むと、そのブロック内で型が確定する",
-    "判別可能なUnion型（Discriminated Union）は実務でよく使われるパターン",
+    "typeof や === null で型を絞り込むと、そのブロック内で型が確定する"
   ]}
 />
