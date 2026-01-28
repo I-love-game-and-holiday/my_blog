@@ -59,16 +59,16 @@ greet("田中", "部長");   // OK: "こんにちは、部長の田中さん"
 
 省略された場合、その引数の値は `undefined` になります。
 
-<Callout type="warning">
-**省略可能な引数は、必須の引数より後に書く**
+<Callout>
+**省略可能な引数は、慣例的に必須の引数より後に書く**
 
 ```typescript
 // OK
 function example(required: string, optional?: number): void { ... }
-
-// エラー
-function example(optional?: number, required: string): void { ... }
 ```
+
+省略可能な引数を先に書くと、呼び出し時に省略できなくなるため意味がありません。<br />
+慣例として、省略可能な引数は引数リストの最後に置きます。
 </Callout>
 
 ### デフォルト引数

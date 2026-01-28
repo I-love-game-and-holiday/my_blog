@@ -16,7 +16,7 @@ let 変数名: 型 = 値;
 
 ## プリミティブ型
 
-最も基本的な型は3つです。
+代表的なものを紹介します。
 
 ### string（文字列）
 
@@ -52,6 +52,24 @@ let isActive: boolean = true;
 let isDeleted: boolean = false;
 ```
 
+### null と undefined
+
+TypeScript には「値がない」ことを表す型が2つあります。
+
+```typescript
+let notDefined: undefined = undefined;  // 値が未定義
+let empty: null = null;                 // 値が空
+```
+
+どちらも単体で使うことは少なく、他の型と組み合わせて「値があるかもしれないし、ないかもしれない」という表現に使います。
+
+```typescript
+// string または null が入る変数
+let nickname: string | null = null;
+```
+
+この `|` を使った書き方は、後のセクション「Union型と型の絞り込み」で詳しく説明します。
+
 ### まとめ
 
 <ContentTable
@@ -60,6 +78,8 @@ let isDeleted: boolean = false;
     ["string", "文字列", "\"こんにちは\", 'hello'"],
     ["number", "数値（整数・小数）", "25, 3.14, -10"],
     ["boolean", "真偽値", "true, false"],
+    ["null", "値が空", "null"],
+    ["undefined", "値が未定義", "undefined"],
   ]}
 />
 
@@ -219,7 +239,7 @@ if (typeof value === "string") {
 
 <SectionSummary
   points={[
-    "基本の型は string（文字列）、number（数値）、boolean（真偽値）の3つ",
+    "基本の型は string、number、boolean の3つ。加えて null と undefined で「値がない」ことを表せる",
     "配列は型の後ろに [] をつける（例: number[]）",
     "オブジェクトはプロパティごとに型を指定する",
     "型推論があるので、初期値がある変数は型注釈を省略できる",
