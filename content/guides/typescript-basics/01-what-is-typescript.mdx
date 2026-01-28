@@ -1,0 +1,133 @@
+---
+title: TypeScriptとは何か
+order: 1
+description: TypeScriptの基本概念とJavaScriptとの違いを理解しよう
+---
+
+## TypeScript とは
+
+**TypeScript**（タイプスクリプト）は、JavaScriptに**型**を追加した言語です。
+
+Microsoft が開発しており、2012年に公開されたオープンソースソフトウェアです。<br />
+拡張子は `.ts` で、コンパイル（変換）すると通常の JavaScript（`.js`）になります。
+
+TypeScriptはJavaScriptのスーパーセットです。<br />
+つまり、JavaScriptの文法や実行環境はそのままに、新機能を追加した言語がTypeScriptです。 
+
+
+## 「型」とは何か
+
+型とは、**データの種類**のことです。
+
+たとえば、日常生活でも「これは数字」「これは文字」と自然に区別していますよね。<br />
+TypeScript では、この区別をコードに明示的に書きます。
+
+```typescript
+// JavaScript - 型を書かない
+let age = 25;
+let name = "田中";
+
+// TypeScript - 型を書く
+let age: number = 25;
+let name: string = "田中";
+```
+
+`: number` や `: string` の部分が**型注釈**（かたちゅうしゃく）です。<br />
+「この変数には数値しか入れません」「この変数には文字列しか入れません」と宣言しています。
+
+## 動的型付けと静的型付け
+
+プログラミング言語は、型のチェック方法によって**2種類**に分かれます。
+
+### 動的型付け（JavaScript など）
+
+**実行してみるまで型のエラーがわからない**方式です。
+
+```javascript
+// JavaScript（動的型付け）
+let value = "こんにちは";  // 文字列を代入
+value = 100;               // 数値に変えてもエラーにならない
+value = true;              // 真偽値にしても OK
+
+// 実行するまで問題に気づけない
+function double(x) {
+  return x * 2;
+}
+double("hello");  // NaN（Not a Number）になるが、実行するまでわからない
+```
+
+変数にどんな型の値でも入れられるので手軽ですが、予期しないバグが実行時に起きやすくなります。
+
+### 静的型付け（TypeScript など）
+
+**実行する前（コードを書いている時点）に型のエラーを検出する**方式です。
+
+```typescript
+// TypeScript（静的型付け）
+let value: string = "こんにちは";  // 文字列型と宣言
+value = 100;    // エラー: 'number' 型を 'string' 型に割り当てられません
+value = true;   // エラー: 'boolean' 型を 'string' 型に割り当てられません
+
+function double(x: number): number {
+  return x * 2;
+}
+double("hello");  // エラー: '"hello"' は 'number' 型に割り当てられません
+```
+
+型が合わないコードを書くと、実行する前にエディタやコンパイラがエラーを出してくれます。
+
+### 比較
+
+<ContentTable
+  headers={["", "動的型付け", "静的型付け"]}
+  rows={[
+    ["型チェックのタイミング", "実行時", "コンパイル時（実行前）"],
+    ["型の宣言", "不要", "必要（省略可能な場合もある）"],
+    ["バグの発見", "実行してから気づく", "書いた時点で気づける"],
+    ["手軽さ", "すぐ書ける", "型を書く手間がある"],
+    ["代表的な言語", "JavaScript, Python, Ruby", "TypeScript, Java, Go, Rust"],
+  ]}
+/>
+
+##  TypeScript を使うメリット
+
+### 1. バグを事前に防げる
+
+先ほど挙げた通り、バグが圧倒的に減ります。小規模な関数などでは宣言するほうがめんどくさい場合もありますが、
+規模が大きくなると全体を把握し続けるのは困難になります。また、チームで開発する場合なども決められた型で
+データをやり取りするようにするとバグの可能性を減らすことができます。
+
+### 2. 実務の現場では TypeScript が主流
+
+チーム開発に最適で利用者が多く、TypeScriptを前提としたフレームワーク(便利アイテム)が複数公開されています。
+現在の開発現場では、JavaScript ではなく TypeScript で書くのが主流です。
+
+小さなスクリプトなら JavaScript でも十分ですが、チームで開発するアプリケーションでは TypeScript が選ばれています。
+
+## TypeScript が使われている場所
+
+Node.js ガイドで紹介したフレームワークのほとんどが、TypeScript に対応しています。
+
+<ContentTable
+  headers={["分野", "代表的な技術", "TypeScript対応"]}
+  rows={[
+    ["フロントエンド", "React, Vue.js, Angular", "標準またはほぼ標準"],
+    ["フルスタック", "Next.js, Nuxt", "標準"],
+    ["バックエンド", "Express, NestJS, Hono", "標準またはほぼ標準"],
+    ["モバイルアプリ", "React Native, Expo", "対応"],
+  ]}
+/>
+
+このサイト自体も TypeScript で作られています。
+
+## セクションまとめ
+
+<SectionSummary
+  points={[
+    "TypeScriptはJavaScriptに型を追加した言語",
+    "動的型付け（JS）は実行時に型を判定、静的型付け（TS）は実行前に型をチェック",
+    "型があるとバグを事前に防げて、エディタの補完も賢くなる",
+    "JavaScriptの上位互換なので、JSの知識はそのまま活かせる",
+    "現在の開発現場ではTypeScriptが主流",
+  ]}
+/>

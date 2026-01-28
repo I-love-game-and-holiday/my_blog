@@ -1,0 +1,228 @@
+---
+title: 基本の型
+order: 2
+description: TypeScriptで使う基本的な型を学ぼう
+---
+
+## 型注釈のおさらい
+
+前のセクションで紹介した通り、TypeScript では変数に**型注釈**をつけて「この変数にはこの種類のデータしか入れない」と宣言します。
+
+```typescript
+let 変数名: 型 = 値;
+```
+
+ここからは、具体的にどんな型があるのかを見ていきましょう。
+
+## プリミティブ型
+
+最も基本的な型は3つです。
+
+### string（文字列）
+
+```typescript
+let name: string = "田中";
+let greeting: string = "こんにちは";
+let template: string = `私の名前は${name}です`;  // テンプレートリテラルもOK
+```
+
+### number（数値）
+
+整数も小数もすべて `number` です。
+
+```typescript
+let age: number = 25;
+let price: number = 1980;
+let rate: number = 0.08;
+let negative: number = -10;
+```
+
+<Callout>
+**JavaScriptと同じく、整数と小数の区別はない**
+
+Java や C では `int`（整数）と `float`（小数）を分けますが、TypeScript（JavaScript）では全て `number` です。
+</Callout>
+
+### boolean（真偽値）
+
+`true` か `false` のどちらかです。
+
+```typescript
+let isActive: boolean = true;
+let isDeleted: boolean = false;
+```
+
+### まとめ
+
+<ContentTable
+  headers={["型", "内容", "例"]}
+  rows={[
+    ["string", "文字列", "\"こんにちは\", 'hello'"],
+    ["number", "数値（整数・小数）", "25, 3.14, -10"],
+    ["boolean", "真偽値", "true, false"],
+  ]}
+/>
+
+## 配列
+
+同じ型の値をまとめて持つデータ構造です。<br />
+型の後ろに `[]` をつけます。
+
+```typescript
+let numbers: number[] = [1, 2, 3, 4, 5];
+let names: string[] = ["田中", "佐藤", "鈴木"];
+let flags: boolean[] = [true, false, true];
+```
+
+異なる型を混ぜるとエラーになります。
+
+```typescript
+let numbers: number[] = [1, 2, "three"];
+// エラー: 'string' 型を 'number' 型に割り当てられません
+```
+
+## オブジェクト
+
+複数のプロパティ（属性）を持つデータです。<br />
+各プロパティに型を指定できます。
+
+```typescript
+let user: { name: string; age: number } = {
+  name: "田中",
+  age: 25,
+};
+```
+
+プロパティの型が合わないとエラーになります。
+
+```typescript
+let user: { name: string; age: number } = {
+  name: "田中",
+  age: "25歳",  // エラー: 'string' 型を 'number' 型に割り当てられません
+};
+```
+
+<Callout>
+**オブジェクトの型定義が長くなる場合**
+
+プロパティが多いオブジェクトは、毎回型を書くと大変です。<br />
+後のセクションで紹介する `interface` や `type` を使って名前をつけると、すっきり書けるようになります。
+</Callout>
+
+## 型推論
+
+実は、TypeScript では型注釈を**省略**できる場合があります。<br />
+値から型を自動的に判断してくれる仕組みを**型推論**（かたすいろん）といいます。
+
+```typescript
+// 型注釈あり
+let age: number = 25;
+
+// 型注釈なし（型推論で number と判断される）
+let age = 25;
+```
+
+どちらも `age` は `number` 型として扱われます。<br />
+`25` という値から TypeScript が「これは number だな」と推論してくれるためです。
+
+型推論が効いている変数に、違う型の値を代入しようとするとエラーになります。
+
+```typescript
+let age = 25;       // number と推論される
+age = "twenty-five";  // エラー: 'string' 型を 'number' 型に割り当てられません
+```
+
+### 型注釈を書くべきか？
+
+これは開発現場でもよく議論になるテーマで、大きく2つの考え方があります。
+
+<ContentTable
+  headers={["方針", "考え方", "メリット"]}
+  rows={[
+    ["推論に任せる派", "推論できる場所は省略し、必要な場所だけ書く", "コードが簡潔になる"],
+    ["全部書く派", "推論できる場所でも明示的に書く", "意図が明確で、レビューしやすい"],
+  ]}
+/>
+
+TypeScript の公式ドキュメントや Google のスタイルガイドでは「推論に任せられる場所は省略してよい」とされていますが、チームによっては「全部書く」をルールにしているところもあります。
+
+**どちらが正しいというものではなく、チームの方針に合わせるのが大切です。**<br />
+このガイドでは学習のために型注釈を明示的に書いていきます。
+
+## any 型 ── 使わないようにしよう
+
+`any` は「どんな型でもOK」という特殊な型です。
+
+```typescript
+let value: any = 10;
+value = "hello";   // OK
+value = true;      // OK
+value = [1, 2, 3]; // OK
+```
+
+エラーが出ないので一見便利ですが、**型チェックが完全に無効化されます**。<br />
+これでは TypeScript を使う意味がなくなってしまいます。
+
+```typescript
+let value: any = "hello";
+value.toFixed(2);  // 実行時エラー！ でもコンパイルは通ってしまう
+```
+
+<Callout type="warning">
+**any は「型チェックの放棄」**
+
+`any` を使うと、その変数に関する型チェックが全て無効になります。<br />
+どうしても型がわからない場面でも、次に紹介する `unknown` 型を使う方が安全です。<br />
+原則として `any` は使わないようにしましょう。
+</Callout>
+
+## unknown 型 ── any の安全な代替
+
+`unknown` も `any` と同じく「どんな型の値でも入る」型です。<br />
+ただし、**そのままでは操作できない**という点が大きく異なります。
+
+```typescript
+let value: unknown = "hello";
+
+// any なら通るが、unknown ではエラー
+value.toUpperCase();  // エラー: 'unknown' 型にプロパティは存在しません
+```
+
+使うには、まず型を確認する必要があります。
+
+```typescript
+let value: unknown = "hello";
+
+if (typeof value === "string") {
+  // このブロック内では string 型として扱える
+  console.log(value.toUpperCase());  // OK: "HELLO"
+}
+```
+
+<ContentTable
+  headers={["", "any", "unknown"]}
+  rows={[
+    ["どんな値でも代入できる", "できる", "できる"],
+    ["そのままメソッドを呼べる", "呼べる（危険）", "呼べない（型チェックが必要）"],
+    ["型の安全性", "なし", "あり"],
+  ]}
+/>
+
+`unknown` は「型がわからないけど、安全に扱いたい」場合に使います。<br />
+`any` を使いたくなったら、まず `unknown` で代替できないか検討しましょう。
+
+<Callout>
+**typeof による型チェック（型ガード）** は、後のセクション「Union型と型の絞り込み」で詳しく説明します。
+</Callout>
+
+## セクションまとめ
+
+<SectionSummary
+  points={[
+    "基本の型は string（文字列）、number（数値）、boolean（真偽値）の3つ",
+    "配列は型の後ろに [] をつける（例: number[]）",
+    "オブジェクトはプロパティごとに型を指定する",
+    "型推論があるので、初期値がある変数は型注釈を省略できる",
+    "any は型チェックが無効化されるので使わない（代わりに unknown を使う）",
+  ]}
+/>

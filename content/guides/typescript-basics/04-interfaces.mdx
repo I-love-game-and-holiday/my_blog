@@ -1,0 +1,264 @@
+---
+title: インターフェースと型エイリアス
+order: 4
+description: オブジェクトの型に名前をつける方法を学ぼう
+---
+
+## なぜ型に名前をつけるのか
+
+前のセクションで、オブジェクトに直接型を書く方法を学びました。
+
+```typescript
+let user: { name: string; age: number; email: string } = {
+  name: "田中",
+  age: 25,
+  email: "tanaka@example.com",
+};
+```
+
+これでも動きますが、同じ型を複数の場所で使う場合に問題が出ます。
+
+```typescript
+// 同じ型を何度も書くのは大変...
+function greet(user: { name: string; age: number; email: string }): string {
+  return `こんにちは、${user.name}さん`;
+}
+
+function sendEmail(user: { name: string; age: number; email: string }): void {
+  console.log(`${user.email} にメールを送信`);
+}
+```
+
+型に**名前**をつければ、1回の定義で使い回せます。<br />
+TypeScript には名前をつける方法が2つあります。**interface** と **type** です。
+
+## interface（インターフェース）
+
+`interface` はオブジェクトの型に名前をつける仕組みです。
+
+```typescript
+interface User {
+  name: string;
+  age: number;
+  email: string;
+}
+```
+
+定義した `User` を型として使えます。
+
+```typescript
+const user: User = {
+  name: "田中",
+  age: 25,
+  email: "tanaka@example.com",
+};
+
+function greet(user: User): string {
+  return `こんにちは、${user.name}さん`;
+}
+
+function sendEmail(user: User): void {
+  console.log(`${user.email} にメールを送信`);
+}
+```
+
+型定義が1か所にまとまり、すっきりしました。
+
+### 省略可能なプロパティ
+
+プロパティ名の後ろに `?` をつけると、そのプロパティは省略可能になります。
+
+```typescript
+interface User {
+  name: string;
+  age: number;
+  email: string;
+  nickname?: string;  // 省略可能
+}
+
+// nickname がなくてもOK
+const user1: User = { name: "田中", age: 25, email: "tanaka@example.com" };
+
+// nickname があってもOK
+const user2: User = { name: "佐藤", age: 30, email: "sato@example.com", nickname: "さとちゃん" };
+```
+
+### readonly（読み取り専用）
+
+`readonly` をつけると、一度設定した値を変更できなくなります。
+
+```typescript
+interface User {
+  readonly id: string;
+  name: string;
+  age: number;
+}
+
+const user: User = { id: "001", name: "田中", age: 25 };
+
+user.name = "佐藤";  // OK: name は変更できる
+user.id = "002";     // エラー: id は readonly なので変更できない
+```
+
+ID のように「一度決めたら変わらない値」に使います。
+
+## type（型エイリアス）
+
+`type` も型に名前をつける仕組みです。
+
+```typescript
+type User = {
+  name: string;
+  age: number;
+  email: string;
+};
+```
+
+使い方は `interface` とほとんど同じです。
+
+```typescript
+const user: User = {
+  name: "田中",
+  age: 25,
+  email: "tanaka@example.com",
+};
+```
+
+### type はオブジェクト以外にも使える
+
+`interface` はオブジェクトの型にしか使えませんが、`type` はどんな型にも名前をつけられます。
+
+```typescript
+// プリミティブ型に名前をつける
+type UserId = string;
+type Age = number;
+
+// 関数の型に名前をつける（前のセクションで登場）
+type CalcFunction = (x: number, y: number) => number;
+
+// リテラル型（特定の値だけ許可する）
+type Status = "active" | "inactive" | "suspended";
+```
+
+`interface` ではこれらの定義はできません。
+
+## interface と type の違い
+
+<ContentTable
+  headers={["", "interface", "type"]}
+  rows={[
+    ["オブジェクトの型定義", "できる", "できる"],
+    ["プリミティブ型の定義", "できない", "できる"],
+    ["関数型の定義", "できる（書き方が異なる）", "できる"],
+    ["Union型（後述）", "できない", "できる"],
+    ["extends（拡張）", "できる", "& で交差型を使う"],
+    ["同名で宣言した場合", "マージされる", "エラー"],
+  ]}
+/>
+
+### extends（拡張）
+
+既存の型を元にプロパティを追加した新しい型を作れます。
+
+```typescript
+// interface の場合: extends を使う
+interface User {
+  name: string;
+  age: number;
+}
+
+interface Employee extends User {
+  department: string;
+  employeeId: string;
+}
+
+// Employee は User のプロパティも全て持つ
+const employee: Employee = {
+  name: "田中",
+  age: 25,
+  department: "開発部",
+  employeeId: "E001",
+};
+```
+
+```typescript
+// type の場合: & （交差型）を使う
+type User = {
+  name: string;
+  age: number;
+};
+
+type Employee = User & {
+  department: string;
+  employeeId: string;
+};
+```
+
+どちらも結果は同じです。
+
+## どちらを使うべきか
+
+これもチームや現場によって方針が異なりますが、よくある使い分けを紹介します。
+
+<ContentTable
+  headers={["用途", "よく使われるもの", "理由"]}
+  rows={[
+    ["オブジェクトの型定義", "interface", "拡張（extends）が直感的で読みやすい"],
+    ["Union型やリテラル型", "type", "interface では定義できない"],
+    ["関数の型", "type", "書き方がシンプル"],
+    ["プリミティブに別名をつける", "type", "interface では定義できない"],
+  ]}
+/>
+
+<Callout>
+**迷ったら interface を使い、interface で書けない場合に type を使う**
+
+これが最もシンプルな判断基準です。<br />
+ただし、プロジェクトやチームによっては「全て type で統一する」方針のところもあります。<br />
+チームのルールがあればそれに従いましょう。
+</Callout>
+
+## 実践的な例
+
+勤怠管理のデータを型で定義してみましょう。
+
+```typescript
+// 勤怠記録の型
+interface AttendanceRecord {
+  readonly id: string;
+  employeeName: string;
+  date: string;
+  clockIn: string;
+  clockOut: string | null;  // 退勤前は null
+  note?: string;            // 備考（任意）
+}
+
+// ステータスの型（特定の値のみ許可）
+type AttendanceStatus = "出勤中" | "退勤済み" | "欠勤";
+
+// 使用例
+const record: AttendanceRecord = {
+  id: "R001",
+  employeeName: "田中",
+  date: "2026-01-28",
+  clockIn: "09:00",
+  clockOut: null,
+  note: "在宅勤務",
+};
+
+const status: AttendanceStatus = "出勤中";
+```
+
+`interface` でオブジェクトの構造を定義し、`type` で特定の値のみ許可する型を定義しています。<br />
+この使い分けが実務でも一般的なパターンです。
+
+## セクションまとめ
+
+<SectionSummary
+  points={[
+    "interface と type で型に名前をつけられる",
+    "? で省略可能なプロパティ、readonly で変更不可のプロパティを定義できる",
+    "interface はオブジェクト向け、type はどんな型にも使える",
+    "迷ったら interface を使い、interface で書けない場合に type を使う",
+  ]}
+/>
