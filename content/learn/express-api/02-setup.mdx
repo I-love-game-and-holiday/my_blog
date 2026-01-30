@@ -1,0 +1,191 @@
+---
+title: 環境構築
+order: 2
+description: プロジェクトを作成し、Express + TypeScript の開発環境をセットアップします。
+---
+
+## このレッスンで作るもの
+
+Express + TypeScript のプロジェクトをゼロから作成します。レッスンの最後には、開発サーバーが起動できる状態になります。
+
+## プロジェクトフォルダの作成
+
+ターミナルを開いて、お好きな場所にフォルダを作成します。
+
+```bash
+mkdir attendance-api
+cd attendance-api
+```
+
+VSCodeでフォルダを開きます。
+
+```bash
+code .
+```
+
+## Step 1: プロジェクトを初期化する
+
+ターミナルで以下のコマンドを実行して、Node.jsプロジェクトを初期化します。
+
+```bash
+npm init -y
+```
+
+`package.json` が作成されます。このファイルはプロジェクトの設定ファイルです。
+
+<Callout type="info">
+`-y` は全ての質問に「はい」と答えるオプションです。後から `package.json` を編集できるので、今は気にしなくてOKです。
+</Callout>
+
+## Step 2: 必要なパッケージをインストールする
+
+### Express のインストール
+
+```bash
+npm install express
+```
+
+### TypeScript と型定義のインストール
+
+```bash
+npm install -D typescript @types/express @types/node tsx
+```
+
+<Callout type="info">
+`-D` は「開発時のみ使うパッケージ」という意味です。本番環境には含まれません。
+
+- **typescript** - TypeScriptコンパイラ
+- **@types/express** - Expressの型定義（TSがExpressのコードを理解するために必要）
+- **@types/node** - Node.jsの型定義
+- **tsx** - TypeScriptファイルを直接実行するためのツール
+</Callout>
+
+### パッケージの違い
+
+<ContentTable
+  headers={["パッケージ", "種類", "役割"]}
+  rows={[
+    ["express", "本番用", "Webフレームワーク本体"],
+    ["typescript", "開発用", "TSをJSに変換するコンパイラ"],
+    ["@types/express", "開発用", "Expressの型情報"],
+    ["@types/node", "開発用", "Node.jsの型情報"],
+    ["tsx", "開発用", "TSファイルを直接実行（コンパイル不要）"],
+  ]}
+/>
+
+## Step 3: TypeScript の設定
+
+TypeScriptの設定ファイルを作成します。
+
+```bash
+npx tsc --init
+```
+
+`tsconfig.json` が作成されます。内容を以下に置き換えてください。
+
+<CollapsibleCode title="tsconfig.json" defaultOpen={false}>
+```json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src/**/*"]
+}
+```
+</CollapsibleCode>
+
+重要な設定項目だけ説明します。
+
+<ContentTable
+  headers={["設定", "説明"]}
+  rows={[
+    ["strict: true", "厳格な型チェックを有効にする（型の恩恵を最大限受けられる）"],
+    ["outDir", "コンパイル後のJSファイルの出力先"],
+    ["rootDir", "ソースコードの格納先"],
+  ]}
+/>
+
+<Callout type="info">
+その他の設定は今は理解しなくて大丈夫です。TypeScriptの設定は項目が多いですが、このコースでは上記の設定で進めます。
+</Callout>
+
+## Step 4: ソースフォルダを作成する
+
+ソースコードを格納する `src` フォルダを作成し、エントリーポイントとなるファイルを作ります。
+
+```bash
+mkdir src
+```
+
+`src/index.ts` を作成して、以下の内容を書きます。
+
+```typescript title="src/index.ts"
+console.log('Hello, Express!');
+```
+
+## Step 5: 開発用スクリプトを設定する
+
+`package.json` にスクリプトを追加します。`"scripts"` セクションを以下のように書き換えてください。
+
+```json title="package.json"
+"scripts": {
+  "dev": "tsx watch src/index.ts",
+  "build": "tsc",
+  "start": "node dist/index.js"
+}
+```
+
+<ContentTable
+  headers={["コマンド", "説明"]}
+  rows={[
+    ["npm run dev", "開発サーバーを起動（ファイル変更を自動検知）"],
+    ["npm run build", "TypeScriptをJavaScriptにコンパイル"],
+    ["npm start", "コンパイル済みのJSを実行（本番用）"],
+  ]}
+/>
+
+<Callout type="info">
+`tsx watch` はファイルの変更を検知して自動でサーバーを再起動してくれます。コース1で使った Live Server と似た役割です。
+</Callout>
+
+## Step 6: 動作確認
+
+開発サーバーを起動してみましょう。
+
+```bash
+npm run dev
+```
+
+ターミナルに以下のように表示されれば成功です。
+
+```
+Hello, Express!
+```
+
+`Ctrl + C` でサーバーを停止できます。
+
+## 現在のフォルダ構造
+
+<FileTree>
+  <FileTreeFolder name="attendance-api" defaultOpen>
+    <FileTreeFolder name="node_modules" />
+    <FileTreeFolder name="src" defaultOpen>
+      <FileTreeFile name="index.ts" active />
+    </FileTreeFolder>
+    <FileTreeFile name="package.json" />
+    <FileTreeFile name="package-lock.json" />
+    <FileTreeFile name="tsconfig.json" />
+  </FileTreeFolder>
+</FileTree>
+
+## 次のステップ
+
+開発環境の準備ができました。次のレッスンでは、Expressを使って最初のサーバーを立ち上げます。

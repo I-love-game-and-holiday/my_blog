@@ -1,0 +1,194 @@
+---
+title: サーバーを立てる
+order: 3
+description: Expressで最初のサーバーを立ち上げ、Hello World を返します。
+---
+
+## このレッスンで作るもの
+
+Expressを使って最初のAPIサーバーを立ち上げます。ブラウザからアクセスすると `Hello World` と表示される状態を作ります。
+
+## Step 1: Expressサーバーを作成する
+
+`src/index.ts` を以下の内容に書き換えてください。
+
+```typescript title="src/index.ts"
+import express from 'express';
+
+const app = express();
+const PORT = 3000;
+
+app.get('/', (req, res) => {
+  res.send('Hello World');
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+```
+
+### コードの解説
+
+1行ずつ見ていきましょう。
+
+```typescript
+import express from 'express';
+```
+
+Express パッケージを読み込みます。
+
+```typescript
+const app = express();
+```
+
+Expressアプリケーションを作成します。この `app` に対してルート（エンドポイント）を設定していきます。
+
+```typescript
+const PORT = 3000;
+```
+
+サーバーが待ち受けるポート番号です。`3000` は開発でよく使われる番号です。
+
+```typescript
+app.get('/', (req, res) => {
+  res.send('Hello World');
+});
+```
+
+`GET /` にアクセスされたときの処理を定義しています。
+
+<ContentTable
+  headers={["引数", "説明"]}
+  rows={[
+    ["req（request）", "クライアントからのリクエスト情報"],
+    ["res（response）", "クライアントに返すレスポンス"],
+  ]}
+/>
+
+`res.send()` で文字列をレスポンスとして返します。
+
+```typescript
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+```
+
+指定したポートでサーバーを起動します。起動が完了するとコールバック関数が実行され、コンソールにURLが表示されます。
+
+## Step 2: サーバーを起動する
+
+ターミナルで開発サーバーを起動します。
+
+```bash
+npm run dev
+```
+
+以下のように表示されれば成功です。
+
+```
+Server is running on http://localhost:3000
+```
+
+## Step 3: ブラウザで確認する
+
+ブラウザを開いて、以下のURLにアクセスしてください。
+
+```
+http://localhost:3000
+```
+
+画面に「Hello World」と表示されれば成功です。
+
+<Callout type="info">
+**localhost とは？**
+
+`localhost` は「自分自身のPC」を指す特別なアドレスです。外部からはアクセスできません。
+
+`:3000` はポート番号です。1台のPCで複数のサーバーを動かすとき、ポート番号で区別します。
+</Callout>
+
+## Step 4: JSONレスポンスを返す
+
+APIは通常、文字列ではなく **JSON** 形式でデータを返します。`res.send()` を `res.json()` に変更してみましょう。
+
+```typescript title="src/index.ts" {7}
+import express from 'express';
+
+const app = express();
+const PORT = 3000;
+
+app.get('/', (req, res) => {
+  res.json({ message: 'Hello World' });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+```
+
+ブラウザをリロードすると、以下のようなJSONが表示されるはずです。
+
+```json
+{"message":"Hello World"}
+```
+
+<Callout type="info">
+**JSON（JavaScript Object Notation）** はデータのやり取りに使われる標準的な形式です。
+
+コース1の `localStorage` でも `JSON.stringify()` や `JSON.parse()` を使いましたね。APIのレスポンスもJSON形式が主流です。
+</Callout>
+
+## Step 5: JSONのパースを有効にする
+
+これから POST リクエストでクライアントからJSONデータを受け取る場面が出てきます。Expressがリクエストボディに含まれるJSONを解析できるように、ミドルウェアを追加しておきます。
+
+```typescript title="src/index.ts" {5}
+import express from 'express';
+
+const app = express();
+
+app.use(express.json());
+
+const PORT = 3000;
+
+app.get('/', (req, res) => {
+  res.json({ message: 'Hello World' });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+```
+
+<LearnMore>
+`app.use()` は **ミドルウェア** を登録するメソッドです。ミドルウェアとは、リクエストとレスポンスの間に挟まる処理のことです。
+
+`express.json()` は、リクエストボディのJSONを自動的にパース（解析）して `req.body` に格納してくれます。
+
+例えば、クライアントが以下のJSONを送った場合：
+```json
+{ "name": "田中" }
+```
+
+`req.body.name` で `"田中"` を取得できるようになります。
+</LearnMore>
+
+## 現在のフォルダ構造
+
+<FileTree>
+  <FileTreeFolder name="attendance-api" defaultOpen>
+    <FileTreeFolder name="node_modules" />
+    <FileTreeFolder name="src" defaultOpen>
+      <FileTreeFile name="index.ts" active />
+    </FileTreeFolder>
+    <FileTreeFile name="package.json" />
+    <FileTreeFile name="package-lock.json" />
+    <FileTreeFile name="tsconfig.json" />
+  </FileTreeFolder>
+</FileTree>
+
+## 次のステップ
+
+サーバーが起動し、JSONレスポンスも返せるようになりました。
+
+次のレッスンでは、勤怠管理のデータ構造を定義して、勤務記録の一覧を返すAPIを作ります。

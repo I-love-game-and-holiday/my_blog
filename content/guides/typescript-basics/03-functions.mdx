@@ -1,0 +1,174 @@
+---
+title: 関数の型
+order: 3
+description: 関数の引数や戻り値に型をつける方法を学ぼう
+---
+
+## 関数に型をつける意味
+
+前のセクションでは変数に型をつけました。<br />
+関数でも同じように、**引数**（受け取るデータ）と**戻り値**（返すデータ）に型を指定できます。
+
+```typescript
+function add(a: number, b: number): number {
+  return a + b;
+}
+```
+
+- `a: number` `b: number` → 引数の型
+- `: number`（閉じ括弧の後ろ）→ 戻り値の型
+
+これにより、間違った使い方をした時点でエラーが出ます。
+
+```typescript
+add(10, "20");   // エラー: 'string' 型を 'number' 型に割り当てられません
+add(10);         // エラー: 2個の引数が必要ですが、1個しかありません
+```
+
+## 引数の型
+
+### 基本
+
+引数名の後ろに `: 型` を書きます。
+
+```typescript
+function greet(name: string): void {
+  console.log(`こんにちは、${name}さん`);
+}
+
+greet("田中");    // OK
+greet(123);       // エラー
+```
+
+### 省略可能な引数（オプショナル引数）
+
+引数名の後ろに `?` をつけると、その引数は省略可能になります。
+
+```typescript
+function greet(name: string, title?: string): void {
+  if (title) {
+    console.log(`こんにちは、${title}の${name}さん`);
+  } else {
+    console.log(`こんにちは、${name}さん`);
+  }
+}
+
+greet("田中");           // OK: "こんにちは、田中さん"
+greet("田中", "部長");   // OK: "こんにちは、部長の田中さん"
+```
+
+省略された場合、その引数の値は `undefined` になります。
+
+<Callout>
+**省略可能な引数は、慣例的に必須の引数より後に書く**
+
+```typescript
+// OK
+function example(required: string, optional?: number): void { ... }
+```
+
+省略可能な引数を先に書くと、呼び出し時に省略できなくなるため意味がありません。<br />
+慣例として、省略可能な引数は引数リストの最後に置きます。
+</Callout>
+
+### デフォルト引数
+
+引数にデフォルト値を設定することもできます。<br />
+省略された場合にデフォルト値が使われます。
+
+```typescript
+function greet(name: string, greeting: string = "こんにちは"): void {
+  console.log(`${greeting}、${name}さん`);
+}
+
+greet("田中");              // "こんにちは、田中さん"
+greet("田中", "おはよう");  // "おはよう、田中さん"
+```
+
+## 戻り値の型
+
+### 基本
+
+関数の引数リストの後ろに `: 型` を書きます。
+
+```typescript
+function multiply(a: number, b: number): number {
+  return a * b;
+}
+
+const result: number = multiply(3, 5);  // 15
+```
+
+### void ── 何も返さない関数
+
+戻り値がない関数には `void` を使います。
+
+```typescript
+function logMessage(message: string): void {
+  console.log(message);
+  // return 文がない = 何も返さない
+}
+```
+
+`void` は「この関数は値を返しません」という宣言です。<br />
+`console.log` のような、処理だけして何も返さない関数で使います。
+
+## アロー関数
+
+JavaScript のアロー関数にも同じように型をつけられます。
+
+```typescript
+// 通常の関数
+function add(a: number, b: number): number {
+  return a + b;
+}
+
+// アロー関数
+const add = (a: number, b: number): number => {
+  return a + b;
+};
+
+// アロー関数（省略記法：1行で return できる場合）
+const add = (a: number, b: number): number => a + b;
+```
+
+どの書き方でも型の指定方法は同じです。
+
+## 関数の型定義
+
+関数そのものの型を定義することもできます。<br />
+同じ形の関数が複数ある場合に、型を揃えるのに便利です。
+
+```typescript
+// 「数値を2つ受け取って数値を返す関数」の型を定義
+type CalcFunction = (x: number, y: number) => number;
+
+// 同じ型の関数を複数作る
+const add: CalcFunction = (x, y) => x + y;
+const multiply: CalcFunction = (x, y) => x * y;
+
+// どちらも同じ形なので、同じように呼び出せる
+add(10, 5);       // 15
+multiply(10, 5);  // 50
+```
+
+型を定義しておくと、形が合わない関数を作ろうとした場合にエラーになります。
+
+```typescript
+// エラー: 文字列を返す関数は CalcFunction に合わない
+const concat: CalcFunction = (x, y) => `${x} + ${y}`;
+```
+
+`type` については次のセクションで詳しく説明します。<br />
+ここでは「関数にも型をつけられる」ということだけ覚えておいてください。
+
+## セクションまとめ
+
+<SectionSummary
+  points={[
+    "関数の引数と戻り値に型を指定できる",
+    "引数名の後ろに ? をつけると省略可能になる",
+    "何も返さない関数の戻り値は void",
+    "アロー関数にも同じように型をつけられる",
+  ]}
+/>
