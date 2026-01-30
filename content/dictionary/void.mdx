@@ -1,0 +1,109 @@
+---
+term: void
+reading: ぼいど
+aliases: ["Void", "ボイド", "void型"]
+---
+
+**void**とは、「**値がない**」ことを表すために使われる概念です。
+
+関数が何も値を返さないとき、その戻り値の型として `void` が使われます。<br/>
+特定の言語の機能ではなく、C、Java、TypeScriptなど**多くのプログラミング言語に共通する概念**です。
+
+## なぜ「値がない」ことを表す必要があるのか
+
+関数には大きく分けて2種類あります。
+
+- **値を返す関数** — 計算結果やデータを呼び出し元に返す
+- **値を返さない関数** — 画面に表示する、ファイルに保存するなど、処理だけを行う
+
+値を返さない関数の戻り値に型を付ける必要があるとき、「何も返さない」という意味で `void` を使います。
+
+## 具体例
+
+いくつかの言語で `void` がどのように使われるか見てみましょう。
+
+**C言語:**
+
+```c
+void sayHello() {
+    printf("Hello");
+}
+```
+
+**Java:**
+
+```java
+void sayHello() {
+    System.out.println("Hello");
+}
+```
+
+**TypeScript:**
+
+```typescript
+function sayHello(): void {
+    console.log("Hello");
+}
+```
+
+どの言語でも、`sayHello` は画面に「Hello」と表示するだけで、呼び出し元に値を返しません。<br/>
+その「何も返さない」ことを `void` で明示しています。
+
+## 値を返す関数との比較
+
+`void` の関数と値を返す関数を並べて比較すると、違いがはっきりします。
+
+```typescript
+// 値を返さない関数（void）
+function greet(name: string): void {
+    console.log(`こんにちは、${name}さん`);
+}
+
+// 値を返す関数（string）
+function createGreeting(name: string): string {
+    return `こんにちは、${name}さん`;
+}
+```
+
+- `greet` は画面に表示するだけで、結果を返しません（`void`）
+- `createGreeting` は挨拶文を文字列として返します（`string`）
+
+## voidはなんのために必要？
+
+voidには大きく2つの役割があります。
+
+### 1. 関数の意図を明示する
+
+voidがあることで、関数の宣言を見ただけで「この関数は値を返さない」とわかります。
+
+```typescript
+function saveToFile(data: string): void { ... }
+function loadFromFile(path: string): string { ... }
+```
+
+voidがなければ、関数の中身を1行ずつ読んで `return` があるか確認しなければなりません。<br/>
+voidは、コードを読む人への「この関数は処理をするだけで、結果は返さないよ」というメッセージです。
+
+### 2. ミスを自動で検出できる
+
+voidの関数は「値を返さない」と宣言しているため、誤って値を返そうとするとエラーになります。
+
+```typescript
+function saveToFile(data: string): void {
+    // ファイルに保存する処理
+    return "保存しました"; // 型エラー！voidなのに値を返している
+}
+```
+
+voidがなければ、このような意図しない `return` を見逃してしまうかもしれません。<br/>
+voidがあるおかげで、「この関数は値を返さないはずなのに返している」とエラーで教えてくれます。
+
+## まとめ
+
+<SectionSummary
+  points={[
+    "voidは関数が値を返さないことを表す概念",
+    "関数の意図を明示し、コードを読む人が中身を見なくても戻り値の有無がわかる",
+    "コンパイラや型チェッカーがvoidを手がかりにミスを検出してくれる",
+  ]}
+/>

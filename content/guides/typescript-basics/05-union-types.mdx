@@ -1,0 +1,168 @@
+---
+title: Union型と型の絞り込み
+order: 5
+description: 複数の型を組み合わせる方法と、安全に使い分ける方法を学ぼう
+---
+
+## Union型とは
+
+前のセクションで、こんなコードが登場しました。
+
+```typescript
+type AttendanceStatus = "出勤中" | "退勤済み" | "欠勤";
+```
+
+`|` で複数の型をつなげたものを **Union型**（ユニオンがた）といいます。<br />
+「この変数には、A **または** B が入る」という意味です。
+
+```typescript
+// string または number が入る変数
+let id: string | number;
+
+id = "ABC-001";  // OK
+id = 123;        // OK
+id = true;       // エラー: 'boolean' 型は割り当てられない
+```
+
+## よく使うパターン
+
+### null を許容する型
+
+「値があるかもしれないし、ないかもしれない」場合に使います。
+
+```typescript
+// 退勤時刻は、まだ退勤していなければ null
+let clockOut: string | null = null;
+
+// 退勤したら値が入る
+clockOut = "18:00";
+```
+
+前のセクションで定義した `AttendanceRecord` でも使っていました。
+
+```typescript
+interface AttendanceRecord {
+  readonly id: string;
+  employeeName: string;
+  date: string;
+  clockIn: string;
+  clockOut: string | null;  // ← ここ
+  note?: string;
+}
+```
+
+### リテラル型の Union
+
+特定の値だけを許可する型を作れます。
+
+```typescript
+type Status = "active" | "inactive" | "suspended";
+
+let userStatus: Status = "active";     // OK
+userStatus = "inactive";               // OK
+userStatus = "deleted";                // エラー: '"deleted"' 型は 'Status' 型に割り当てられない
+```
+
+文字列だけでなく、数値のリテラル型も作れます。
+
+```typescript
+type DiceValue = 1 | 2 | 3 | 4 | 5 | 6;
+
+let dice: DiceValue = 3;   // OK
+dice = 7;                   // エラー
+```
+
+## 型の絞り込み（型ガード）
+
+Union型を使うと、変数に複数の型が入る可能性があります。<br />
+そのままでは、特定の型にしかないメソッドを呼び出せません。
+
+```typescript
+function printId(id: string | number): void {
+  console.log(id.toUpperCase());
+  // エラー: 'toUpperCase' は 'number' 型に存在しません
+}
+```
+
+`id` は `string` かもしれないし `number` かもしれないので、TypeScript は `string` 専用のメソッドを許可しません。
+
+### typeof による絞り込み
+
+`typeof` を使って型を判定すると、そのブロック内では型が確定します。
+
+```typescript
+function printId(id: string | number): void {
+  if (typeof id === "string") {
+    // このブロック内では id は string 型として扱われる
+    console.log(id.toUpperCase());
+  } else {
+    // このブロック内では id は number 型として扱われる
+    console.log(id.toFixed(0));
+  }
+}
+
+printId("abc-001");  // "ABC-001"
+printId(123);        // "123"
+```
+
+このように条件分岐で型を確定させることを**型の絞り込み**（Type Narrowing）といいます。<br />
+TypeScript が `if` の条件を見て「このブロック内なら `string` だな」と判断してくれるのです。
+
+### null チェックによる絞り込み
+
+`null` を含む Union型も同様に絞り込めます。
+
+```typescript
+function formatClockOut(clockOut: string | null): string {
+  if (clockOut === null) {
+    return "未退勤";
+  }
+  // ここでは clockOut は string 型として扱われる
+  return `退勤: ${clockOut}`;
+}
+
+formatClockOut("18:00");  // "退勤: 18:00"
+formatClockOut(null);     // "未退勤"
+```
+
+## typeof で判定できる型
+
+`typeof` で判定できる代表的な型は以下です。
+
+<ContentTable
+  headers={["typeof の結果", "対応する型"]}
+  rows={[
+    ["\"string\"", "string"],
+    ["\"number\"", "number"],
+    ["\"boolean\"", "boolean"],
+    ["\"undefined\"", "undefined"],
+    ["\"object\"", "オブジェクト、配列、null"],
+  ]}
+/>
+
+<Callout type="warning">
+**typeof null は "object" になる**
+
+JavaScript の歴史的な仕様により、`typeof null` は `"object"` を返します。<br />
+`null` を判定するときは `typeof` ではなく `=== null` を使いましょう。
+
+```typescript
+function example(value: string | null): void {
+  // よくない: typeof value === "object" だと null も通ってしまう
+  if (value === null) {
+    console.log("値がありません");
+    return;
+  }
+  console.log(value.toUpperCase());
+}
+```
+</Callout>
+## セクションまとめ
+
+<SectionSummary
+  points={[
+    "Union型は | で複数の型を組み合わせる（例: string | number）",
+    "null を許容する型や、特定の値だけ許可するリテラル型に使う",
+    "typeof や === null で型を絞り込むと、そのブロック内で型が確定する"
+  ]}
+/>
