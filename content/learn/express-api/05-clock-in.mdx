@@ -1,0 +1,343 @@
+---
+title: 出勤・退勤を記録する
+order: 5
+description: POSTリクエストで出勤・退勤の打刻を記録するAPIを作ります。
+---
+
+## このレッスンで作るもの
+
+POSTリクエストを使って、出勤と退勤を記録するAPIを2つ作ります。
+
+- `POST /records/clock-in` - 出勤打刻
+- `POST /records/clock-out` - 退勤打刻
+
+## GETとPOSTの違い
+
+前のレッスンでは `GET` でデータを取得しました。今回は `POST` でデータを作成・更新します。
+
+<ContentTable
+  headers={["メソッド", "用途", "データの送り方"]}
+  rows={[
+    ["GET", "データを取得する", "URLのみ（ボディなし）"],
+    ["POST", "データを作成する", "リクエストボディにJSONを含める"],
+  ]}
+/>
+
+GETはブラウザのアドレスバーからテストできましたが、POSTはブラウザから直接送ることができません。ターミナルから `curl` コマンドを使ってテストします。
+
+<Callout type="info">
+**curl（カール）** はターミナルからHTTPリクエストを送れるコマンドラインツールです。
+
+APIの動作確認でよく使われます。ほとんどのOS（Mac / Linux / Windows 10以降）にプリインストールされています。
+</Callout>
+
+## Step 1: 出勤打刻APIを作る
+
+`src/index.ts` に出勤打刻のエンドポイントを追加します。
+
+```typescript title="src/index.ts"
+import express from 'express';
+import { getRecords, getRecordById, addRecord, generateId } from './data.js';
+
+const app = express();
+
+app.use(express.json());
+
+const PORT = 3000;
+
+// 勤務記録の一覧を取得
+app.get('/records', (req, res) => {
+  const records = getRecords();
+  res.json(records);
+});
+
+// 特定の勤務記録を取得
+app.get('/records/:id', (req, res) => {
+  const record = getRecordById(req.params.id);
+
+  if (!record) {
+    res.status(404).json({ error: '記録が見つかりません' });
+    return;
+  }
+
+  res.json(record);
+});
+
+// 出勤打刻
+app.post('/records/clock-in', (req, res) => {
+  const { employeeName, date, clockIn, note } = req.body;
+
+  // 必須項目のチェック
+  if (!employeeName || !date || !clockIn) {
+    res.status(400).json({ error: 'employeeName, date, clockIn は必須です' });
+    return;
+  }
+
+  const newRecord = {
+    id: generateId(),
+    employeeName,
+    date,
+    clockIn,
+    clockOut: null,
+    note: note || '',
+  };
+
+  addRecord(newRecord);
+  res.status(201).json(newRecord);
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+```
+
+### コードの解説
+
+```typescript
+const { employeeName, date, clockIn, note } = req.body;
+```
+
+リクエストボディからデータを取り出しています。これは**分割代入（destructuring）**という書き方です。
+
+<LearnMore>
+分割代入は、オブジェクトのプロパティを個別の変数に展開する構文です。
+
+```typescript
+// 通常の書き方
+const employeeName = req.body.employeeName;
+const date = req.body.date;
+
+// 分割代入（同じ意味）
+const { employeeName, date } = req.body;
+```
+
+コードが短くなり、読みやすくなります。
+</LearnMore>
+
+```typescript
+res.status(201).json(newRecord);
+```
+
+ステータスコード `201`（Created）は「新しいリソースが作成された」ことを意味します。POSTで新しいデータを作成した場合に使います。
+
+## Step 2: curlで出勤打刻をテストする
+
+開発サーバーが起動している状態で、**別のターミナル**を開いて以下のコマンドを実行します。
+
+<OsCodeBlock
+  mac={`curl -X POST http://localhost:3000/records/clock-in \\
+  -H "Content-Type: application/json" \\
+  -d '{"employeeName": "鈴木一郎", "date": "2026-01-28", "clockIn": "09:00"}'`}
+  windows={`curl -X POST http://localhost:3000/records/clock-in ^
+  -H "Content-Type: application/json" ^
+  -d "{\\"employeeName\\": \\"鈴木一郎\\", \\"date\\": \\"2026-01-28\\", \\"clockIn\\": \\"09:00\\"}"  `}
+/>
+
+### curlコマンドの解説
+
+<ContentTable
+  headers={["オプション", "意味"]}
+  rows={[
+    ["-X POST", "POSTメソッドでリクエストを送る"],
+    ["-H \"Content-Type: application/json\"", "送るデータがJSON形式であることを伝える"],
+    ["-d '{...}'", "リクエストボディ（送るデータ）"],
+  ]}
+/>
+
+成功すると以下のようなレスポンスが返ります。
+
+```json
+{
+  "id": "4",
+  "employeeName": "鈴木一郎",
+  "date": "2026-01-28",
+  "clockIn": "09:00",
+  "clockOut": null,
+  "note": ""
+}
+```
+
+`GET /records` にアクセスして、新しい記録が追加されていることを確認しましょう。
+
+```
+http://localhost:3000/records
+```
+
+## Step 3: 退勤打刻APIを作る
+
+退勤打刻は、既存の出勤記録に対して `clockOut` を更新する処理です。
+
+出勤打刻のエンドポイントの下に追加してください。
+
+```typescript title="src/index.ts"
+// 退勤打刻
+app.post('/records/clock-out', (req, res) => {
+  const { id, clockOut } = req.body;
+
+  // 必須項目のチェック
+  if (!id || !clockOut) {
+    res.status(400).json({ error: 'id, clockOut は必須です' });
+    return;
+  }
+
+  const record = getRecordById(id);
+
+  if (!record) {
+    res.status(404).json({ error: '記録が見つかりません' });
+    return;
+  }
+
+  if (record.clockOut !== null) {
+    res.status(400).json({ error: 'すでに退勤が記録されています' });
+    return;
+  }
+
+  record.clockOut = clockOut;
+  res.json(record);
+});
+```
+
+### ポイント
+
+退勤打刻では3つのチェックを行っています。
+
+1. **必須項目チェック** - `id` と `clockOut` が必要
+2. **存在チェック** - 指定されたIDの記録が存在するか
+3. **二重打刻チェック** - すでに退勤が記録されていないか
+
+## Step 4: curlで退勤打刻をテストする
+
+先ほど出勤登録した鈴木一郎さん（id: 4）の退勤を記録します。
+
+<OsCodeBlock
+  mac={`curl -X POST http://localhost:3000/records/clock-out \\
+  -H "Content-Type: application/json" \\
+  -d '{"id": "4", "clockOut": "18:00"}'`}
+  windows={`curl -X POST http://localhost:3000/records/clock-out ^
+  -H "Content-Type: application/json" ^
+  -d "{\\"id\\": \\"4\\", \\"clockOut\\": \\"18:00\\"}"  `}
+/>
+
+成功すると以下のようなレスポンスが返ります。
+
+```json
+{
+  "id": "4",
+  "employeeName": "鈴木一郎",
+  "date": "2026-01-28",
+  "clockIn": "09:00",
+  "clockOut": "18:00",
+  "note": ""
+}
+```
+
+### エラーケースも試してみよう
+
+すでに退勤済みの記録に対してもう一度退勤を記録しようとするとどうなるか試してみましょう。
+
+<OsCodeBlock
+  mac={`curl -X POST http://localhost:3000/records/clock-out \\
+  -H "Content-Type: application/json" \\
+  -d '{"id": "4", "clockOut": "19:00"}'`}
+  windows={`curl -X POST http://localhost:3000/records/clock-out ^
+  -H "Content-Type: application/json" ^
+  -d "{\\"id\\": \\"4\\", \\"clockOut\\": \\"19:00\\"}"  `}
+/>
+
+```json
+{
+  "error": "すでに退勤が記録されています"
+}
+```
+
+エラーが正しく返ってきますね。
+
+## 完成コード
+
+<CollapsibleCode title="src/index.ts 全体" defaultOpen={false}>
+```typescript
+import express from 'express';
+import { getRecords, getRecordById, addRecord, generateId } from './data.js';
+
+const app = express();
+
+app.use(express.json());
+
+const PORT = 3000;
+
+// 勤務記録の一覧を取得
+app.get('/records', (req, res) => {
+  const records = getRecords();
+  res.json(records);
+});
+
+// 特定の勤務記録を取得
+app.get('/records/:id', (req, res) => {
+  const record = getRecordById(req.params.id);
+
+  if (!record) {
+    res.status(404).json({ error: '記録が見つかりません' });
+    return;
+  }
+
+  res.json(record);
+});
+
+// 出勤打刻
+app.post('/records/clock-in', (req, res) => {
+  const { employeeName, date, clockIn, note } = req.body;
+
+  if (!employeeName || !date || !clockIn) {
+    res.status(400).json({ error: 'employeeName, date, clockIn は必須です' });
+    return;
+  }
+
+  const newRecord = {
+    id: generateId(),
+    employeeName,
+    date,
+    clockIn,
+    clockOut: null,
+    note: note || '',
+  };
+
+  addRecord(newRecord);
+  res.status(201).json(newRecord);
+});
+
+// 退勤打刻
+app.post('/records/clock-out', (req, res) => {
+  const { id, clockOut } = req.body;
+
+  if (!id || !clockOut) {
+    res.status(400).json({ error: 'id, clockOut は必須です' });
+    return;
+  }
+
+  const record = getRecordById(id);
+
+  if (!record) {
+    res.status(404).json({ error: '記録が見つかりません' });
+    return;
+  }
+
+  if (record.clockOut !== null) {
+    res.status(400).json({ error: 'すでに退勤が記録されています' });
+    return;
+  }
+
+  record.clockOut = clockOut;
+  res.json(record);
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+```
+</CollapsibleCode>
+
+## 次のステップ
+
+出勤・退勤の記録ができるようになりました。CRUDの**C**reateと**R**ead が完成しています。
+
+次のレッスンでは、PUTとDELETEを使って記録の修正と削除（**U**pdate と **D**elete）を実装します。
