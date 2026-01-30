@@ -1,0 +1,300 @@
+---
+title: 記録を修正・削除する
+order: 6
+description: PUTとDELETEメソッドで勤務記録の修正と削除を実装します。
+---
+
+## このレッスンで作るもの
+
+CRUDの残り2つ、**U**pdate と **D**elete を実装します。
+
+- `PUT /records/:id` - 打刻の修正
+- `DELETE /records/:id` - 記録の削除
+
+## なぜ修正・削除が必要なのか
+
+勤怠管理では、こんな場面が日常的にあります。
+
+- 出勤時刻を間違えて打刻した → **修正**
+- 間違って登録してしまった記録がある → **削除**
+
+実務のシステムでは当たり前に存在する機能です。
+
+## Step 1: 修正APIを作る
+
+`src/index.ts` に `PUT /records/:id` を追加します。退勤打刻のエンドポイントの下に追加してください。
+
+```typescript title="src/index.ts"
+import express from 'express';
+import {
+  getRecords,
+  getRecordById,
+  addRecord,
+  updateRecord,
+  deleteRecord,
+  generateId,
+} from './data.js';
+
+// ... 既存のエンドポイント ...
+
+// 記録を修正
+app.put('/records/:id', (req, res) => {
+  const { id } = req.params;
+  const updates = req.body;
+
+  const updatedRecord = updateRecord(id, updates);
+
+  if (!updatedRecord) {
+    res.status(404).json({ error: '記録が見つかりません' });
+    return;
+  }
+
+  res.json(updatedRecord);
+});
+```
+
+### PUTメソッドについて
+
+`PUT` は既存のリソースを更新するためのHTTPメソッドです。
+
+```
+PUT /records/3  →  ID:3 の記録を更新
+```
+
+`req.params.id` でURLのIDを取得し、`req.body` で更新したいデータを受け取ります。
+
+## Step 2: curlで修正をテストする
+
+田中太郎さん（id: 3）の出勤時刻を修正してみましょう。備考も更新します。
+
+<OsCodeBlock
+  mac={`curl -X PUT http://localhost:3000/records/3 \\
+  -H "Content-Type: application/json" \\
+  -d '{"clockIn": "09:00", "note": "遅延証明書提出済み"}'`}
+  windows={`curl -X PUT http://localhost:3000/records/3 ^
+  -H "Content-Type: application/json" ^
+  -d "{\\"clockIn\\": \\"09:00\\", \\"note\\": \\"遅延証明書提出済み\\"}"  `}
+/>
+
+成功すると更新後のデータが返ってきます。
+
+```json
+{
+  "id": "3",
+  "employeeName": "田中太郎",
+  "date": "2026-01-28",
+  "clockIn": "09:00",
+  "clockOut": null,
+  "note": "遅延証明書提出済み"
+}
+```
+
+`clockIn` が `"09:15"` から `"09:00"` に、`note` が `"電車遅延"` から `"遅延証明書提出済み"` に更新されていることを確認しましょう。
+
+<Callout type="info">
+`PUT` では送ったプロパティだけが更新されます。今回は `clockIn` と `note` だけを送ったので、`employeeName` や `date` はそのまま残ります。
+
+これは `data.ts` の `updateRecord` 関数でスプレッド構文 `{ ...records[index], ...updates }` を使っているためです。
+</Callout>
+
+## Step 3: 削除APIを作る
+
+`DELETE /records/:id` を追加します。
+
+```typescript title="src/index.ts"
+// 記録を削除
+app.delete('/records/:id', (req, res) => {
+  const { id } = req.params;
+
+  const deleted = deleteRecord(id);
+
+  if (!deleted) {
+    res.status(404).json({ error: '記録が見つかりません' });
+    return;
+  }
+
+  res.status(204).send();
+});
+```
+
+### ステータスコード 204
+
+`204 No Content` は「処理は成功したが、返すデータはない」を意味します。削除が成功した場合、返すべきデータがないため `204` を使います。
+
+`res.status(204).send()` は、ボディなしのレスポンスを返します。
+
+## Step 4: curlで削除をテストする
+
+佐藤花子さん（id: 2）の記録を削除してみましょう。
+
+<OsCodeBlock
+  mac={`curl -X DELETE http://localhost:3000/records/2 -v`}
+  windows={`curl -X DELETE http://localhost:3000/records/2 -v`}
+/>
+
+<Callout type="info">
+`-v` はレスポンスの詳細（ステータスコードやヘッダー）を表示するオプションです。`204 No Content` が返ってくることを確認しましょう。
+</Callout>
+
+削除後、一覧を取得して確認します。
+
+```
+http://localhost:3000/records
+```
+
+佐藤花子の記録が消えていれば成功です。
+
+### 存在しないIDの削除
+
+存在しないIDを指定した場合のエラーも確認しておきましょう。
+
+<OsCodeBlock
+  mac={`curl -X DELETE http://localhost:3000/records/999`}
+  windows={`curl -X DELETE http://localhost:3000/records/999`}
+/>
+
+```json
+{
+  "error": "記録が見つかりません"
+}
+```
+
+## CRUD完成
+
+ここまでで、全てのCRUD操作が完成しました。
+
+<ContentTable
+  headers={["操作", "メソッド", "エンドポイント", "レッスン"]}
+  rows={[
+    ["Create（作成）", "POST", "/records/clock-in, /records/clock-out", "レッスン5"],
+    ["Read（読取）", "GET", "/records, /records/:id", "レッスン4"],
+    ["Update（更新）", "PUT", "/records/:id", "レッスン6（今回）"],
+    ["Delete（削除）", "DELETE", "/records/:id", "レッスン6（今回）"],
+  ]}
+/>
+
+## 完成コード
+
+<CollapsibleCode title="src/index.ts 全体" defaultOpen={false}>
+```typescript
+import express from 'express';
+import {
+  getRecords,
+  getRecordById,
+  addRecord,
+  updateRecord,
+  deleteRecord,
+  generateId,
+} from './data.js';
+
+const app = express();
+
+app.use(express.json());
+
+const PORT = 3000;
+
+// 勤務記録の一覧を取得
+app.get('/records', (req, res) => {
+  const records = getRecords();
+  res.json(records);
+});
+
+// 特定の勤務記録を取得
+app.get('/records/:id', (req, res) => {
+  const record = getRecordById(req.params.id);
+
+  if (!record) {
+    res.status(404).json({ error: '記録が見つかりません' });
+    return;
+  }
+
+  res.json(record);
+});
+
+// 出勤打刻
+app.post('/records/clock-in', (req, res) => {
+  const { employeeName, date, clockIn, note } = req.body;
+
+  if (!employeeName || !date || !clockIn) {
+    res.status(400).json({ error: 'employeeName, date, clockIn は必須です' });
+    return;
+  }
+
+  const newRecord = {
+    id: generateId(),
+    employeeName,
+    date,
+    clockIn,
+    clockOut: null,
+    note: note || '',
+  };
+
+  addRecord(newRecord);
+  res.status(201).json(newRecord);
+});
+
+// 退勤打刻
+app.post('/records/clock-out', (req, res) => {
+  const { id, clockOut } = req.body;
+
+  if (!id || !clockOut) {
+    res.status(400).json({ error: 'id, clockOut は必須です' });
+    return;
+  }
+
+  const record = getRecordById(id);
+
+  if (!record) {
+    res.status(404).json({ error: '記録が見つかりません' });
+    return;
+  }
+
+  if (record.clockOut !== null) {
+    res.status(400).json({ error: 'すでに退勤が記録されています' });
+    return;
+  }
+
+  record.clockOut = clockOut;
+  res.json(record);
+});
+
+// 記録を修正
+app.put('/records/:id', (req, res) => {
+  const { id } = req.params;
+  const updates = req.body;
+
+  const updatedRecord = updateRecord(id, updates);
+
+  if (!updatedRecord) {
+    res.status(404).json({ error: '記録が見つかりません' });
+    return;
+  }
+
+  res.json(updatedRecord);
+});
+
+// 記録を削除
+app.delete('/records/:id', (req, res) => {
+  const { id } = req.params;
+
+  const deleted = deleteRecord(id);
+
+  if (!deleted) {
+    res.status(404).json({ error: '記録が見つかりません' });
+    return;
+  }
+
+  res.status(204).send();
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+```
+</CollapsibleCode>
+
+## 次のステップ
+
+CRUDが全て揃いました。しかし、現在のAPIにはまだ問題があります。
+
+例えば、出勤時刻に `"abc"` のような不正な値を送っても受け付けてしまいます。次のレッスンでは、バリデーション（入力値の検証）を追加して、より堅牢なAPIに仕上げます。
