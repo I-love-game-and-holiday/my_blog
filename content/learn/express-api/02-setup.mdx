@@ -12,24 +12,30 @@ Express + TypeScript のプロジェクトをゼロから作成します。レ�
 
 ターミナルを開いて、お好きな場所にフォルダを作成します。
 
+<CopyableCode>
 ```bash
 mkdir attendance-api
 cd attendance-api
 ```
+</CopyableCode>
 
 VSCodeでフォルダを開きます。
 
+<CopyableCode>
 ```bash
 code .
 ```
+</CopyableCode>
 
 ## Step 1: プロジェクトを初期化する
 
 ターミナルで以下のコマンドを実行して、Node.jsプロジェクトを初期化します。
 
+<CopyableCode>
 ```bash
 npm init -y
 ```
+</CopyableCode>
 
 `package.json` が作成されます。このファイルはプロジェクトの設定ファイルです。
 
@@ -41,15 +47,19 @@ npm init -y
 
 ### Express のインストール
 
+<CopyableCode>
 ```bash
 npm install express
 ```
+</CopyableCode>
 
 ### TypeScript と型定義のインストール
 
+<CopyableCode>
 ```bash
 npm install -D typescript @types/express @types/node tsx
 ```
+</CopyableCode>
 
 <Callout type="info">
 `-D` は「開発時のみ使うパッケージ」という意味です。本番環境には含まれません。
@@ -77,9 +87,11 @@ npm install -D typescript @types/express @types/node tsx
 
 TypeScriptの設定ファイルを作成します。
 
+<CopyableCode>
 ```bash
 npx tsc --init
 ```
+</CopyableCode>
 
 `tsconfig.json` が作成されます。内容を以下に置き換えてください。
 
@@ -121,9 +133,11 @@ npx tsc --init
 
 ソースコードを格納する `src` フォルダを作成し、エントリーポイントとなるファイルを作ります。
 
+<CopyableCode>
 ```bash
 mkdir src
 ```
+</CopyableCode>
 
 `src/index.ts` を作成して、以下の内容を書きます。
 
@@ -160,9 +174,11 @@ console.log('Hello, Express!');
 
 開発サーバーを起動してみましょう。
 
+<CopyableCode>
 ```bash
 npm run dev
 ```
+</CopyableCode>
 
 ターミナルに以下のように表示されれば成功です。
 
