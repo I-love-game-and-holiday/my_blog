@@ -11,7 +11,7 @@ Expressを使って最初のAPIサーバーを立ち上げます。ブラウザ�
 ## Step 1: Expressサーバーを作成する
 
 `src/index.ts` を以下の内容に書き換えてください。
-<CollapsibleCode title="index.html" defaultOpen={true}>
+<CollapsibleCode title="index.ts" defaultOpen={true}>
 ```typescript
 import express from 'express';
 
@@ -31,33 +31,48 @@ app.listen(PORT, () => {
 
 1行ずつ見ていきましょう。
 
+<div className="mt-8 border-b border-gray-200 pb-8 dark:border-neutral-700">
 Express パッケージを読み込みます。
 
 ```typescript
 import express from 'express';
 ```
+</div>
 
-
+<div className="mt-8 border-b border-gray-200 pb-8 dark:border-neutral-700">
+Expressアプリケーションを作成します。この `app` に対してルート（エンドポイント）を設定していきます。
 
 ```typescript
 const app = express();
 ```
 
-Expressアプリケーションを作成します。この `app` に対してルート（エンドポイント）を設定していきます。
+<LearnMore>
+### express()とは
+
+このexpressパッケージを利用するために必要な宣言。
+
+<a href="https://expressjs.com/en/5x/api.html#express" target="_blank" rel="noopener noreferrer">express公式</a>
+では`Creates an Express application. The express() function is a top-level function exported by the express module.`と記載されています。
+
+</LearnMore>
+</div>
+
+<div className="mt-8 border-b border-gray-200 pb-8 dark:border-neutral-700">
+サーバーが待ち受けるポート番号を指定します。`3000` は開発でよく使われる番号です。
 
 ```typescript
 const PORT = 3000;
 ```
+</div>
 
-サーバーが待ち受けるポート番号です。`3000` は開発でよく使われる番号です。
+<div className="mt-8 border-b border-gray-200 pb-8 dark:border-neutral-700">
+`GET /` にアクセスされたときの処理を定義します。
 
 ```typescript
 app.get('/', (req, res) => {
   res.send('Hello World');
 });
 ```
-
-`GET /` にアクセスされたときの処理を定義しています。
 
 <ContentTable
   headers={["引数", "説明"]}
@@ -68,6 +83,11 @@ app.get('/', (req, res) => {
 />
 
 `res.send()` で文字列をレスポンスとして返します。
+</div>
+
+<div className="mt-8">
+
+サーバーが接続を受けられる状態にします。
 
 ```typescript
 app.listen(PORT, () => {
@@ -75,7 +95,11 @@ app.listen(PORT, () => {
 });
 ```
 
-指定したポートでサーバーを起動します。起動が完了するとコールバック関数が実行され、コンソールにURLが表示されます。
+指定したポート`3000`でサーバーを起動します。<br/>
+起動が完了するとコールバック関数が実行され、コンソールにURLが表示されます。
+
+<small>※このコールバック関数はデバッグ用です。なくても動きます</small>
+</div>
 
 ## Step 2: サーバーを起動する
 
@@ -95,9 +119,11 @@ Server is running on http://localhost:3000
 
 ブラウザを開いて、以下のURLにアクセスしてください。
 
-```
+<CopyableCode>
+```bash
 http://localhost:3000
 ```
+</CopyableCode>
 
 画面に「Hello World」と表示されれば成功です。
 
@@ -143,13 +169,13 @@ app.listen(PORT, () => {
 ## Step 5: JSONのパースを有効にする
 
 これから POST リクエストでクライアントからJSONデータを受け取る場面が出てきます。Expressがリクエストボディに含まれるJSONを解析できるように、ミドルウェアを追加しておきます。
-
-```typescript title="src/index.ts" {5}
+<CollapsibleCode title="index.ts" defaultOpen={true}>
+```typescript
 import express from 'express';
 
 const app = express();
 
-app.use(express.json());
+app.use(express.json());  //←追加
 
 const PORT = 3000;
 
@@ -161,6 +187,7 @@ app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
 ```
+</CollapsibleCode>
 
 <LearnMore>
 `app.use()` は **ミドルウェア** を登録するメソッドです。ミドルウェアとは、リクエストとレスポンスの間に挟まる処理のことです。
