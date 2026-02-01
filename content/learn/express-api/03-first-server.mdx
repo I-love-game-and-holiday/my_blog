@@ -11,8 +11,8 @@ Expressを使って最初のAPIサーバーを立ち上げます。ブラウザ�
 ## Step 1: Expressサーバーを作成する
 
 `src/index.ts` を以下の内容に書き換えてください。
-
-```typescript title="src/index.ts"
+<CollapsibleCode title="index.html" defaultOpen={true}>
+```typescript
 import express from 'express';
 
 const app = express();
@@ -26,16 +26,18 @@ app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
 ```
-
+</CollapsibleCode>
 ### コードの解説
 
 1行ずつ見ていきましょう。
+
+Express パッケージを読み込みます。
 
 ```typescript
 import express from 'express';
 ```
 
-Express パッケージを読み込みます。
+
 
 ```typescript
 const app = express();
