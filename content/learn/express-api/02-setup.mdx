@@ -40,7 +40,8 @@ npm init -y
 `package.json` が作成されます。このファイルはプロジェクトの設定ファイルです。
 
 <Callout type="info">
-`-y` は全ての質問に「はい」と答えるオプションです。後から `package.json` を編集できるので、今は気にしなくてOKです。
+  `-y` は全ての質問に「はい」と答えるオプションです。後から `package.json`
+  を編集できるので、今は気にしなくてOKです。
 </Callout>
 
 ## Step 2: 必要なパッケージをインストールする
@@ -62,12 +63,12 @@ npm install -D typescript @types/express @types/node tsx
 </CopyableCode>
 
 <Callout type="info">
-`-D` は「開発時のみ使うパッケージ」という意味です。本番環境には含まれません。
+  `-D` は「開発時のみ使うパッケージ」という意味です。本番環境には含まれません。
 
-- **typescript** - TypeScriptコンパイラ
-- **@types/express** - Expressの型定義（TSがExpressのコードを理解するために必要）
-- **@types/node** - Node.jsの型定義
-- **tsx** - TypeScriptファイルを直接実行するためのツール
+  - **typescript** - TypeScriptコンパイラ
+  - **@types/express** - Expressの型定義（TSがExpressのコードを理解するために必要）
+  - **@types/node** - Node.jsの型定義
+  - **tsx** - TypeScriptファイルを直接実行するためのツール
 </Callout>
 
 ### パッケージの違い
@@ -95,6 +96,29 @@ npx tsc --init
 
 `tsconfig.json` が作成されます。内容を以下に置き換えてください。
 
+<LearnMore>
+### npm と npx の違い
+
+ここでは `npx tsc --init` を使いましたが、Step 2 では `npm install` を使っていました。この2つは似ていますが、役割が異なります。
+
+**npm** はパッケージの**インストールや管理**を行うツールです。`npm install express` のように、
+パッケージをプロジェクトに追加するときに使います。
+
+**npx** はパッケージのコマンドを**一時的に実行**するためのツールです。`npx tsc --init` は、
+インストール済みの `tsc`（TypeScriptコンパイラ）コマンドを実行しています。
+
+<ContentTable
+  headers={["コマンド", "役割", "例"]}
+  rows={[
+    ["npm", "パッケージのインストール・管理", "npm install express"],
+    ["npx", "パッケージのコマンドを実行", "npx tsc --init"],
+  ]}
+/>
+
+`npx` を使うと、グローバルインストールしなくてもプロジェクト内のパッケージのコマンドを実行できるので便利です。
+
+</LearnMore>
+
 <CollapsibleCode title="tsconfig.json" defaultOpen={false}>
 ```json
 {
@@ -119,14 +143,17 @@ npx tsc --init
 <ContentTable
   headers={["設定", "説明"]}
   rows={[
-    ["strict: true", "厳格な型チェックを有効にする（型の恩恵を最大限受けられる）"],
+    [
+      "strict: true",
+      "厳格な型チェックを有効にする（型の恩恵を最大限受けられる）",
+    ],
     ["outDir", "コンパイル後のJSファイルの出力先"],
     ["rootDir", "ソースコードの格納先"],
   ]}
 />
 
 <Callout type="info">
-その他の設定は今は理解しなくて大丈夫です。TypeScriptの設定は項目が多いですが、このコースでは上記の設定で進めます。
+  `tsconfig.json` は TypeScript の設定ファイルです。今は中身を理解しなくても大丈夫なので、そのままコピーして使ってください。
 </Callout>
 
 ## Step 4: ソースフォルダを作成する
@@ -139,11 +166,17 @@ mkdir src
 ```
 </CopyableCode>
 
+<Callout type="info">
+  `src` は ソースコードを格納するフォルダーです。これは執筆者の好みではなく、業界の標準的な習慣です。
+</Callout>
+
 `src/index.ts` を作成して、以下の内容を書きます。
 
-```typescript title="src/index.ts"
-console.log('Hello, Express!');
+<CopyableCode>
+```typescript　title="src/index.ts"
+console.log("Hello, Express!");
 ```
+</CopyableCode>
 
 ## Step 5: 開発用スクリプトを設定する
 
@@ -166,9 +199,25 @@ console.log('Hello, Express!');
   ]}
 />
 
-<Callout type="info">
-`tsx watch` はファイルの変更を検知して自動でサーバーを再起動してくれます。コース1で使った Live Server と似た役割です。
-</Callout>
+<LearnMore>
+### スクリプトとは
+
+`package.json` の `"scripts"` には、よく使うコマンドに**短い名前**をつけて登録できます。
+
+開発サーバーを起動する際に毎回 `tsx watch src/index.ts` と入力するのは面倒ですよね。
+そこで `"dev"` という名前を付けておけば、`npm run dev` だけで同じコマンドが実行されるようになります。
+
+```
+"dev": "tsx watch src/index.ts"
+↓ npm run dev と入力するだけで
+↓ tsx watch src/index.ts が実行される
+```
+
+これにより、長いコマンドを覚えなくても `npm run dev` で開発を始められます。
+また、 `npm run dev` で開発サーバーが起動するという共通ルールが慣例的に存在してるので、
+チームやプロジェクトが変わってもこのコマンドを覚えておけば新しいプロジェクトに参加したときもすぐに開発を始められます。
+
+</LearnMore>
 
 ## Step 6: 動作確認
 
@@ -180,15 +229,21 @@ npm run dev
 ```
 </CopyableCode>
 
-ターミナルに以下のように表示されれば成功です。
-
-```
-Hello, Express!
-```
+ターミナルに以下のように『Hello, Express!』と表示されれば成功です。
+<ContentImage
+  src="/learn/express-api/hello-world.jpg"
+  alt="express開発サーバーの起動テスト"
+  caption=""
+  width={500}
+  height={450}
+/>
 
 `Ctrl + C` でサーバーを停止できます。
 
 ## 現在のフォルダ構造
+
+現在のフォルダー構成です。`src`と`index.ts`以外は自動生成されるはずですので、
+もし存在しない場合は、操作に漏れがないか確認しましょう。
 
 <FileTree>
   <FileTreeFolder name="attendance-api" defaultOpen>
