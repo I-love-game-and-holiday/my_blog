@@ -12,6 +12,7 @@ import { SectionSummary } from '@/components/content/section-summary'
 import { Callout } from '@/components/content/callout'
 import { OsCommandTabs, OsCodeBlock } from '@/components/code'
 import { OsTable } from '@/components/os/os-table'
+import { LearnMore } from '@/components/content/learn-more'
 
 const mdxComponents = {
     ContentImage,
@@ -23,6 +24,7 @@ const mdxComponents = {
     OsCommandTabs,
     OsCodeBlock,
     OsTable,
+    LearnMore,
 }
 
 const DICTIONARY_DIR = path.join(process.cwd(), 'content', 'dictionary')
