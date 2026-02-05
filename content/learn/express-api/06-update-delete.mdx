@@ -4,6 +4,14 @@ order: 6
 description: PUTとDELETEメソッドで勤務記録の修正と削除を実装します。
 ---
 
+{/* TODO: 開発メモ
+  04-get-records.mdx で data.ts を GET 用関数のみに縮小済み。
+  05-clock-in.mdx で addRecord, generateId を追加する想定。
+  このレッスンで使う updateRecord, deleteRecord を data.ts に追加するステップが必要。
+  また Partial<AttendanceRecord> の解説はこのレッスン（updateRecord 初出）で行うこと。
+  ※ 04 にあった解説には note の型展開に誤り(string | null → string)があったので正しく書くこと。
+*/}
+
 ## このレッスンで作るもの
 
 CRUDの残り2つ、**U**pdate と **D**elete を実装します。

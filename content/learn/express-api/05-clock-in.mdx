@@ -4,6 +4,12 @@ order: 5
 description: POSTリクエストで出勤・退勤の打刻を記録するAPIを作ります。
 ---
 
+{/* TODO: 開発メモ
+  04-get-records.mdx で data.ts を GET 用関数(getRecords, getRecordById)のみに縮小した。
+  このレッスンで使う addRecord, generateId を data.ts に追加するステップが必要。
+  また let records / let nextId への変更も必要（push・インクリメントが発生するため）。
+*/}
+
 ## このレッスンで作るもの
 
 POSTリクエストを使って、出勤と退勤を記録するAPIを2つ作ります。
