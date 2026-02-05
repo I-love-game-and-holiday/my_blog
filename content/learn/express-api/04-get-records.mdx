@@ -16,17 +16,19 @@ description: モックデータを準備し、GET エンドポイントで勤務
 まず、勤務記録のデータ構造を TypeScript の型で定義します。
 
 `src/types.ts` を作成してください。
-
-```typescript title="src/types.ts"
+<CollapsibleCode title="src/types.ts" defaultOpen={true}>
+```typescript
 export interface AttendanceRecord {
   id: string;
   employeeName: string;
   date: string;          // "2026-01-28"
   clockIn: string;       // "09:00"
   clockOut: string | null;
-  note?: string;         // 備考（遅刻理由など）
+  note: string | null;   // 備考（遅刻理由など）
 }
 ```
+</CollapsibleCode>
+
 
 ### 型定義のポイント
 
@@ -38,23 +40,46 @@ export interface AttendanceRecord {
     ["date", "string", "勤務日（YYYY-MM-DD形式）"],
     ["clockIn", "string", "出勤時刻（HH:mm形式）"],
     ["clockOut", "string | null", "退勤時刻（未退勤ならnull）"],
-    ["note", "string | undefined", "備考（省略可能）"],
+    ["note", "string | null", "備考（なければnull）"],
   ]}
 />
 
-<Callout type="info">
-`clockOut` が `string | null` なのは、出勤はしたけどまだ退勤していない状態を表すためです。
+<LearnMore>
+**オプショナルとパイプ（`|`）の使い分け**
 
-`note?` の `?` は「省略可能（optional）」を意味します。TypeScript入門ガイドで学んだ内容ですね。
-</Callout>
+DBのカラムは必ず存在していてるのでstringかnullのどちらかになるのでパイプを利用します。
+
+対して、関数は渡す引数がない場合もあるのでオプショナルで定義することが多いです。
+
+例えば、下の画像のようなコードを表示する部分のソースコードを見てみましょう。
+
+<ContentImage
+  src="/learn/express-api/codeblock.jpg"
+  alt="コードブロックの例"
+  caption=""
+  width={500}
+  height={450}
+/>
+
+コードブロックを表示するコンポーネントはコードの折り畳み状態を任意で指定できるようにしています。
+defaultOpenはオプショナルになっていて、指定しないときはコードを折りたたんだ状態で表示します。
+隠したいときだけ引数で指定するようにしてます。
+<ContentImage
+  src="/learn/express-api/function.jpg"
+  alt="コードブロックのソースコード"
+  caption=""
+  width={500}
+  height={450}
+/>
+</LearnMore>
 
 ## Step 2: モックデータを作成する
 
 実際のデータベースの代わりに、配列でデータを管理します。
 
 `src/data.ts` を作成してください。
-
-```typescript title="src/data.ts"
+<CollapsibleCode title="src/data.ts">
+```typescript
 import { AttendanceRecord } from './types.js';
 
 let records: AttendanceRecord[] = [
@@ -64,7 +89,7 @@ let records: AttendanceRecord[] = [
     date: '2026-01-27',
     clockIn: '09:00',
     clockOut: '18:00',
-    note: '',
+    note: null,
   },
   {
     id: '2',
@@ -72,6 +97,7 @@ let records: AttendanceRecord[] = [
     date: '2026-01-27',
     clockIn: '08:45',
     clockOut: '17:30',
+    note: null,
   },
   {
     id: '3',
@@ -119,12 +145,8 @@ export function generateId(): string {
   return id;
 }
 ```
+</CollapsibleCode>
 
-<Callout type="info">
-`import` 文のパスに `.js` が付いていることに気づきましたか？
-
-TypeScriptは `.ts` ファイルをコンパイルすると `.js` になります。Node.jsの ESModules では、実行時に存在するファイルのパス（`.js`）を指定する必要があります。少し不思議ですが、TypeScriptの仕様です。
-</Callout>
 
 ### コードの解説
 
@@ -203,7 +225,7 @@ http://localhost:3000/records
     "date": "2026-01-27",
     "clockIn": "09:00",
     "clockOut": "18:00",
-    "note": ""
+    "note": null
   },
   ...
 ]
@@ -277,7 +299,7 @@ http://localhost:3000/records/1
   "date": "2026-01-27",
   "clockIn": "09:00",
   "clockOut": "18:00",
-  "note": ""
+  "note": null
 }
 ```
 
