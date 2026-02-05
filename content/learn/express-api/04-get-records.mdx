@@ -11,6 +11,8 @@ description: モックデータを準備し、GET エンドポイントで勤務
 - `GET /records` - 勤務記録の一覧を取得
 - `GET /records/:id` - 特定の勤務記録を取得
 
+上記のエンドポイントを叩いたときに、勤務記録を取得できる状態がこのレッスンのゴールです。
+
 ## Step 1: データの型を定義する
 
 まず、勤務記録のデータ構造を TypeScript の型で定義します。
@@ -45,44 +47,32 @@ export interface AttendanceRecord {
 />
 
 <LearnMore>
-**オプショナルとパイプ（`|`）の使い分け**
+**オプショナル（`?`）とパイプ（`|`）の使い分け**
 
-DBのカラムは必ず存在していてるのでstringかnullのどちらかになるのでパイプを利用します。
+`clockOut: string | null` は「値は必ず存在するが、中身が `null` の場合がある」
+ことを表します。DBのカラムのように、フィールド自体は常にあるけれど
+「まだ退勤していない」なら `null` が入る、というケースです。
 
-対して、関数は渡す引数がない場合もあるのでオプショナルで定義することが多いです。
+一方、`note?: string` のようにオプショナル（`?`）で書くと、
+「そのプロパティ自体を省略できる」という意味になります。
+関数の引数で「指定しなくてもいい」場合に使うことが多いです。
 
-例えば、下の画像のようなコードを表示する部分のソースコードを見てみましょう。
-
-<ContentImage
-  src="/learn/express-api/codeblock.jpg"
-  alt="コードブロックの例"
-  caption=""
-  width={500}
-  height={450}
-/>
-
-コードブロックを表示するコンポーネントはコードの折り畳み状態を任意で指定できるようにしています。
-defaultOpenはオプショナルになっていて、指定しないときはコードを折りたたんだ状態で表示します。
-隠したいときだけ引数で指定するようにしてます。
-<ContentImage
-  src="/learn/express-api/function.jpg"
-  alt="コードブロックのソースコード"
-  caption=""
-  width={500}
-  height={450}
-/>
+今回の `AttendanceRecord` では、全フィールドがDBのカラムとして
+必ず存在するため、「あるかないか分からない」オプショナルではなく、
+`string | null` を使っています。
 </LearnMore>
 
 ## Step 2: モックデータを作成する
 
 実際のデータベースの代わりに、配列でデータを管理します。
 
-`src/data.ts` を作成してください。
+`src/data.ts` を作成してください。<br/>
+軽く目を通して意味が分かったらコピペしていただいて構いません。
 <CollapsibleCode title="src/data.ts">
 ```typescript
 import { AttendanceRecord } from './types.js';
 
-let records: AttendanceRecord[] = [
+const records: AttendanceRecord[] = [
   {
     id: '1',
     employeeName: '田中太郎',
@@ -109,8 +99,6 @@ let records: AttendanceRecord[] = [
   },
 ];
 
-let nextId = 4;
-
 export function getRecords(): AttendanceRecord[] {
   return records;
 }
@@ -118,75 +106,46 @@ export function getRecords(): AttendanceRecord[] {
 export function getRecordById(id: string): AttendanceRecord | undefined {
   return records.find((record) => record.id === id);
 }
-
-export function addRecord(record: AttendanceRecord): void {
-  records.push(record);
-}
-
-export function updateRecord(id: string, updates: Partial<AttendanceRecord>): AttendanceRecord | undefined {
-  const index = records.findIndex((record) => record.id === id);
-  if (index === -1) return undefined;
-
-  records[index] = { ...records[index], ...updates };
-  return records[index];
-}
-
-export function deleteRecord(id: string): boolean {
-  const index = records.findIndex((record) => record.id === id);
-  if (index === -1) return false;
-
-  records.splice(index, 1);
-  return true;
-}
-
-export function generateId(): string {
-  const id = String(nextId);
-  nextId++;
-  return id;
-}
 ```
 </CollapsibleCode>
 
 
 ### コードの解説
 
-このファイルでは、データの操作に必要な関数をまとめて定義しています。
+このファイルでは、勤務記録の取得に必要な関数を定義しています。
 
 <ContentTable
   headers={["関数", "役割"]}
   rows={[
     ["getRecords()", "全ての勤務記録を返す"],
     ["getRecordById(id)", "IDで1件の記録を検索して返す"],
-    ["addRecord(record)", "新しい記録を追加する"],
-    ["updateRecord(id, updates)", "既存の記録を更新する"],
-    ["deleteRecord(id)", "記録を削除する"],
-    ["generateId()", "新しいIDを生成する"],
   ]}
 />
 
 <LearnMore>
-`Partial<AttendanceRecord>` は TypeScript の **ユーティリティ型** です。
+**`getRecordById`関数だけ戻り値に`undefined`がある理由**
 
-`AttendanceRecord` の全てのプロパティを省略可能にした型を作ります。更新時には一部のプロパティだけ変更したいケースがあるため、`Partial` を使っています。
+`getRecords`関数は、サーバーが持っている全データをそのまま返すだけなので、
+結果は常に`AttendanceRecord[]`（配列）です。空の配列になることはあっても、
+データ自体が「見つからない」という状況は起きません。
 
-```typescript
-// Partial<AttendanceRecord> は以下と同じ意味
-{
-  id?: string;
-  employeeName?: string;
-  date?: string;
-  clockIn?: string;
-  clockOut?: string | null;
-  note?: string;
-}
-```
+一方、`getRecordById`関数は、クライアントから渡されたIDで1件を検索します。
+データが100件しかないのに `id: "9999"` を指定された場合、該当するデータは
+存在しないため `undefined` を返します。
+
+このように**外部からの入力によって「見つからない」ケースがある関数**は、
+戻り値に `undefined` を含めて、呼び出し側に「見つからない可能性がある」
+ことを型で伝えます。
 </LearnMore>
+
+
 
 ## Step 3: 一覧取得APIを作る
 
 `src/index.ts` を修正して、`GET /records` エンドポイントを追加します。
 
-```typescript title="src/index.ts"
+<CollapsibleCode title="src/index.ts" defaultOpen={true}>
+```typescript
 import express from 'express';
 import { getRecords, getRecordById } from './data.js';
 
@@ -206,6 +165,7 @@ app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
 ```
+</CollapsibleCode>
 
 ## Step 4: ブラウザで確認する
 
