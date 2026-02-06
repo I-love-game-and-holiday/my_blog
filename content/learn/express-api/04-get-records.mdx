@@ -72,7 +72,7 @@ export interface AttendanceRecord {
 ```typescript
 import { AttendanceRecord } from './types.js';
 
-const records: AttendanceRecord[] = [
+export const records: AttendanceRecord[] = [
   {
     id: '1',
     employeeName: '田中太郎',
@@ -98,6 +98,28 @@ const records: AttendanceRecord[] = [
     note: '電車遅延',
   },
 ];
+```
+</CollapsibleCode>
+
+このファイルの役割は**モックデータの定義のみ**です。データへのアクセスロジック（検索や取得）は次のステップで別ファイルに書きます。
+
+<Callout type="info">
+**なぜデータと処理を分けるのか？**
+
+`data.ts` にモックデータと取得関数をまとめて書くこともできますが、「データの定義」と「データへのアクセスロジック」はそれぞれ異なる役割です。
+
+たとえば、将来モックデータをデータベースに置き換える場合、`data.ts` はモックデータごと不要になります。一方、アクセスロジックは中身がDB呼び出しに変わるだけで、ファイル自体は残ります。役割ごとにファイルを分けておけば、変更の影響範囲が明確になり、修正がしやすくなります。
+</Callout>
+
+## Step 3: データアクセス関数を作成する
+
+モックデータに対する検索・取得のロジックを `src/record-repository.ts` に書きます。
+
+`src/record-repository.ts` を作成してください。
+<CollapsibleCode title="src/record-repository.ts" defaultOpen={true}>
+```typescript
+import { AttendanceRecord } from './types.js';
+import { records } from './data.js';
 
 export function getRecords(): AttendanceRecord[] {
   return records;
@@ -108,7 +130,6 @@ export function getRecordById(id: string): AttendanceRecord | undefined {
 }
 ```
 </CollapsibleCode>
-
 
 ### コードの解説
 
@@ -140,14 +161,14 @@ export function getRecordById(id: string): AttendanceRecord | undefined {
 
 
 
-## Step 3: 一覧取得APIを作る
+## Step 4: 一覧取得APIを作る
 
 `src/index.ts` を修正して、`GET /records` エンドポイントを追加します。
 
 <CollapsibleCode title="src/index.ts" defaultOpen={true}>
 ```typescript
 import express from 'express';
-import { getRecords, getRecordById } from './data.js';
+import { getRecords, getRecordById } from './record-repository.js';
 
 const app = express();
 
@@ -167,31 +188,33 @@ app.listen(PORT, () => {
 ```
 </CollapsibleCode>
 
-## Step 4: ブラウザで確認する
+`records`というパスかつ、`GET`リクエストである場合は、このappオブジェクトが`getRecords`関数を呼び出します。<br/>
+`index.ts`は処理を行うためのルーティング(リクエストに応じて呼び出す関数を選別する)を行っていて、具体的な処理は下位の関数が担っています。
+(今回なら`getRecords`関数が下位関数)
+このような構造にすることで、APIの追加やロジックの保守が容易になります。
 
-開発サーバーを起動して（既に起動していれば自動で再読み込みされます）、ブラウザで以下のURLにアクセスしてください。
+## Step 5: ブラウザで確認する
 
-```
+開発サーバーを起動して、ブラウザで下記のURLにアクセスしてください。
+
+<CopyableCode>
+```bash
 http://localhost:3000/records
 ```
+</CopyableCode>
+
 
 モックデータがJSON形式で表示されれば成功です。
 
-```json
-[
-  {
-    "id": "1",
-    "employeeName": "田中太郎",
-    "date": "2026-01-27",
-    "clockIn": "09:00",
-    "clockOut": "18:00",
-    "note": null
-  },
-  ...
-]
-```
+<ContentImage
+  src="/learn/express-api/GET_json.jpg"
+  alt="getリクエストのレスポンスjson"
+  caption=""
+  width={200}
+  height={450}
+/>
 
-## Step 5: 個別取得APIを作る
+## Step 6: 個別取得APIを作る
 
 特定のIDの記録を取得する `GET /records/:id` を追加します。
 
@@ -215,9 +238,13 @@ app.get('/records/:id', (req, res) => {
 });
 ```
 
-### ルートパラメータ
+### パスパラメータ
 
-`:id` の部分は **ルートパラメータ** と呼ばれ、URLの一部を変数として受け取れます。
+`:id` の部分は **パスパラメータ** と呼ばれ、URLの一部を変数として受け取れます。
+
+<Callout type="info">
+Expressの公式ドキュメントでは「ルートパラメータ（Route parameters）」と呼んでいます。意味は同じですが、パスパラメータの方がフレームワークを問わず広く使われる用語です。
+</Callout>
 
 ```
 GET /records/1  →  req.params.id は "1"
@@ -242,47 +269,49 @@ GET /records/2  →  req.params.id は "2"
 ステータスコードを指定しない場合、Expressは自動的に `200` を返します。エラー時には適切なステータスコードを明示的に設定しましょう。
 </Callout>
 
-## Step 6: 動作確認
+## Step 7: 動作確認
 
-ブラウザで以下のURLにアクセスしてみましょう。
-
-```
+ブラウザで下記URLにアクセスしてみましょう。
+<CopyableCode>
+```bash
 http://localhost:3000/records/1
 ```
+</CopyableCode>
+
 
 田中太郎の記録が返ってきます。
 
-```json
-{
-  "id": "1",
-  "employeeName": "田中太郎",
-  "date": "2026-01-27",
-  "clockIn": "09:00",
-  "clockOut": "18:00",
-  "note": null
-}
-```
+<ContentImage
+  src="/learn/express-api/getById.jpg"
+  alt="idを指定したGETリクエストのレスポンスjson"
+  caption=""
+  width={200}
+  height={450}
+/>
 
 存在しないIDにアクセスしてみましょう。
-
-```
+<CopyableCode>
+```bash
 http://localhost:3000/records/999
 ```
+</CopyableCode>
 
 エラーレスポンスが返ってきます。
 
-```json
-{
-  "error": "記録が見つかりません"
-}
-```
+<ContentImage
+  src="/learn/express-api/999error.jpg"
+  alt="存在しないIDを指定したGETリクエストのレスポンスjson"
+  caption=""
+  width={200}
+  height={450}
+/>
 
 ## 完成コード
 
 <CollapsibleCode title="src/index.ts 全体" defaultOpen={false}>
 ```typescript
 import express from 'express';
-import { getRecords, getRecordById } from './data.js';
+import { getRecords, getRecordById } from './record-repository.js';
 
 const app = express();
 
@@ -322,6 +351,7 @@ app.listen(PORT, () => {
     <FileTreeFolder name="src" defaultOpen>
       <FileTreeFile name="data.ts" />
       <FileTreeFile name="index.ts" active />
+      <FileTreeFile name="record-repository.ts" />
       <FileTreeFile name="types.ts" />
     </FileTreeFolder>
     <FileTreeFile name="package.json" />
