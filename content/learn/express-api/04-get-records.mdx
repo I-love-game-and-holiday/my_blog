@@ -308,7 +308,68 @@ http://localhost:3000/records/999
 
 ## 完成コード
 
-<CollapsibleCode title="src/index.ts 全体" defaultOpen={false}>
+<CollapsibleCode title="src/types.ts" defaultOpen={false}>
+```typescript
+export interface AttendanceRecord {
+  id: string;
+  employeeName: string;
+  date: string;          // "2026-01-28"
+  clockIn: string;       // "09:00"
+  clockOut: string | null;
+  note: string | null;   // 備考（遅刻理由など）
+}
+```
+</CollapsibleCode>
+
+<CollapsibleCode title="src/data.ts" defaultOpen={false}>
+```typescript
+import { AttendanceRecord } from './types.js';
+
+export const records: AttendanceRecord[] = [
+  {
+    id: '1',
+    employeeName: '田中太郎',
+    date: '2026-01-27',
+    clockIn: '09:00',
+    clockOut: '18:00',
+    note: null,
+  },
+  {
+    id: '2',
+    employeeName: '佐藤花子',
+    date: '2026-01-27',
+    clockIn: '08:45',
+    clockOut: '17:30',
+    note: null,
+  },
+  {
+    id: '3',
+    employeeName: '田中太郎',
+    date: '2026-01-28',
+    clockIn: '09:15',
+    clockOut: null,
+    note: '電車遅延',
+  },
+];
+```
+</CollapsibleCode>
+
+<CollapsibleCode title="src/record-repository.ts" defaultOpen={false}>
+```typescript
+import { AttendanceRecord } from './types.js';
+import { records } from './data.js';
+
+export function getRecords(): AttendanceRecord[] {
+  return records;
+}
+
+export function getRecordById(id: string): AttendanceRecord | undefined {
+  return records.find((record) => record.id === id);
+}
+```
+</CollapsibleCode>
+
+<CollapsibleCode title="src/index.ts" defaultOpen={false}>
 ```typescript
 import express from 'express';
 import { getRecords, getRecordById } from './record-repository.js';
@@ -349,10 +410,10 @@ app.listen(PORT, () => {
   <FileTreeFolder name="attendance-api" defaultOpen>
     <FileTreeFolder name="node_modules" />
     <FileTreeFolder name="src" defaultOpen>
-      <FileTreeFile name="data.ts" />
+      <FileTreeFile name="data.ts" active />
       <FileTreeFile name="index.ts" active />
-      <FileTreeFile name="record-repository.ts" />
-      <FileTreeFile name="types.ts" />
+      <FileTreeFile name="record-repository.ts" active />
+      <FileTreeFile name="types.ts" active />
     </FileTreeFolder>
     <FileTreeFile name="package.json" />
     <FileTreeFile name="package-lock.json" />
