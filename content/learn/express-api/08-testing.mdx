@@ -200,7 +200,7 @@ npm test
 
 ## Step 6: チャレンジ - データ操作のテストを書く
 
-余裕がある方は、`src/data.ts` のテストも書いてみましょう。
+余裕がある方は、`src/record-repository.ts` のテストも書いてみましょう。
 
 <CollapsibleCode title="ヒント: どんなテストを書くか" defaultOpen={false}>
 ```
@@ -213,7 +213,7 @@ npm test
 ```
 </CollapsibleCode>
 
-<CollapsibleCode title="答え: src/data.test.ts" defaultOpen={false}>
+<CollapsibleCode title="答え: src/record-repository.test.ts" defaultOpen={false}>
 ```typescript
 import { describe, it, expect } from 'vitest';
 import { getRecords, getRecordById, addRecord, deleteRecord } from './record-repository.js';
@@ -284,8 +284,9 @@ describe('deleteRecord', () => {
     <FileTreeFolder name="node_modules" />
     <FileTreeFolder name="src" defaultOpen>
       <FileTreeFile name="data.ts" />
-      <FileTreeFile name="data.test.ts" />
+      <FileTreeFile name="record-repository.test.ts" />
       <FileTreeFile name="index.ts" />
+      <FileTreeFile name="record-repository.ts" />
       <FileTreeFile name="types.ts" />
       <FileTreeFile name="validation.ts" />
       <FileTreeFile name="validation.test.ts" active />

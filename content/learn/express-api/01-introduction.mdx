@@ -30,6 +30,10 @@ TypeScript + Express を使って、**勤怠管理API** を作ります。
   headers={["前提", "内容"]}
   rows={[
     [
+      <a href="/guides/http-basics">Web APIのためのHTTP入門</a>,
+      "HTTPメソッド・ステータスコード・リクエスト/レスポンスの基本を学ぶ",
+    ],
+    [
       <a href="/guides/nodejs-basics">Node.js</a>,
       "JavaScriptを実行するためのソフトウェアNode.jsについて学ぼう",
     ],
@@ -57,11 +61,6 @@ REST APIでは、**HTTPメソッド** で「何をしたいか」を表現しま
     ["DELETE", "データを削除する", "記録を削除する"],
   ]}
 />
-
-<Callout type="info">
-この4つの操作は **CRUD**（**C**reate・**R**ead・**U**pdate・**D**elete）と呼ばれます。コース1のTodoアプリでも同じ操作を実装しましたね。
-
-</Callout>
 
 <LearnMore>
 HTTPメソッド自体はどのWeb APIでも使いますが、設計スタイルによってはすべての操作をPOSTで送るケースもあります（例: GraphQL APIでは、データの取得も作成もすべてPOSTで送り、リクエストの中身で操作を指定します）。
