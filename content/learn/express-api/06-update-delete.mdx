@@ -11,20 +11,95 @@ CRUDの残り2つ、**U**pdate と **D**elete を実装します。
 - `PUT /records/:id` - 打刻の修正
 - `DELETE /records/:id` - 記録の削除
 
-## なぜ修正・削除が必要なのか
+日々の仕事に追われて退勤打刻を忘れていた・出勤してるのに打刻してない。みたいなミスは割とよくありますよね。
+こういうミスに対応できるように修正・削除のAPIを作りましょう。
 
-勤怠管理では、こんな場面が日常的にあります。
 
-- 出勤時刻を間違えて打刻した → **修正**
-- 間違って登録してしまった記録がある → **削除**
+## Step 1: Partial\<AttendanceRecord\> を知る
 
-実務のシステムでは当たり前に存在する機能です。
+修正APIでは「出勤時刻だけ修正したい」「備考だけ更新したい」のように、一部のプロパティだけを送るのが一般的です。
+このとき、関数の引数の型に `AttendanceRecord` をそのまま使うと、全プロパティを渡さなければ型エラーになってしまいます。
 
-## Step 1: 修正APIを作る
+そこで使うのが `Partial<T>` です。TypeScript の組み込みユーティリティ型で、全てのプロパティをオプショナル（省略可能）にします。
+
+```typescript
+// Partial<AttendanceRecord> と書くだけで、TypeScript が内部的に以下のように展開してくれる
+// 自分で定義する必要はない
+{
+  id?: string;
+  employeeName?: string;
+  date?: string;
+  clockIn?: string;
+  clockOut?: string | null;
+  note?: string | null;
+}
+```
+
+`Partial<AttendanceRecord>` と書くだけで全プロパティがオプショナルになるため、自分で新しい型を定義する必要はありません。次のステップで、この型を引数に使った関数を作ります。
+
+<Callout type="info">
+`Partial<T>` の他にも `Required<T>`（全プロパティを必須にする）や `Pick<T, K>`（指定したプロパティだけを取り出す）など、便利なユーティリティ型があります。
+</Callout>
+
+## Step 2: record-repositoryに関数を追加する
+
+`updateRecord` と `deleteRecord` を `src/record-repository.ts` に追加します。
+
+<CopyableCode>
+```typescript
+// ... 既存の関数 ...
+
+export function updateRecord(
+  id: string,
+  updates: Partial<AttendanceRecord>,
+): AttendanceRecord | undefined {
+  const index = records.findIndex((record) => record.id === id);
+  if (index === -1) return undefined;
+  records[index] = { ...records[index], ...updates };
+  return records[index];
+}
+
+export function deleteRecord(id: string): boolean {
+  const index = records.findIndex((record) => record.id === id);
+  if (index === -1) return false;
+  records.splice(index, 1);
+  return true;
+}
+```
+</CopyableCode>
+
+### 追加した関数の解説
+
+<ContentTable
+  headers={["関数", "役割"]}
+  rows={[
+    ["updateRecord(id, updates)", "IDで記録を検索し、渡されたプロパティだけを上書きする"],
+    ["deleteRecord(id)", "IDで記録を検索し、配列から削除する"],
+  ]}
+/>
+
+### スプレッド構文による部分更新
+
+`updateRecord` の中で使っている `{ ...records[index], ...updates }` がこの関数のポイントです。
+
+スプレッド構文（`...`）はオブジェクトの中身を展開する構文で、同じキーがある場合は**後に書いた方で上書き**されます。
+
+```typescript
+const original = { clockIn: '09:15', clockOut: null, note: '電車遅延' };
+const updates  = { clockIn: '09:00', note: '遅延証明書提出済み' };
+
+const result = { ...original, ...updates };
+// → { clockIn: '09:00', clockOut: null, note: '遅延証明書提出済み' }
+```
+
+`updates` に含まれる `clockIn` と `note` だけが上書きされ、`clockOut` など送っていないプロパティはそのまま残ります。これにより、変更したいプロパティだけを送れば部分更新ができる仕組みです。
+
+## Step 3: 修正APIを作る
 
 `src/index.ts` に `PUT /records/:id` を追加します。退勤打刻のエンドポイントの下に追加してください。
 
-```typescript title="src/index.ts"
+<CopyableCode>
+```typescript
 import express from 'express';
 import {
   getRecords,
@@ -33,7 +108,7 @@ import {
   updateRecord,
   deleteRecord,
   generateId,
-} from './data.js';
+} from './record-repository.js';
 
 // ... 既存のエンドポイント ...
 
@@ -52,6 +127,7 @@ app.put('/records/:id', (req, res) => {
   res.json(updatedRecord);
 });
 ```
+</CopyableCode>
 
 ### PUTメソッドについて
 
@@ -63,7 +139,7 @@ PUT /records/3  →  ID:3 の記録を更新
 
 `req.params.id` でURLのIDを取得し、`req.body` で更新したいデータを受け取ります。
 
-## Step 2: curlで修正をテストする
+## Step 4: curlで修正をテストする
 
 田中太郎さん（id: 3）の出勤時刻を修正してみましょう。備考も更新します。
 
@@ -71,9 +147,9 @@ PUT /records/3  →  ID:3 の記録を更新
   mac={`curl -X PUT http://localhost:3000/records/3 \\
   -H "Content-Type: application/json" \\
   -d '{"clockIn": "09:00", "note": "遅延証明書提出済み"}'`}
-  windows={`curl -X PUT http://localhost:3000/records/3 ^
-  -H "Content-Type: application/json" ^
-  -d "{\\"clockIn\\": \\"09:00\\", \\"note\\": \\"遅延証明書提出済み\\"}"  `}
+  windows={`curl -X PUT http://localhost:3000/records/3 \`
+  -H "Content-Type: application/json" \`
+  -d '{"clockIn": "09:00", "note": "遅延証明書提出済み"}'`}
 />
 
 成功すると更新後のデータが返ってきます。
@@ -92,16 +168,16 @@ PUT /records/3  →  ID:3 の記録を更新
 `clockIn` が `"09:15"` から `"09:00"` に、`note` が `"電車遅延"` から `"遅延証明書提出済み"` に更新されていることを確認しましょう。
 
 <Callout type="info">
-`PUT` では送ったプロパティだけが更新されます。今回は `clockIn` と `note` だけを送ったので、`employeeName` や `date` はそのまま残ります。
-
-これは `data.ts` の `updateRecord` 関数でスプレッド構文 `{ ...records[index], ...updates }` を使っているためです。
+送ったプロパティだけが更新され、`employeeName` や `date` はそのまま残っています。<br/>
+これが Step 2 で解説したスプレッド構文による部分更新の効果です。
 </Callout>
 
-## Step 3: 削除APIを作る
+## Step 5: 削除APIを作る
 
-`DELETE /records/:id` を追加します。
+削除用エンドポイント（`DELETE /records/:id`）を`src/index.ts`に追加します。
 
-```typescript title="src/index.ts"
+<CopyableCode>
+```typescript
 // 記録を削除
 app.delete('/records/:id', (req, res) => {
   const { id } = req.params;
@@ -116,21 +192,25 @@ app.delete('/records/:id', (req, res) => {
   res.status(204).send();
 });
 ```
+</CopyableCode>
 
 ### ステータスコード 204
 
-`204 No Content` は「処理は成功したが、返すデータはない」を意味します。削除が成功した場合、返すべきデータがないため `204` を使います。
+`204 No Content` は「処理は成功したが、返すデータはない」を意味します。<br/>
+削除が成功した場合 `204` を使います。
 
-`res.status(204).send()` は、ボディなしのレスポンスを返します。
+削除は常に成功するとは限りません。例えば、データベースを使っていてデータベースの接続に失敗して削除ができない場合は`500 Internal Server Error`などを返します。
+`204`を見ると、削除に成功したことが一目で判断できます。
 
-## Step 4: curlで削除をテストする
+## Step 6: curlで削除をテストする
 
 佐藤花子さん（id: 2）の記録を削除してみましょう。
 
-<OsCodeBlock
-  mac={`curl -X DELETE http://localhost:3000/records/2 -v`}
-  windows={`curl -X DELETE http://localhost:3000/records/2 -v`}
-/>
+<CopyableCode>
+```bash
+curl -X DELETE http://localhost:3000/records/2 -v
+```
+</CopyableCode>
 
 <Callout type="info">
 `-v` はレスポンスの詳細（ステータスコードやヘッダー）を表示するオプションです。`204 No Content` が返ってくることを確認しましょう。
@@ -138,9 +218,11 @@ app.delete('/records/:id', (req, res) => {
 
 削除後、一覧を取得して確認します。
 
+<CopyableCode>
+```bash
+curl http://localhost:3000/records
 ```
-http://localhost:3000/records
-```
+</CopyableCode>
 
 佐藤花子の記録が消えていれば成功です。
 
@@ -148,10 +230,11 @@ http://localhost:3000/records
 
 存在しないIDを指定した場合のエラーも確認しておきましょう。
 
-<OsCodeBlock
-  mac={`curl -X DELETE http://localhost:3000/records/999`}
-  windows={`curl -X DELETE http://localhost:3000/records/999`}
-/>
+<CopyableCode>
+```bash
+curl -X DELETE http://localhost:3000/records/999
+```
+</CopyableCode>
 
 ```json
 {
@@ -161,7 +244,8 @@ http://localhost:3000/records
 
 ## CRUD完成
 
-ここまでで、全てのCRUD操作が完成しました。
+ここまでで、全てのCRUD操作が完成しました。<br/>
+恐らくレッスン1の段階ではイメージが難しかったかもしれませんが、改めてAPIエンドポイントの表を見てみましょう。
 
 <ContentTable
   headers={["操作", "メソッド", "エンドポイント", "レッスン"]}
@@ -173,9 +257,55 @@ http://localhost:3000/records
   ]}
 />
 
+『あぁ、なるほどな』と少しでも分かってもらえたら嬉しいです。
+
 ## 完成コード
 
-<CollapsibleCode title="src/index.ts 全体" defaultOpen={false}>
+<CollapsibleCode title="src/record-repository.ts" defaultOpen={false}>
+```typescript
+import { AttendanceRecord } from './types.js';
+import { records } from './data.js';
+
+let nextId = records.length + 1;
+
+export function getRecords(): AttendanceRecord[] {
+  return records;
+}
+
+export function getRecordById(id: string): AttendanceRecord | undefined {
+  return records.find((record) => record.id === id);
+}
+
+export function generateId(): string {
+  const id = String(nextId);
+  nextId++;
+  return id;
+}
+
+export function addRecord(record: AttendanceRecord): void {
+  records.push(record);
+}
+
+export function updateRecord(
+  id: string,
+  updates: Partial<AttendanceRecord>,
+): AttendanceRecord | undefined {
+  const index = records.findIndex((record) => record.id === id);
+  if (index === -1) return undefined;
+  records[index] = { ...records[index], ...updates };
+  return records[index];
+}
+
+export function deleteRecord(id: string): boolean {
+  const index = records.findIndex((record) => record.id === id);
+  if (index === -1) return false;
+  records.splice(index, 1);
+  return true;
+}
+```
+</CollapsibleCode>
+
+<CollapsibleCode title="src/index.ts" defaultOpen={false}>
 ```typescript
 import express from 'express';
 import {
@@ -185,7 +315,7 @@ import {
   updateRecord,
   deleteRecord,
   generateId,
-} from './data.js';
+} from './record-repository.js';
 
 const app = express();
 
@@ -226,7 +356,7 @@ app.post('/records/clock-in', (req, res) => {
     date,
     clockIn,
     clockOut: null,
-    note: note || '',
+    note: note || null,
   };
 
   addRecord(newRecord);
@@ -295,6 +425,7 @@ app.listen(PORT, () => {
 
 ## 次のステップ
 
-CRUDが全て揃いました。しかし、現在のAPIにはまだ問題があります。
+勤怠管理APIが全て揃いました。しかし、現在のAPIにはまだ問題があります。
 
-例えば、出勤時刻に `"abc"` のような不正な値を送っても受け付けてしまいます。次のレッスンでは、バリデーション（入力値の検証）を追加して、より堅牢なAPIに仕上げます。
+例えば、出勤時刻に `"abc"` のような不正な値を送っても受け付けてしまいます。<br/>
+次のレッスンでは、バリデーション（入力値の検証）を追加して、より堅牢なAPIに仕上げます。

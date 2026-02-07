@@ -11,22 +11,26 @@ description: モックデータを準備し、GET エンドポイントで勤務
 - `GET /records` - 勤務記録の一覧を取得
 - `GET /records/:id` - 特定の勤務記録を取得
 
+上記のエンドポイントを叩いたときに、勤務記録を取得できる状態がこのレッスンのゴールです。
+
 ## Step 1: データの型を定義する
 
 まず、勤務記録のデータ構造を TypeScript の型で定義します。
 
 `src/types.ts` を作成してください。
-
-```typescript title="src/types.ts"
+<CollapsibleCode title="src/types.ts" defaultOpen={true}>
+```typescript
 export interface AttendanceRecord {
   id: string;
   employeeName: string;
   date: string;          // "2026-01-28"
   clockIn: string;       // "09:00"
   clockOut: string | null;
-  note?: string;         // 備考（遅刻理由など）
+  note: string | null;   // 備考（遅刻理由など）
 }
 ```
+</CollapsibleCode>
+
 
 ### 型定義のポイント
 
@@ -38,33 +42,44 @@ export interface AttendanceRecord {
     ["date", "string", "勤務日（YYYY-MM-DD形式）"],
     ["clockIn", "string", "出勤時刻（HH:mm形式）"],
     ["clockOut", "string | null", "退勤時刻（未退勤ならnull）"],
-    ["note", "string | undefined", "備考（省略可能）"],
+    ["note", "string | null", "備考（なければnull）"],
   ]}
 />
 
-<Callout type="info">
-`clockOut` が `string | null` なのは、出勤はしたけどまだ退勤していない状態を表すためです。
+<LearnMore>
+**オプショナル（`?`）とパイプ（`|`）の使い分け**
 
-`note?` の `?` は「省略可能（optional）」を意味します。TypeScript入門ガイドで学んだ内容ですね。
-</Callout>
+`clockOut: string | null` は「値は必ず存在するが、中身が `null` の場合がある」
+ことを表します。DBのカラムのように、フィールド自体は常にあるけれど
+「まだ退勤していない」なら `null` が入る、というケースです。
+
+一方、`note?: string` のようにオプショナル（`?`）で書くと、
+「そのプロパティ自体を省略できる」という意味になります。
+関数の引数で「指定しなくてもいい」場合に使うことが多いです。
+
+今回の `AttendanceRecord` では、全フィールドがDBのカラムとして
+必ず存在するため、「あるかないか分からない」オプショナルではなく、
+`string | null` を使っています。
+</LearnMore>
 
 ## Step 2: モックデータを作成する
 
 実際のデータベースの代わりに、配列でデータを管理します。
 
-`src/data.ts` を作成してください。
-
-```typescript title="src/data.ts"
+`src/data.ts` を作成してください。<br/>
+軽く目を通して意味が分かったらコピペしていただいて構いません。
+<CollapsibleCode title="src/data.ts">
+```typescript
 import { AttendanceRecord } from './types.js';
 
-let records: AttendanceRecord[] = [
+export const records: AttendanceRecord[] = [
   {
     id: '1',
     employeeName: '田中太郎',
     date: '2026-01-27',
     clockIn: '09:00',
     clockOut: '18:00',
-    note: '',
+    note: null,
   },
   {
     id: '2',
@@ -72,6 +87,7 @@ let records: AttendanceRecord[] = [
     date: '2026-01-27',
     clockIn: '08:45',
     clockOut: '17:30',
+    note: null,
   },
   {
     id: '3',
@@ -82,8 +98,28 @@ let records: AttendanceRecord[] = [
     note: '電車遅延',
   },
 ];
+```
+</CollapsibleCode>
 
-let nextId = 4;
+このファイルの役割は**モックデータの定義のみ**です。データへのアクセスロジック（検索や取得）は次のステップで別ファイルに書きます。
+
+<Callout type="info">
+**なぜデータと処理を分けるのか？**
+
+`data.ts` にモックデータと取得関数をまとめて書くこともできますが、「データの定義」と「データへのアクセスロジック」はそれぞれ異なる役割です。
+
+たとえば、将来モックデータをデータベースに置き換える場合、`data.ts` はモックデータごと不要になります。一方、アクセスロジックは中身がDB呼び出しに変わるだけで、ファイル自体は残ります。役割ごとにファイルを分けておけば、変更の影響範囲が明確になり、修正がしやすくなります。
+</Callout>
+
+## Step 3: データアクセス関数を作成する
+
+モックデータに対する検索・取得のロジックを `src/record-repository.ts` に書きます。
+
+`src/record-repository.ts` を作成してください。
+<CollapsibleCode title="src/record-repository.ts" defaultOpen={true}>
+```typescript
+import { AttendanceRecord } from './types.js';
+import { records } from './data.js';
 
 export function getRecords(): AttendanceRecord[] {
   return records;
@@ -92,81 +128,47 @@ export function getRecords(): AttendanceRecord[] {
 export function getRecordById(id: string): AttendanceRecord | undefined {
   return records.find((record) => record.id === id);
 }
-
-export function addRecord(record: AttendanceRecord): void {
-  records.push(record);
-}
-
-export function updateRecord(id: string, updates: Partial<AttendanceRecord>): AttendanceRecord | undefined {
-  const index = records.findIndex((record) => record.id === id);
-  if (index === -1) return undefined;
-
-  records[index] = { ...records[index], ...updates };
-  return records[index];
-}
-
-export function deleteRecord(id: string): boolean {
-  const index = records.findIndex((record) => record.id === id);
-  if (index === -1) return false;
-
-  records.splice(index, 1);
-  return true;
-}
-
-export function generateId(): string {
-  const id = String(nextId);
-  nextId++;
-  return id;
-}
 ```
-
-<Callout type="info">
-import 文のパスに `.js` が付いていることに気づきましたか？
-
-TypeScriptは `.ts` ファイルをコンパイルすると `.js` になります。Node.jsの ESModules では、実行時に存在するファイルのパス（`.js`）を指定する必要があります。少し不思議ですが、TypeScriptの仕様です。
-</Callout>
+</CollapsibleCode>
 
 ### コードの解説
 
-このファイルでは、データの操作に必要な関数をまとめて定義しています。
+このファイルでは、勤務記録の取得に必要な関数を定義しています。
 
 <ContentTable
   headers={["関数", "役割"]}
   rows={[
     ["getRecords()", "全ての勤務記録を返す"],
     ["getRecordById(id)", "IDで1件の記録を検索して返す"],
-    ["addRecord(record)", "新しい記録を追加する"],
-    ["updateRecord(id, updates)", "既存の記録を更新する"],
-    ["deleteRecord(id)", "記録を削除する"],
-    ["generateId()", "新しいIDを生成する"],
   ]}
 />
 
 <LearnMore>
-`Partial<AttendanceRecord>` は TypeScript の **ユーティリティ型** です。
+**`getRecordById`関数だけ戻り値に`undefined`がある理由**
 
-`AttendanceRecord` の全てのプロパティを省略可能にした型を作ります。更新時には一部のプロパティだけ変更したいケースがあるため、`Partial` を使っています。
+`getRecords`関数は、サーバーが持っている全データをそのまま返すだけなので、
+結果は常に`AttendanceRecord[]`（配列）です。空の配列になることはあっても、
+データ自体が「見つからない」という状況は起きません。
 
-```typescript
-// Partial<AttendanceRecord> は以下と同じ意味
-{
-  id?: string;
-  employeeName?: string;
-  date?: string;
-  clockIn?: string;
-  clockOut?: string | null;
-  note?: string;
-}
-```
+一方、`getRecordById`関数は、クライアントから渡されたIDで1件を検索します。
+データが100件しかないのに `id: "9999"` を指定された場合、該当するデータは
+存在しないため `undefined` を返します。
+
+このように**外部からの入力によって「見つからない」ケースがある関数**は、
+戻り値に `undefined` を含めて、呼び出し側に「見つからない可能性がある」
+ことを型で伝えます。
 </LearnMore>
 
-## Step 3: 一覧取得APIを作る
+
+
+## Step 4: 一覧取得APIを作る
 
 `src/index.ts` を修正して、`GET /records` エンドポイントを追加します。
 
-```typescript title="src/index.ts"
+<CollapsibleCode title="src/index.ts" defaultOpen={true}>
+```typescript
 import express from 'express';
-import { getRecords, getRecordById } from './data.js';
+import { getRecords, getRecordById } from './record-repository.js';
 
 const app = express();
 
@@ -184,32 +186,35 @@ app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
 ```
+</CollapsibleCode>
 
-## Step 4: ブラウザで確認する
+`records`というパスかつ、`GET`リクエストである場合は、このappオブジェクトが`getRecords`関数を呼び出します。<br/>
+`index.ts`は処理を行うためのルーティング(リクエストに応じて呼び出す関数を選別する)を行っていて、具体的な処理は下位の関数が担っています。
+(今回なら`getRecords`関数が下位関数)
+このような構造にすることで、APIの追加やロジックの保守が容易になります。
 
-開発サーバーを起動して（既に起動していれば自動で再読み込みされます）、ブラウザで以下のURLにアクセスしてください。
+## Step 5: ブラウザで確認する
 
-```
+開発サーバーを起動して、ブラウザで下記のURLにアクセスしてください。
+
+<CopyableCode>
+```bash
 http://localhost:3000/records
 ```
+</CopyableCode>
+
 
 モックデータがJSON形式で表示されれば成功です。
 
-```json
-[
-  {
-    "id": "1",
-    "employeeName": "田中太郎",
-    "date": "2026-01-27",
-    "clockIn": "09:00",
-    "clockOut": "18:00",
-    "note": ""
-  },
-  ...
-]
-```
+<ContentImage
+  src="/learn/express-api/GET_json.jpg"
+  alt="getリクエストのレスポンスjson"
+  caption=""
+  width={200}
+  height={450}
+/>
 
-## Step 5: 個別取得APIを作る
+## Step 6: 個別取得APIを作る
 
 特定のIDの記録を取得する `GET /records/:id` を追加します。
 
@@ -233,9 +238,13 @@ app.get('/records/:id', (req, res) => {
 });
 ```
 
-### ルートパラメータ
+### パスパラメータ
 
-`:id` の部分は **ルートパラメータ** と呼ばれ、URLの一部を変数として受け取れます。
+`:id` の部分は **パスパラメータ** と呼ばれ、URLの一部を変数として受け取れます。
+
+<Callout type="info">
+Expressの公式ドキュメントでは「ルートパラメータ（Route parameters）」と呼んでいます。意味は同じですが、パスパラメータの方がフレームワークを問わず広く使われる用語です。
+</Callout>
 
 ```
 GET /records/1  →  req.params.id は "1"
@@ -260,47 +269,110 @@ GET /records/2  →  req.params.id は "2"
 ステータスコードを指定しない場合、Expressは自動的に `200` を返します。エラー時には適切なステータスコードを明示的に設定しましょう。
 </Callout>
 
-## Step 6: 動作確認
+## Step 7: 動作確認
 
-ブラウザで以下のURLにアクセスしてみましょう。
-
-```
+ブラウザで下記URLにアクセスしてみましょう。
+<CopyableCode>
+```bash
 http://localhost:3000/records/1
 ```
+</CopyableCode>
+
 
 田中太郎の記録が返ってきます。
 
-```json
-{
-  "id": "1",
-  "employeeName": "田中太郎",
-  "date": "2026-01-27",
-  "clockIn": "09:00",
-  "clockOut": "18:00",
-  "note": ""
-}
-```
+<ContentImage
+  src="/learn/express-api/getById.jpg"
+  alt="idを指定したGETリクエストのレスポンスjson"
+  caption=""
+  width={200}
+  height={450}
+/>
 
 存在しないIDにアクセスしてみましょう。
-
-```
+<CopyableCode>
+```bash
 http://localhost:3000/records/999
 ```
+</CopyableCode>
 
 エラーレスポンスが返ってきます。
 
-```json
-{
-  "error": "記録が見つかりません"
-}
-```
+<ContentImage
+  src="/learn/express-api/999error.jpg"
+  alt="存在しないIDを指定したGETリクエストのレスポンスjson"
+  caption=""
+  width={200}
+  height={450}
+/>
 
 ## 完成コード
 
-<CollapsibleCode title="src/index.ts 全体" defaultOpen={false}>
+<CollapsibleCode title="src/types.ts" defaultOpen={false}>
+```typescript
+export interface AttendanceRecord {
+  id: string;
+  employeeName: string;
+  date: string;          // "2026-01-28"
+  clockIn: string;       // "09:00"
+  clockOut: string | null;
+  note: string | null;   // 備考（遅刻理由など）
+}
+```
+</CollapsibleCode>
+
+<CollapsibleCode title="src/data.ts" defaultOpen={false}>
+```typescript
+import { AttendanceRecord } from './types.js';
+
+export const records: AttendanceRecord[] = [
+  {
+    id: '1',
+    employeeName: '田中太郎',
+    date: '2026-01-27',
+    clockIn: '09:00',
+    clockOut: '18:00',
+    note: null,
+  },
+  {
+    id: '2',
+    employeeName: '佐藤花子',
+    date: '2026-01-27',
+    clockIn: '08:45',
+    clockOut: '17:30',
+    note: null,
+  },
+  {
+    id: '3',
+    employeeName: '田中太郎',
+    date: '2026-01-28',
+    clockIn: '09:15',
+    clockOut: null,
+    note: '電車遅延',
+  },
+];
+```
+</CollapsibleCode>
+
+<CollapsibleCode title="src/record-repository.ts" defaultOpen={false}>
+```typescript
+import { AttendanceRecord } from './types.js';
+import { records } from './data.js';
+
+export function getRecords(): AttendanceRecord[] {
+  return records;
+}
+
+export function getRecordById(id: string): AttendanceRecord | undefined {
+  return records.find((record) => record.id === id);
+}
+```
+</CollapsibleCode>
+
+<CollapsibleCode title="src/index.ts" defaultOpen={false}>
 ```typescript
 import express from 'express';
-import { getRecords, getRecordById } from './data.js';
+import { getRecords, getRecordById } from './record-repository.js';
 
 const app = express();
 
@@ -338,9 +410,10 @@ app.listen(PORT, () => {
   <FileTreeFolder name="attendance-api" defaultOpen>
     <FileTreeFolder name="node_modules" />
     <FileTreeFolder name="src" defaultOpen>
-      <FileTreeFile name="data.ts" />
+      <FileTreeFile name="data.ts" active />
       <FileTreeFile name="index.ts" active />
-      <FileTreeFile name="types.ts" />
+      <FileTreeFile name="record-repository.ts" active />
+      <FileTreeFile name="types.ts" active />
     </FileTreeFolder>
     <FileTreeFile name="package.json" />
     <FileTreeFile name="package-lock.json" />

@@ -19,18 +19,20 @@ description: バリデーションを追加して、不正なリクエストに�
 APIが受け取るデータが「正しい形式か」を検証する処理です。
 
 ```
-クライアント → リクエスト → [バリデーション] → 処理 → レスポンス
-                               ↓
-                          不正なら 400 エラー
+クライアント(Webブラウザなど) → リクエスト → [バリデーション] → 処理 → レスポンス
+                                                ↓
+                                            不正なら 400 エラー
 ```
 
-実務ではバリデーションが非常に重要です。不正なデータがシステムに入り込むと、予期しないエラーやセキュリティ上の問題を引き起こします。
+システムやサービスにおいてバリデーションは非常に重要です。<br/>
+不正なデータがシステムに入り込むと、予期しないエラーの原因になります。
 
 ## Step 1: バリデーション関数を作る
 
 `src/validation.ts` を作成して、バリデーション関数をまとめます。
 
-```typescript title="src/validation.ts"
+<CollapsibleCode title="src/validation.ts" defaultOpen={true}>
+```typescript
 // 日付の形式チェック（YYYY-MM-DD）
 export function isValidDate(date: string): boolean {
   const regex = /^\d{4}-\d{2}-\d{2}$/;
@@ -54,6 +56,7 @@ export function isClockOutAfterClockIn(clockIn: string, clockOut: string): boole
   return clockOut > clockIn;
 }
 ```
+</CollapsibleCode>
 
 ### コードの解説
 
@@ -77,6 +80,7 @@ export function isClockOutAfterClockIn(clockIn: string, clockOut: string): boole
 
 `regex.test(date)` は、`date` が正規表現のパターンに一致するかを `true` / `false` で返します。
 
+<CollapsibleCode title="正規表現の使用例" defaultOpen={true}>
 ```typescript
 const regex = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -84,8 +88,10 @@ regex.test('2026-01-28');  // true
 regex.test('abc');          // false
 regex.test('2026/01/28');   // false（ハイフンではなくスラッシュ）
 ```
+</CollapsibleCode>
 
-正規表現は奥が深いですが、今回は「形式が合っているか」のチェックに使っています。全部覚える必要はなく、必要なときに調べれば大丈夫です。
+正規表現は奥が深いですが、今回は「形式が合っているか」のチェックに使っています。<br/>
+暗記する必要はなく、必要なときに調べてコピペすれば大丈夫です。
 </LearnMore>
 
 #### 日付の妥当性チェック
@@ -98,12 +104,18 @@ regex.test('2026/01/28');   // false（ハイフンではなくスラッシュ�
 new Date('2026-01-28').getTime();  // 1769472000000（有効）
 new Date('2026-99-99').getTime();  // NaN（無効）
 ```
+<Callout type="info">
+実務では <a href="https://zod.dev/" target="_blank" rel="noopener noreferrer">Zod</a> などの
+バリデーションライブラリを使うことが多いです。<br/>
+ただ、自力で書いてみると「何をチェックすべきか」の感覚が身につくのでいい勉強になります。
+</Callout>
 
 ## Step 2: 出勤打刻にバリデーションを追加する
 
 `src/index.ts` の出勤打刻エンドポイントを修正します。
 
-```typescript title="src/index.ts" {3,15-25}
+<CollapsibleCode title="src/index.ts（import文の変更 + 出勤打刻バリデーション追加）" defaultOpen={true}>
+```typescript
 import express from 'express';
 import {
   getRecords,
@@ -112,7 +124,7 @@ import {
   updateRecord,
   deleteRecord,
   generateId,
-} from './data.js';
+} from './record-repository.js';
 import { isValidDate, isValidTime } from './validation.js';
 
 // ... 既存のコード ...
@@ -142,19 +154,21 @@ app.post('/records/clock-in', (req, res) => {
     date,
     clockIn,
     clockOut: null,
-    note: note || '',
+    note: note || null,
   };
 
   addRecord(newRecord);
   res.status(201).json(newRecord);
 });
 ```
+</CollapsibleCode>
 
 ## Step 3: 退勤打刻にバリデーションを追加する
 
 退勤打刻にも時刻のバリデーションと、出勤より後かのチェックを追加します。
 
-```typescript title="src/index.ts" {1,13-22}
+<CollapsibleCode title="src/index.ts（import文の変更 + 退勤打刻バリデーション追加）" defaultOpen={true}>
+```typescript
 import { isValidDate, isValidTime, isClockOutAfterClockIn } from './validation.js';
 
 // ... 既存のコード ...
@@ -194,6 +208,7 @@ app.post('/records/clock-out', (req, res) => {
   res.json(record);
 });
 ```
+</CollapsibleCode>
 
 ## Step 4: バリデーションの動作確認
 
@@ -205,9 +220,9 @@ app.post('/records/clock-out', (req, res) => {
   mac={`curl -X POST http://localhost:3000/records/clock-in \\
   -H "Content-Type: application/json" \\
   -d '{"employeeName": "テスト", "date": "abc", "clockIn": "09:00"}'`}
-  windows={`curl -X POST http://localhost:3000/records/clock-in ^
-  -H "Content-Type: application/json" ^
-  -d "{\\"employeeName\\": \\"テスト\\", \\"date\\": \\"abc\\", \\"clockIn\\": \\"09:00\\"}"  `}
+  windows={`curl.exe -X POST http://localhost:3000/records/clock-in \`
+  -H "Content-Type: application/json" \`
+  -d '{"employeeName": "テスト", "date": "abc", "clockIn": "09:00"}'`}
 />
 
 ```json
@@ -222,9 +237,9 @@ app.post('/records/clock-out', (req, res) => {
   mac={`curl -X POST http://localhost:3000/records/clock-in \\
   -H "Content-Type: application/json" \\
   -d '{"employeeName": "テスト", "date": "2026-01-28", "clockIn": "25:00"}'`}
-  windows={`curl -X POST http://localhost:3000/records/clock-in ^
-  -H "Content-Type: application/json" ^
-  -d "{\\"employeeName\\": \\"テスト\\", \\"date\\": \\"2026-01-28\\", \\"clockIn\\": \\"25:00\\"}"  `}
+  windows={`curl.exe -X POST http://localhost:3000/records/clock-in \`
+  -H "Content-Type: application/json" \`
+  -d '{"employeeName": "テスト", "date": "2026-01-28", "clockIn": "25:00"}'`}
 />
 
 ```json
@@ -241,9 +256,9 @@ app.post('/records/clock-out', (req, res) => {
   mac={`curl -X POST http://localhost:3000/records/clock-out \\
   -H "Content-Type: application/json" \\
   -d '{"id": "3", "clockOut": "08:00"}'`}
-  windows={`curl -X POST http://localhost:3000/records/clock-out ^
-  -H "Content-Type: application/json" ^
-  -d "{\\"id\\": \\"3\\", \\"clockOut\\": \\"08:00\\"}"  `}
+  windows={`curl.exe -X POST http://localhost:3000/records/clock-out \`
+  -H "Content-Type: application/json" \`
+  -d '{"id": "3", "clockOut": "08:00"}'`}
 />
 
 ```json
@@ -291,7 +306,7 @@ import {
   updateRecord,
   deleteRecord,
   generateId,
-} from './data.js';
+} from './record-repository.js';
 import { isValidDate, isValidTime, isClockOutAfterClockIn } from './validation.js';
 
 const app = express();
@@ -343,7 +358,7 @@ app.post('/records/clock-in', (req, res) => {
     date,
     clockIn,
     clockOut: null,
-    note: note || '',
+    note: note || null,
   };
 
   addRecord(newRecord);
@@ -428,6 +443,7 @@ app.listen(PORT, () => {
     <FileTreeFolder name="src" defaultOpen>
       <FileTreeFile name="data.ts" />
       <FileTreeFile name="index.ts" active />
+      <FileTreeFile name="record-repository.ts" />
       <FileTreeFile name="types.ts" />
       <FileTreeFile name="validation.ts" />
     </FileTreeFolder>
