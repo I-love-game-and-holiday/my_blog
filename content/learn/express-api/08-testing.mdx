@@ -4,8 +4,6 @@ order: 8
 description: Vitestでバリデーション関数とAPIエンドポイントのテストを書きます。
 ---
 
-{/* TODO: 型定義が `note: string | null` に変更されたため、テストコード内のモックデータに `note: null` を追加する必要あり */}
-
 ## このレッスンで学ぶこと
 
 **テスト** を書いて、コードが正しく動くことを自動で検証する方法を学びます。
@@ -18,25 +16,26 @@ description: Vitestでバリデーション関数とAPIエンドポイントの�
   headers={["メリット", "説明"]}
   rows={[
     ["バグの早期発見", "コードを変更したときに、既存の機能が壊れていないかすぐに分かる"],
-    ["安心してコードを変更できる", "テストが通れば、変更が既存機能に影響していないことが保証される"],
-    ["仕様書の代わりになる", "テストコードを読めば「何が正しい動作か」が分かる"],
+    ["検証を自動化できる", "一度書けば何度でもコマンド1つで繰り返し実行できる"],
   ]}
 />
 
-<Callout type="info">
-テストは「書くのが面倒」と思われがちですが、手動テストの繰り返しの方が長期的にはずっと面倒です。
+<Callout type="warning">
+**テストは「正しさの証明」ではありません**
 
-特にコース3（リファクタリング）では、テストがあるからこそ安心してコードを変更できるようになります。
+テストが全て通っていても、テストケース自体が間違っていればバグは見逃されます。
+テストが保証するのは「テストが想定した範囲で、期待通りに動いている」ということだけです。
 </Callout>
 
 ## Step 1: Vitestをインストールする
 
-テストフレームワークとして **Vitest** を使います。
+テストフレームワークとして <a href="https://vitest.dev" target="_blank" rel="noopener noreferrer">**Vitest**</a> を使います。
 
+<CopyableCode>
 ```bash
 npm install -D vitest
 ```
-
+</CopyableCode>
 <Callout type="info">
 **Vitest** は高速で使いやすいテストフレームワークです。設定がほぼ不要で、TypeScriptもそのまま使えます。
 </Callout>
@@ -45,16 +44,15 @@ npm install -D vitest
 
 `package.json` の `scripts` にテスト用のコマンドを追加します。
 
-```json title="package.json"
+<CopyableCode>
+```json
 "scripts": {
-  "dev": "tsx watch src/index.ts",
-  "build": "tsc",
-  "start": "node dist/index.js",
+  // 省略
   "test": "vitest run",
   "test:watch": "vitest"
 }
 ```
-
+</CopyableCode>
 <ContentTable
   headers={["コマンド", "説明"]}
   rows={[
@@ -67,9 +65,12 @@ npm install -D vitest
 
 バリデーション関数のテストから始めましょう。
 
+テストファイルは `validation.test.ts` のように、テスト対象のファイル名に `.test.ts` を付けて作成します。Vitestはデフォルトで `.test.ts` や `.spec.ts` を含むファイルをテストファイルとして自動検出します。
+
 `src/validation.test.ts` を作成してください。
 
-```typescript title="src/validation.test.ts"
+<CollapsibleCode title="src/validation.test.ts" defaultOpen={true}>
+```typescript
 import { describe, it, expect } from 'vitest';
 import { isValidDate, isValidTime, isClockOutAfterClockIn } from './validation.js';
 
@@ -87,7 +88,7 @@ describe('isValidDate', () => {
 
   it('存在しない日付を拒否する', () => {
     expect(isValidDate('2026-13-01')).toBe(false);
-    expect(isValidDate('2026-02-30')).toBe(false);
+    expect(isValidDate('2026-00-01')).toBe(false);
   });
 });
 
@@ -120,7 +121,7 @@ describe('isClockOutAfterClockIn', () => {
   });
 });
 ```
-
+</CollapsibleCode>
 ### テストの構造
 
 ```typescript
@@ -147,31 +148,23 @@ describe('isValidDate', () => {    // テストグループの名前
 
 ## Step 4: テストを実行する
 
+<CopyableCode>
 ```bash
 npm test
 ```
-
+</CopyableCode>
 全てのテストが通れば、以下のような出力が表示されます。
 
-```
- ✓ src/validation.test.ts (8)
-   ✓ isValidDate (3)
-     ✓ 正しい日付形式を受け付ける
-     ✓ 不正な形式を拒否する
-     ✓ 存在しない日付を拒否する
-   ✓ isValidTime (2)
-     ✓ 正しい時刻形式を受け付ける
-     ✓ 不正な形式を拒否する
-   ✓ isClockOutAfterClockIn (3)
-     ✓ 退勤が出勤より後ならtrueを返す
-     ✓ 退勤が出勤より前ならfalseを返す
-     ✓ 同じ時刻ならfalseを返す
+<ContentImage
+  src="/learn/express-api/test.jpg"
+  alt="テストの実行結果"
+  caption=""
 
- Test Files  1 passed (1)
-      Tests  8 passed (8)
-```
+/>
 
 全てグリーン（合格）です。
+
+<small>※簡易実装なので合格にならないパターンはいくらかあります</small>
 
 ## Step 5: テストを失敗させてみる
 
@@ -179,25 +172,27 @@ npm test
 
 `src/validation.ts` の `isValidTime` を以下のように変更します。
 
-```typescript title="src/validation.ts"
+<CopyableCode>
+```typescript
 export function isValidTime(time: string): boolean {
   return true; // 常にtrueを返す（壊れた状態）
 }
 ```
-
+</CopyableCode>
 テストを実行すると：
 
+<CopyableCode>
 ```bash
 npm test
 ```
+</CopyableCode>
 
-```
- ✗ src/validation.test.ts (8)
-   ✓ isValidDate (3)
-   ✗ isValidTime (2)
-     ✓ 正しい時刻形式を受け付ける
-     ✗ 不正な形式を拒否する
-```
+
+<ContentImage
+  src="/learn/express-api/fail_test.jpg"
+  alt="テストの実行結果（失敗）"
+  caption=""
+/>
 
 テストが失敗し、どこが壊れたか一目で分かります。
 
@@ -221,7 +216,7 @@ npm test
 <CollapsibleCode title="答え: src/data.test.ts" defaultOpen={false}>
 ```typescript
 import { describe, it, expect } from 'vitest';
-import { getRecords, getRecordById, addRecord, deleteRecord } from './data.js';
+import { getRecords, getRecordById, addRecord, deleteRecord } from './record-repository.js';
 import { AttendanceRecord } from './types.js';
 
 describe('getRecords', () => {
@@ -257,6 +252,7 @@ describe('addRecord', () => {
       date: '2026-01-28',
       clockIn: '09:00',
       clockOut: null,
+      note: null,
     };
 
     addRecord(newRecord);
@@ -303,5 +299,7 @@ describe('deleteRecord', () => {
 ## 次のステップ
 
 テストを書いて、コードの品質を自動で検証する方法を学びました。
+あらゆるシステム開発でテストは必ずと言っていいほど実施されます。
+フレームワークごとに文法が異なる場合もありますが、基本的な考え方は共通です。
 
-次のレッスンでは、このコースで学んだことを振り返り、次のステップへの道筋を確認します。
+次のステップでは、このコースで学んだことを振り返ります。
