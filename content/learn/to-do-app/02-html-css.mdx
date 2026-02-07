@@ -218,9 +218,9 @@ h1 {
   font-size: 16px;
 }
 
-.todo-item.completed span {
+.todo-item input[type="checkbox"]:checked + span {
   text-decoration: line-through;
-  color: #999;
+  color: #888;
 }
 
 .todo-item button {
@@ -250,7 +250,7 @@ CSSやHTMLの細かい意味が分からなくても大丈夫です。<br/>
 ## ブラウザで確認
 
 ### Live Server拡張機能の追加
-htmlの編集をリアルタイムで反映してブラウザで確認しながら開発するための拡張機能です。
+HTMLの編集をリアルタイムで反映してブラウザで確認しながら開発するための拡張機能です。
 <ContentImage
   src="/learn/todo-app/liveServer.jpg"
   alt="Live Server拡張機能の追加"
@@ -260,7 +260,7 @@ htmlの編集をリアルタイムで反映してブラウザで確認しなが�
 />
 
 ### ブラウザで確認
-vscodeエディタ右下に『go live』という項目があるはずですので、クリックしてhtmlを確認しましょう。
+VSCodeエディタ右下に『Go Live』という項目があるはずですので、クリックしてHTMLを確認しましょう。
 <ContentImage
   src="/learn/todo-app/goLive.jpg"
   alt="Live Server拡張機能の追加"

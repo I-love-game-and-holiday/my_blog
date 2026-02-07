@@ -23,21 +23,154 @@ POSTリクエストを使って、出勤と退勤を記録するAPIを2つ作り
   ]}
 />
 
-GETはブラウザのアドレスバーからテストできましたが、POSTはブラウザから直接送ることができません。ターミナルから `curl` コマンドを使ってテストします。
+### なぜ打刻にPOSTを使うのか
+
+POSTは新規登録で使われることが多いメソッドですが、実は **「GETやPUT、DELETEに当てはまらない操作全般」** に使える万能なメソッドです。
+
+出勤打刻は新しい勤務記録を1件作成するので、POSTの典型的な使い方です。
+一方、退勤打刻は既存の記録に `clockOut` を書き込む「更新」ですが、これもPOSTで実装しています。
+更新ならPUT（次のレッスンで学びます）の方が適切に思えるかもしれません。POSTを使う理由は **冪等性（べきとうせい）** にあります。
+
+<ContentTable
+  headers={["メソッド", "冪等性", "例"]}
+  rows={[
+    ["GET", "冪等（何回実行しても同じ結果）", "記録の一覧を取得 → 何度取得しても同じ"],
+    ["PUT", "冪等（何回実行しても同じ結果）", "名前を「田中」に更新 → 何度やっても「田中」"],
+    ["POST", "冪等でない（実行するたびに結果が変わりうる）", "出勤打刻 → 送るたびに記録が増える"],
+  ]}
+/>
+
+PUTは「同じリクエストを何度送っても結果が同じ」になることが期待されるメソッドです。しかし打刻は本来、同じ日に何度も出勤・退勤できるべきではありません。実行するたびに結果が変わりうる（または拒否すべき）操作なので、冪等でないPOSTが適しています。
+
+<LearnMore>
+**POSTを選ぶもう一つの理由 ― ブラウザやインフラとの連携**
+
+HTTPメソッドの使い分けは、サーバーの実装だけでなく**ブラウザやネットワーク機器の動作にも影響**します。
+
+たとえば、ブラウザでPOSTリクエストを送信した後に「戻る」ボタンや「更新」ボタンを押すと、「フォームを再送信しますか？」という確認ダイアログが表示されます。これはPOSTが「冪等でない＝もう一度実行すると結果が変わるかもしれない」メソッドだとブラウザが知っているからです。
+
+一方、GETやPUTにはこの確認が出ません。「何度実行しても安全」だとブラウザが判断するためです。
+
+```
+POST → ブラウザ「本当にもう一度送りますか？」（確認ダイアログ）
+GET  → ブラウザ「そのまま再取得します」（確認なし）
+```
+
+つまり、HTTPメソッドを正しく使い分けることで、ブラウザやプロキシといった**周辺のインフラが適切に振る舞ってくれる**のです。これがREST APIでメソッドの使い分けが重要とされる大きな理由の一つです。
+</LearnMore>
+
+
+## Step 1: データの配列を書き換え可能にする
+
+前のレッスンでは `data.ts` のモックデータを `const` で定義していました。今回はPOSTで新しい記録を追加（push）するため、配列を `let` に変更する必要があります。
+
+`src/data.ts` を以下のように修正してください。
+<CollapsibleCode title="src/data.ts" defaultOpen={true}>
+```typescript
+import { AttendanceRecord } from './types.js';
+
+export let records: AttendanceRecord[] = [
+  {
+    id: '1',
+    employeeName: '田中太郎',
+    date: '2026-01-27',
+    clockIn: '09:00',
+    clockOut: '18:00',
+    note: null,
+  },
+  {
+    id: '2',
+    employeeName: '佐藤花子',
+    date: '2026-01-27',
+    clockIn: '08:45',
+    clockOut: '17:30',
+    note: null,
+  },
+  {
+    id: '3',
+    employeeName: '田中太郎',
+    date: '2026-01-28',
+    clockIn: '09:15',
+    clockOut: null,
+    note: '電車遅延',
+  },
+];
+```
+</CollapsibleCode>
+
+変更点は `export const records` → `export let records` の1箇所だけです。
+
+<LearnMore>
+**なぜ `let` に変更するのか？**
+
+`const` で宣言した配列に `push` でデータを追加すること自体は実はJavaScriptでは可能です。`const` は「変数への再代入」を禁止するだけで、配列の中身の変更は許可されるためです。
+
+```typescript
+const arr = [1, 2, 3];
+arr.push(4);     // OK（中身の変更）
+arr = [5, 6, 7]; // エラー（再代入は不可）
+```
+
+しかし、`const` は「この値は変わらない」という意図を示すために使うのが一般的です。今回のように中身が変わる配列を `const` で宣言すると、コードを読む人に誤解を与えてしまいます。変更されることが前提のデータは `let` で宣言しましょう。
+</LearnMore>
+
+## Step 2: record-repositoryにPOST用の関数を追加する
+
+前のレッスンでは `record-repository.ts` に `getRecords` と `getRecordById` を定義しました。<br/>
+ここに、出勤打刻で使う `addRecord` と `generateId` を追加します。
+
+`src/record-repository.ts` を以下のように修正してください。
+
+<CollapsibleCode title="src/record-repository.ts" defaultOpen={true}>
+```typescript
+import { AttendanceRecord } from './types.js';
+import { records } from './data.js';
+
+let nextId = records.length + 1;
+
+export function getRecords(): AttendanceRecord[] {
+  return records;
+}
+
+export function getRecordById(id: string): AttendanceRecord | undefined {
+  return records.find((record) => record.id === id);
+}
+
+export function generateId(): string {
+  const id = String(nextId);
+  nextId++;
+  return id;
+}
+
+export function addRecord(record: AttendanceRecord): void {
+  records.push(record);
+}
+```
+</CollapsibleCode>
+
+### 追加した関数の解説
+
+<ContentTable
+  headers={["関数", "役割"]}
+  rows={[
+    ["generateId()", "連番でIDを採番する（4, 5, 6...）"],
+    ["addRecord(record)", "配列に新しい記録を追加する"],
+  ]}
+/>
+
+`nextId` は `records.length + 1` で初期化しています。モックデータが3件あるので、最初の `generateId()` は `"4"` を返します。
 
 <Callout type="info">
-**curl（カール）** はターミナルからHTTPリクエストを送れるコマンドラインツールです。
-
-APIの動作確認でよく使われます。ほとんどのOS（Mac / Linux / Windows 10以降）にプリインストールされています。
+本来、IDの採番はデータベースが自動で行います。ここではモックデータを使っているため、簡易的に連番で管理しています。
 </Callout>
 
-## Step 1: 出勤打刻APIを作る
+## Step 3: 出勤打刻APIを作る
 
 `src/index.ts` に出勤打刻のエンドポイントを追加します。
-
-```typescript title="src/index.ts"
+<CollapsibleCode title="src/index.ts" defaultOpen={true}>
+```typescript
 import express from 'express';
-import { getRecords, getRecordById, addRecord, generateId } from './data.js';
+import { getRecords, getRecordById, addRecord, generateId } from './record-repository.js';
 
 const app = express();
 
@@ -79,7 +212,7 @@ app.post('/records/clock-in', (req, res) => {
     date,
     clockIn,
     clockOut: null,
-    note: note || '',
+    note: note || null,
   };
 
   addRecord(newRecord);
@@ -90,6 +223,7 @@ app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
 ```
+</CollapsibleCode>
 
 ### コードの解説
 
@@ -97,7 +231,7 @@ app.listen(PORT, () => {
 const { employeeName, date, clockIn, note } = req.body;
 ```
 
-リクエストボディからデータを取り出しています。これは**分割代入（destructuring）**という書き方です。
+リクエストボディからデータを取り出しています。これは **分割代入（destructuring）** という書き方です。
 
 <LearnMore>
 分割代入は、オブジェクトのプロパティを個別の変数に展開する構文です。
@@ -120,7 +254,25 @@ res.status(201).json(newRecord);
 
 ステータスコード `201`（Created）は「新しいリソースが作成された」ことを意味します。POSTで新しいデータを作成した場合に使います。
 
-## Step 2: curlで出勤打刻をテストする
+<Callout type="warning">
+**改ざんの可能性のある処理はサーバー側で行いましょう**
+
+このレッスンではリクエストボディで `clockIn` や `clockOut` の時刻を送っていますが、これは学習用の簡易的な実装です。
+実際の勤怠システムでは、クライアントから送られた時刻をそのまま信用するのは危険です。
+ユーザーが開発者ツールなどで時刻を改ざんできてしまうためです。
+
+本番環境ではサーバーが受信した時点の時刻（`new Date()`）を使って記録するのが一般的です。
+</Callout>
+
+## Step 4: curlで出勤打刻をテストする
+
+GETはブラウザのアドレスバーからテストできましたが、POSTはブラウザから直接送ることができません。ターミナルから `curl` コマンドを使ってテストします。
+
+<Callout type="info">
+**curl（カール）** はターミナルからHTTPリクエストを送れるコマンドラインツールです。
+
+APIの動作確認でよく使われます。ほとんどのOS（Mac / Linux / Windows 10以降）にプリインストールされています。
+</Callout>
 
 開発サーバーが起動している状態で、**別のターミナル**を開いて以下のコマンドを実行します。
 
@@ -128,9 +280,9 @@ res.status(201).json(newRecord);
   mac={`curl -X POST http://localhost:3000/records/clock-in \\
   -H "Content-Type: application/json" \\
   -d '{"employeeName": "鈴木一郎", "date": "2026-01-28", "clockIn": "09:00"}'`}
-  windows={`curl -X POST http://localhost:3000/records/clock-in ^
-  -H "Content-Type: application/json" ^
-  -d "{\\"employeeName\\": \\"鈴木一郎\\", \\"date\\": \\"2026-01-28\\", \\"clockIn\\": \\"09:00\\"}"  `}
+  windows={`curl -X POST http://localhost:3000/records/clock-in \`
+  -H "Content-Type: application/json" \`
+  -d '{"employeeName": "鈴木一郎", "date": "2026-01-28", "clockIn": "09:00"}'`}
 />
 
 ### curlコマンドの解説
@@ -144,7 +296,7 @@ res.status(201).json(newRecord);
   ]}
 />
 
-成功すると以下のようなレスポンスが返ります。
+POSTリクエストに成功すると以下のようなレスポンスが返ります。
 
 ```json
 {
@@ -153,23 +305,33 @@ res.status(201).json(newRecord);
   "date": "2026-01-28",
   "clockIn": "09:00",
   "clockOut": null,
-  "note": ""
+  "note": null
 }
 ```
 
-`GET /records` にアクセスして、新しい記録が追加されていることを確認しましょう。
+curlで一覧を取得して、新しい記録が追加されていることを確認しましょう。
 
+<CopyableCode>
+```bash
+curl http://localhost:3000/records
 ```
-http://localhost:3000/records
-```
+</CopyableCode>
 
-## Step 3: 退勤打刻APIを作る
+<Callout type="info">
+追加したデータは **メモリ上の配列** に保存されているだけなので、サーバーを再起動すると元の3件に戻ります。
+`data.ts` ファイル自体も書き換わりません。
+
+実際のアプリケーションではデータベースを使ってデータを永続化します。
+</Callout>
+
+## Step 5: 退勤打刻APIを作る
 
 退勤打刻は、既存の出勤記録に対して `clockOut` を更新する処理です。
 
 出勤打刻のエンドポイントの下に追加してください。
 
-```typescript title="src/index.ts"
+<CollapsibleCode title="src/index.ts" defaultOpen={true}>
+```typescript
 // 退勤打刻
 app.post('/records/clock-out', (req, res) => {
   const { id, clockOut } = req.body;
@@ -196,6 +358,7 @@ app.post('/records/clock-out', (req, res) => {
   res.json(record);
 });
 ```
+</CollapsibleCode>
 
 ### ポイント
 
@@ -205,7 +368,7 @@ app.post('/records/clock-out', (req, res) => {
 2. **存在チェック** - 指定されたIDの記録が存在するか
 3. **二重打刻チェック** - すでに退勤が記録されていないか
 
-## Step 4: curlで退勤打刻をテストする
+## Step 6: curlで退勤打刻をテストする
 
 先ほど出勤登録した鈴木一郎さん（id: 4）の退勤を記録します。
 
@@ -213,9 +376,9 @@ app.post('/records/clock-out', (req, res) => {
   mac={`curl -X POST http://localhost:3000/records/clock-out \\
   -H "Content-Type: application/json" \\
   -d '{"id": "4", "clockOut": "18:00"}'`}
-  windows={`curl -X POST http://localhost:3000/records/clock-out ^
-  -H "Content-Type: application/json" ^
-  -d "{\\"id\\": \\"4\\", \\"clockOut\\": \\"18:00\\"}"  `}
+  windows={`curl -X POST http://localhost:3000/records/clock-out \`
+  -H "Content-Type: application/json" \`
+  -d '{"id": "4", "clockOut": "18:00"}'`}
 />
 
 成功すると以下のようなレスポンスが返ります。
@@ -227,7 +390,7 @@ app.post('/records/clock-out', (req, res) => {
   "date": "2026-01-28",
   "clockIn": "09:00",
   "clockOut": "18:00",
-  "note": ""
+  "note": null
 }
 ```
 
@@ -239,9 +402,9 @@ app.post('/records/clock-out', (req, res) => {
   mac={`curl -X POST http://localhost:3000/records/clock-out \\
   -H "Content-Type: application/json" \\
   -d '{"id": "4", "clockOut": "19:00"}'`}
-  windows={`curl -X POST http://localhost:3000/records/clock-out ^
-  -H "Content-Type: application/json" ^
-  -d "{\\"id\\": \\"4\\", \\"clockOut\\": \\"19:00\\"}"  `}
+  windows={`curl -X POST http://localhost:3000/records/clock-out \`
+  -H "Content-Type: application/json" \`
+  -d '{"id": "4", "clockOut": "19:00"}'`}
 />
 
 ```json
@@ -254,10 +417,70 @@ app.post('/records/clock-out', (req, res) => {
 
 ## 完成コード
 
-<CollapsibleCode title="src/index.ts 全体" defaultOpen={false}>
+<CollapsibleCode title="src/data.ts" defaultOpen={false}>
+```typescript
+import { AttendanceRecord } from './types.js';
+
+export let records: AttendanceRecord[] = [
+  {
+    id: '1',
+    employeeName: '田中太郎',
+    date: '2026-01-27',
+    clockIn: '09:00',
+    clockOut: '18:00',
+    note: null,
+  },
+  {
+    id: '2',
+    employeeName: '佐藤花子',
+    date: '2026-01-27',
+    clockIn: '08:45',
+    clockOut: '17:30',
+    note: null,
+  },
+  {
+    id: '3',
+    employeeName: '田中太郎',
+    date: '2026-01-28',
+    clockIn: '09:15',
+    clockOut: null,
+    note: '電車遅延',
+  },
+];
+```
+</CollapsibleCode>
+
+<CollapsibleCode title="src/record-repository.ts" defaultOpen={false}>
+```typescript
+import { AttendanceRecord } from './types.js';
+import { records } from './data.js';
+
+let nextId = records.length + 1;
+
+export function getRecords(): AttendanceRecord[] {
+  return records;
+}
+
+export function getRecordById(id: string): AttendanceRecord | undefined {
+  return records.find((record) => record.id === id);
+}
+
+export function generateId(): string {
+  const id = String(nextId);
+  nextId++;
+  return id;
+}
+
+export function addRecord(record: AttendanceRecord): void {
+  records.push(record);
+}
+```
+</CollapsibleCode>
+
+<CollapsibleCode title="src/index.ts" defaultOpen={false}>
 ```typescript
 import express from 'express';
-import { getRecords, getRecordById, addRecord, generateId } from './data.js';
+import { getRecords, getRecordById, addRecord, generateId } from './record-repository.js';
 
 const app = express();
 
@@ -298,7 +521,7 @@ app.post('/records/clock-in', (req, res) => {
     date,
     clockIn,
     clockOut: null,
-    note: note || '',
+    note: note || null,
   };
 
   addRecord(newRecord);

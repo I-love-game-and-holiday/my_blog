@@ -6,12 +6,29 @@
 
 | コンポーネント | 用途 |
 |--------------|------|
+| `CopyableCode` | コピーボタン付きコードブロック（ヘッダーなし） |
 | `CollapsibleCode` | 折りたたみ可能なコードブロック |
 | `OsCodeBlock` | Mac/Windows切替のコードブロック |
 | `OsCommandTabs` | Mac/Windows切替の複数コマンド表示 |
 | `OsTable` | Mac/Windows切替のテーブル（`os/os-table.tsx`） |
 
 ## 使い方
+
+### CopyableCode
+
+コピーボタン付きのシンプルなコードブロック。ヘッダーや折りたたみ機能はなく、コードブロック右上にコピーボタンのみ表示。
+
+```mdx
+<CopyableCode>
+```bash
+npm install express
+```
+</CopyableCode>
+```
+
+| Props | 型 | デフォルト | 説明 |
+|-------|-----|-----------|------|
+| `children` | `ReactNode` | - | コードブロック（```で囲んだ部分） |
 
 ### CollapsibleCode
 
@@ -85,6 +102,7 @@ code/
 ├── copy-button.tsx       # コピーボタン（共通）
 ├── code-block-header.tsx # ヘッダー（共通）
 ├── code-block-wrapper.tsx # 外枠・コンテンツ（共通）
+├── copyable-code.tsx     # コピーボタン付き（ヘッダーなし）
 ├── collapsible-code.tsx  # 折りたたみ
 ├── os-tabs.tsx           # OS切替タブ
 └── os-code-block.tsx     # OS切替コードブロック
