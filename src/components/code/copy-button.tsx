@@ -13,14 +13,22 @@ interface CopyButtonProps {
 export function CopyButton({ getText, className }: CopyButtonProps) {
     const [copied, setCopied] = useState(false)
 
-    const handleCopy = async (e: MouseEvent) => {
+    const handleCopy = (e: MouseEvent) => {
         e.stopPropagation()
         const text = getText()
-        if (text) {
-            await navigator.clipboard.writeText(text)
-            setCopied(true)
-            setTimeout(() => setCopied(false), 2000)
+        if (!text) return
+
+        const handler = (ev: ClipboardEvent) => {
+            ev.preventDefault()
+            ev.clipboardData?.setData('text/plain', text)
         }
+
+        document.addEventListener('copy', handler)
+        document.execCommand('copy')
+        document.removeEventListener('copy', handler)
+
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
     }
 
     return (

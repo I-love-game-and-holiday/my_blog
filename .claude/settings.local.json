@@ -28,7 +28,8 @@
       "Bash(grep:*)",
       "Bash(npx next build:*)",
       "Bash(node:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(findstr:*)"
     ]
   }
 }
