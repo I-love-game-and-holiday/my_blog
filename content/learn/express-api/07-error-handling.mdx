@@ -19,9 +19,9 @@ description: バリデーションを追加して、不正なリクエストに�
 APIが受け取るデータが「正しい形式か」を検証する処理です。
 
 ```
-クライアント → リクエスト → [バリデーション] → 処理 → レスポンス
-                               ↓
-                          不正なら 400 エラー
+クライアント(Webブラウザなど) → リクエスト → [バリデーション] → 処理 → レスポンス
+                                                ↓
+                                            不正なら 400 エラー
 ```
 
 実務ではバリデーションが非常に重要です。不正なデータがシステムに入り込むと、予期しないエラーやセキュリティ上の問題を引き起こします。
@@ -30,7 +30,8 @@ APIが受け取るデータが「正しい形式か」を検証する処理で�
 
 `src/validation.ts` を作成して、バリデーション関数をまとめます。
 
-```typescript title="src/validation.ts"
+<CollapsibleCode title="src/validation.ts" defaultOpen={true}>
+```typescript
 // 日付の形式チェック（YYYY-MM-DD）
 export function isValidDate(date: string): boolean {
   const regex = /^\d{4}-\d{2}-\d{2}$/;
@@ -54,6 +55,7 @@ export function isClockOutAfterClockIn(clockIn: string, clockOut: string): boole
   return clockOut > clockIn;
 }
 ```
+</CollapsibleCode>
 
 ### コードの解説
 
@@ -77,6 +79,7 @@ export function isClockOutAfterClockIn(clockIn: string, clockOut: string): boole
 
 `regex.test(date)` は、`date` が正規表現のパターンに一致するかを `true` / `false` で返します。
 
+<CollapsibleCode title="正規表現の使用例" defaultOpen={true}>
 ```typescript
 const regex = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -84,6 +87,7 @@ regex.test('2026-01-28');  // true
 regex.test('abc');          // false
 regex.test('2026/01/28');   // false（ハイフンではなくスラッシュ）
 ```
+</CollapsibleCode>
 
 正規表現は奥が深いですが、今回は「形式が合っているか」のチェックに使っています。全部覚える必要はなく、必要なときに調べれば大丈夫です。
 </LearnMore>
@@ -103,7 +107,8 @@ new Date('2026-99-99').getTime();  // NaN（無効）
 
 `src/index.ts` の出勤打刻エンドポイントを修正します。
 
-```typescript title="src/index.ts" {3,15-25}
+<CollapsibleCode title="src/index.ts（import文の変更 + 出勤打刻バリデーション追加）" defaultOpen={true}>
+```typescript
 import express from 'express';
 import {
   getRecords,
@@ -149,12 +154,14 @@ app.post('/records/clock-in', (req, res) => {
   res.status(201).json(newRecord);
 });
 ```
+</CollapsibleCode>
 
 ## Step 3: 退勤打刻にバリデーションを追加する
 
 退勤打刻にも時刻のバリデーションと、出勤より後かのチェックを追加します。
 
-```typescript title="src/index.ts" {1,13-22}
+<CollapsibleCode title="src/index.ts（import文の変更 + 退勤打刻バリデーション追加）" defaultOpen={true}>
+```typescript
 import { isValidDate, isValidTime, isClockOutAfterClockIn } from './validation.js';
 
 // ... 既存のコード ...
@@ -194,6 +201,7 @@ app.post('/records/clock-out', (req, res) => {
   res.json(record);
 });
 ```
+</CollapsibleCode>
 
 ## Step 4: バリデーションの動作確認
 
