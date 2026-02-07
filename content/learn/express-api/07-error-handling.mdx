@@ -205,9 +205,9 @@ app.post('/records/clock-out', (req, res) => {
   mac={`curl -X POST http://localhost:3000/records/clock-in \\
   -H "Content-Type: application/json" \\
   -d '{"employeeName": "テスト", "date": "abc", "clockIn": "09:00"}'`}
-  windows={`curl -X POST http://localhost:3000/records/clock-in ^
-  -H "Content-Type: application/json" ^
-  -d "{\\"employeeName\\": \\"テスト\\", \\"date\\": \\"abc\\", \\"clockIn\\": \\"09:00\\"}"  `}
+  windows={`curl.exe -X POST http://localhost:3000/records/clock-in \`
+  -H "Content-Type: application/json" \`
+  -d '{"employeeName": "テスト", "date": "abc", "clockIn": "09:00"}'`}
 />
 
 ```json
@@ -222,9 +222,9 @@ app.post('/records/clock-out', (req, res) => {
   mac={`curl -X POST http://localhost:3000/records/clock-in \\
   -H "Content-Type: application/json" \\
   -d '{"employeeName": "テスト", "date": "2026-01-28", "clockIn": "25:00"}'`}
-  windows={`curl -X POST http://localhost:3000/records/clock-in ^
-  -H "Content-Type: application/json" ^
-  -d "{\\"employeeName\\": \\"テスト\\", \\"date\\": \\"2026-01-28\\", \\"clockIn\\": \\"25:00\\"}"  `}
+  windows={`curl.exe -X POST http://localhost:3000/records/clock-in \`
+  -H "Content-Type: application/json" \`
+  -d '{"employeeName": "テスト", "date": "2026-01-28", "clockIn": "25:00"}'`}
 />
 
 ```json
@@ -241,9 +241,9 @@ app.post('/records/clock-out', (req, res) => {
   mac={`curl -X POST http://localhost:3000/records/clock-out \\
   -H "Content-Type: application/json" \\
   -d '{"id": "3", "clockOut": "08:00"}'`}
-  windows={`curl -X POST http://localhost:3000/records/clock-out ^
-  -H "Content-Type: application/json" ^
-  -d "{\\"id\\": \\"3\\", \\"clockOut\\": \\"08:00\\"}"  `}
+  windows={`curl.exe -X POST http://localhost:3000/records/clock-out \`
+  -H "Content-Type: application/json" \`
+  -d '{"id": "3", "clockOut": "08:00"}'`}
 />
 
 ```json
