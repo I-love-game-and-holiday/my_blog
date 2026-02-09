@@ -14,6 +14,8 @@ interface ClickableCardProps {
     variant?: 'default' | 'plain'
     /** デフォルトのパディング（p-4）を適用するか */
     padding?: 'default' | 'none'
+    /** ボーダー色の上書き（Tailwind クラス名） */
+    borderColor?: string
 }
 
 /**
@@ -28,13 +30,14 @@ export function ClickableCard({
     className,
     variant = 'default',
     padding = 'default',
+    borderColor,
 }: ClickableCardProps) {
     return (
         <Link
             href={href}
             className={cn(
                 'group block rounded-lg',
-                variant === 'default' && 'border border-border',
+                variant === 'default' && (borderColor ? `border ${borderColor}` : 'border border-border'),
                 padding === 'default' && 'p-4',
                 INTERACTIVE_HOVER_BG,
                 INTERACTIVE_ACTIVE_BG,
