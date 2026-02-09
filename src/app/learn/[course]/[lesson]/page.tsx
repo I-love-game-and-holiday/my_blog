@@ -8,6 +8,8 @@ import { ArticleLayout } from '@/components/layout/article-layout'
 import { MdxContentWrapper } from '@/components/dictionary/mdx-components'
 import { ContentSidebar } from '@/components/layout/content-sidebar'
 import { DictionarySidebar } from '@/components/layout/dictionary-sidebar'
+import { LessonNavigation } from '@/components/content/lesson-navigation'
+import { LessonViewTracker } from '@/components/content/lesson-view-tracker'
 
 type PageParams = {
     course: string
@@ -86,6 +88,9 @@ export default async function LessonPage(props: PageProps) {
                     </span>
                 </nav>
 
+                {/* 進捗トラッカー */}
+                <LessonViewTracker courseSlug={params.course} lessonSlug={params.lesson} />
+
                 {/* Course sidebar (left) */}
                 <ContentSidebar
                     title="コース内容"
@@ -97,6 +102,7 @@ export default async function LessonPage(props: PageProps) {
                     currentIndex={currentIndex}
                     headings={headings}
                     goals={course.frontMatter?.goals}
+                    courseSlug={params.course}
                 />
 
                 {/* Dictionary sidebar (right) */}
@@ -121,39 +127,19 @@ export default async function LessonPage(props: PageProps) {
                 </article>
 
                 {/* Navigation */}
-                <nav className="mt-12 pt-8 border-t border-border">
-                    <div className="flex justify-between items-center gap-4">
-                        {prevLesson ? (
-                            <Link
-                                href={prevLesson.route}
-                                className="flex flex-col items-start text-left hover:opacity-80 transition-opacity"
-                            >
-                                <span className="text-sm text-muted-foreground">前のレッスン</span>
-                                <span className="font-medium">{prevLesson.frontMatter?.title || prevLesson.title}</span>
-                            </Link>
-                        ) : (
-                            <div />
-                        )}
-
-                        {nextLesson ? (
-                            <Link
-                                href={nextLesson.route}
-                                className="flex flex-col items-end text-right hover:opacity-80 transition-opacity"
-                            >
-                                <span className="text-sm text-muted-foreground">次のレッスン</span>
-                                <span className="font-medium">{nextLesson.frontMatter?.title || nextLesson.title}</span>
-                            </Link>
-                        ) : (
-                            <Link
-                                href={course.route}
-                                className="flex flex-col items-end text-right hover:opacity-80 transition-opacity"
-                            >
-                                <span className="text-sm text-muted-foreground">完了</span>
-                                <span className="font-medium">コース一覧に戻る</span>
-                            </Link>
-                        )}
-                    </div>
-                </nav>
+                <LessonNavigation
+                    courseSlug={params.course}
+                    currentLessonSlug={params.lesson}
+                    prevLesson={prevLesson ? {
+                        route: prevLesson.route,
+                        title: prevLesson.frontMatter?.title || prevLesson.title,
+                    } : null}
+                    nextLesson={nextLesson ? {
+                        route: nextLesson.route,
+                        title: nextLesson.frontMatter?.title || nextLesson.title,
+                    } : null}
+                    courseRoute={course.route}
+                />
             </div>
         </ArticleLayout>
     )

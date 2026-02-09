@@ -3,7 +3,13 @@ import { getCourse, getCourseSlugs } from '@/lib/get-courses'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { CourseGoals } from '@/components/content/course-goals'
-import { ClickableCard } from '@/components/ui/clickable-card'
+import { CourseProgressBadge } from '@/components/content/course-progress-badge'
+import {
+    ContinueLearningBanner,
+    LessonList,
+    CourseStartButton,
+    ResetProgressButton,
+} from '@/components/content/course-detail-client'
 
 type PageParams = {
     course: string
@@ -43,11 +49,17 @@ export default async function CoursePage(props: PageProps) {
                     href="/learn"
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors mb-4 inline-block"
                 >
-                    ← コース一覧に戻る
+                    &larr; コース一覧に戻る
                 </Link>
-                <h1 className="text-3xl font-bold tracking-tight mb-2">
-                    {course.frontMatter?.title || course.title}
-                </h1>
+                <div className="flex items-center gap-3 mb-2">
+                    <h1 className="text-3xl font-bold tracking-tight">
+                        {course.frontMatter?.title || course.title}
+                    </h1>
+                    <CourseProgressBadge
+                        courseSlug={course.slug}
+                        totalLessons={course.lessons.length}
+                    />
+                </div>
                 {course.frontMatter?.description && (
                     <p className="text-muted-foreground">
                         {course.frontMatter.description}
@@ -59,42 +71,17 @@ export default async function CoursePage(props: PageProps) {
                 <CourseGoals goals={course.frontMatter.goals} />
             )}
 
+            <ContinueLearningBanner courseSlug={course.slug} lessons={course.lessons} />
+
             {course.lessons.length === 0 ? (
                 <p className="text-muted-foreground">まだレッスンがありません。</p>
             ) : (
-                <div className="space-y-3">
-                    {course.lessons.map((lesson, index) => (
-                        <ClickableCard key={lesson.route} href={lesson.route}>
-                            <div className="flex items-center gap-4">
-                                <span className="flex items-center justify-center w-8 h-8 text-sm font-medium bg-secondary rounded-full shrink-0">
-                                    {index + 1}
-                                </span>
-                                <div>
-                                    <h3 className="font-medium group-hover:underline">
-                                        {lesson.frontMatter?.title || lesson.title}
-                                    </h3>
-                                    {lesson.frontMatter?.description && (
-                                        <p className="text-sm text-muted-foreground">
-                                            {lesson.frontMatter.description}
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
-                        </ClickableCard>
-                    ))}
-                </div>
+                <LessonList courseSlug={course.slug} lessons={course.lessons} />
             )}
 
-            {course.lessons.length > 0 && (
-                <div className="mt-8 pt-8 border-t border-border">
-                    <Link
-                        href={course.lessons[0].route}
-                        className="inline-flex items-center justify-center px-6 py-3 bg-foreground text-background font-medium rounded-lg hover:bg-foreground/90 transition-colors"
-                    >
-                        コースを始める
-                    </Link>
-                </div>
-            )}
+            <CourseStartButton courseSlug={course.slug} lessons={course.lessons} />
+
+            <ResetProgressButton courseSlug={course.slug} />
         </div>
     )
 }
