@@ -21,6 +21,8 @@
     --color-accent: var(--accent);
     --color-accent-foreground: var(--accent-foreground);
     --color-border: var(--border);
+    --color-success: var(--success);
+    --color-success-foreground: var(--success-foreground);
 }
 
 :root {
@@ -38,6 +40,8 @@
     --accent: #f5f5f5;
     --accent-foreground: #171717;
     --border: #e5e5e5;
+    --success: #2dba4e;
+    --success-foreground: #ffffff;
 }
 
 .dark {
@@ -54,6 +58,8 @@
     --accent: #262626;
     --accent-foreground: #fafafa;
     --border: #404040;
+    --success: #3fc463;
+    --success-foreground: #ffffff;
 }
 
 @layer base {

@@ -1,5 +1,6 @@
 import { getCourses } from '@/lib/get-courses'
 import { ClickableCard } from '@/components/ui/clickable-card'
+import { CourseProgressBadge } from '@/components/content/course-progress-badge'
 
 export const metadata = {
     title: 'Learn',
@@ -33,9 +34,15 @@ export default async function LearnPage() {
                         >
                             <div className="flex items-start justify-between gap-4">
                                 <div>
-                                    <h2 className="text-xl font-semibold mb-1 group-hover:underline">
-                                        {course.frontMatter?.title || course.title}
-                                    </h2>
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <h2 className="text-xl font-semibold group-hover:underline">
+                                            {course.frontMatter?.title || course.title}
+                                        </h2>
+                                        <CourseProgressBadge
+                                            courseSlug={course.slug}
+                                            totalLessons={course.lessons.length}
+                                        />
+                                    </div>
                                     {course.frontMatter?.description && (
                                         <p className="text-muted-foreground text-sm">
                                             {course.frontMatter.description}
