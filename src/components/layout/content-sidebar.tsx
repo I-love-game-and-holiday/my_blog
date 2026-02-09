@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { Target, BookOpen, Check } from 'lucide-react'
 import { SlidePanel } from './slide-panel'
 import { MobileCollapseSection } from './mobile-collapse-section'
+import { useCourseProgress } from '@/contexts/course-progress-context'
+import { COMPLETED_CIRCLE_BG, PROGRESS_BAR_BG } from '@/lib/constants'
 
 interface TableOfContentsItem {
     id: string
@@ -40,6 +42,8 @@ interface ContentSidebarProps {
     headings?: TableOfContentsItem[]
     /** 目標リスト（コース用、オプション） */
     goals?: string[]
+    /** コースslug（learn用。指定時はLocalStorageベースで進捗管理する） */
+    courseSlug?: string
 }
 
 /**
@@ -59,6 +63,7 @@ export function ContentSidebar({
     currentIndex,
     headings = [],
     goals = [],
+    courseSlug,
 }: ContentSidebarProps) {
     const [isOpen, setIsOpen] = useState(true)
 
@@ -72,6 +77,7 @@ export function ContentSidebar({
             currentIndex={currentIndex}
             headings={headings}
             goals={goals}
+            courseSlug={courseSlug}
         />
     )
 
@@ -113,6 +119,7 @@ interface ContentSidebarBodyProps {
     currentIndex: number
     headings: TableOfContentsItem[]
     goals: string[]
+    courseSlug?: string
 }
 
 function ContentSidebarBody({
@@ -124,7 +131,15 @@ function ContentSidebarBody({
     currentIndex,
     headings,
     goals,
+    courseSlug,
 }: ContentSidebarBodyProps) {
+    const { isLessonCompleted, getCompletedCount } = useCourseProgress()
+
+    // courseSlugがある場合はLocalStorageベース、ない場合は従来のインデックスベース
+    const completedCount = courseSlug
+        ? getCompletedCount(courseSlug)
+        : currentIndex + 1
+
     return (
         <div className="space-y-6">
             {/* 親タイトル */}
@@ -162,28 +177,34 @@ function ContentSidebarBody({
                     <h3 className="font-semibold text-sm">{itemsLabel}</h3>
                 </div>
                 <ul className="space-y-1">
-                    {items.map((item, index) => (
-                        <ItemLink
-                            key={item.slug}
-                            item={item}
-                            index={index}
-                            isCurrent={item.slug === currentSlug}
-                            isCompleted={index < currentIndex}
-                            headings={item.slug === currentSlug ? headings : []}
-                        />
-                    ))}
+                    {items.map((item, index) => {
+                        const completed = courseSlug
+                            ? isLessonCompleted(courseSlug, item.slug)
+                            : index < currentIndex
+
+                        return (
+                            <ItemLink
+                                key={item.slug}
+                                item={item}
+                                index={index}
+                                isCurrent={item.slug === currentSlug}
+                                isCompleted={completed}
+                                headings={item.slug === currentSlug ? headings : []}
+                            />
+                        )
+                    })}
                 </ul>
             </div>
 
             {/* 進捗 */}
             <div className="pt-4 border-t border-border">
                 <div className="text-xs text-muted-foreground mb-2">
-                    進捗: {currentIndex + 1} / {items.length}
+                    進捗: {completedCount} / {items.length}
                 </div>
                 <div className="w-full h-1.5 bg-border rounded-full overflow-hidden">
                     <div
-                        className="h-full bg-foreground transition-all"
-                        style={{ width: `${((currentIndex + 1) / items.length) * 100}%` }}
+                        className={`h-full transition-all ${courseSlug ? PROGRESS_BAR_BG : 'bg-foreground'}`}
+                        style={{ width: `${(completedCount / items.length) * 100}%` }}
                     />
                 </div>
             </div>
@@ -216,7 +237,7 @@ function ItemLink({ item, index, isCurrent, isCompleted, headings }: ItemLinkPro
                 <span className={`
                     flex items-center justify-center w-5 h-5 rounded-full text-xs
                     ${isCompleted
-                        ? 'bg-foreground text-background'
+                        ? COMPLETED_CIRCLE_BG
                         : isCurrent
                             ? 'bg-foreground/20 text-foreground'
                             : 'bg-border text-muted-foreground'
