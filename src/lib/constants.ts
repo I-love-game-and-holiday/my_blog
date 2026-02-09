@@ -23,3 +23,19 @@ export const INTERACTIVE_ACTIVE_BG = 'active:bg-muted-foreground/20'
 
 /** インタラクティブ要素のトランジション（Tailwind CSS クラス名） */
 export const INTERACTIVE_TRANSITION = 'transition-colors duration-150'
+
+/**
+ * 完了状態のスタイル定数
+ */
+
+/** 完了カードのボーダー色 */
+export const COMPLETED_BORDER = 'border-success'
+
+/** 完了チェックマーク（丸アイコン）の背景 */
+export const COMPLETED_CIRCLE_BG = 'bg-success text-success-foreground'
+
+/** 完了バッジのスタイル */
+export const COMPLETED_BADGE_BG = 'bg-success/10 text-success'
+
+/** 進捗バーの色 */
+export const PROGRESS_BAR_BG = 'bg-success'
