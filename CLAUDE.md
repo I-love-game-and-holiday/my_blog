@@ -35,7 +35,6 @@
 | UI | React 19, Tailwind CSS 4, shadcn/ui |
 | コンテンツ | MDX, Nextra 4, next-mdx-remote |
 | 検索 | Pagefind |
-| コメント | Giscus |
 | アイコン | Lucide, Tabler Icons |
 | デプロイ | Vercel |
 
