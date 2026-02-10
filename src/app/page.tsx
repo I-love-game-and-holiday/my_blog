@@ -8,8 +8,8 @@ export default function HomePage() {
             {/* Hero Section */}
             <section className="text-center mb-16">
                 <p className={`text-lg md:text-xl text-muted-foreground ${CONTENT_MAX_WIDTH} mx-auto`}>
-                    基礎を学んだあなたが、
-                    自分でアプリを作れるようになるまで。
+                    基礎を学んだあなたが、<br className="md:hidden" />
+                    自分でアプリを作るまで。
                 </p>
             </section>
 
@@ -25,11 +25,10 @@ export default function HomePage() {
                         </span>
                     </div>
                     <h2 className="text-2xl md:text-3xl font-semibold mb-3 group-hover:underline">
-                        学習コースを始める
+                        学習コース
                     </h2>
                     <p className="text-background/80">
-                        ステップバイステップで実践スキルを身につける。<br />
-                        基礎の次に進むためのハンズオン教材。
+                        ハンズオンで基礎を身に着ける
                     </p>
                 </Link>
             </section>
