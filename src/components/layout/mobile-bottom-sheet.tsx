@@ -34,7 +34,7 @@ export function MobileBottomSheet({
     }
 
     return (
-        <div className="lg:hidden fixed inset-0 z-50">
+        <div className="lg:hidden fixed inset-0 z-(--z-overlay)">
             {/* バックドロップ */}
             <div
                 className="absolute inset-0 bg-black/50"
