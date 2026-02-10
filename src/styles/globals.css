@@ -23,6 +23,23 @@
     --color-border: var(--border);
     --color-success: var(--success);
     --color-success-foreground: var(--success-foreground);
+
+    /* Layout */
+    --header-height: 3.5rem;
+    --container-max-width: 56rem;
+    --content-max-width: 42rem;
+
+    /* Z-index scale */
+    --z-base: 10;
+    --z-panel-trigger: 40;
+    --z-panel: 50;
+    --z-overlay: 50;
+    --z-header: 60;
+
+    /* Code block colors */
+    --color-code-bg: #1a1a1a;
+    --color-code-fg: #e5e5e5;
+    --color-code-highlight: #6366f1;
 }
 
 :root {
@@ -42,6 +59,8 @@
     --border: #e5e5e5;
     --success: #2dba4e;
     --success-foreground: #ffffff;
+    --prose-accent: #3b82f6;
+    --prose-accent-light: #60a5fa;
 }
 
 .dark {
@@ -60,6 +79,8 @@
     --border: #404040;
     --success: #3fc463;
     --success-foreground: #ffffff;
+    --prose-accent: #60a5fa;
+    --prose-accent-light: #93c5fd;
 }
 
 @layer base {
@@ -77,12 +98,16 @@
 }
 
 .prose h1 {
-    @apply text-3xl font-bold tracking-tight mt-8 mb-4;
-    @apply border-l-4 border-blue-500 pl-4;
+    font-size: clamp(1.5rem, 1.25rem + 1vw, 1.875rem);
+    line-height: 1.3;
+    @apply font-bold tracking-tight mt-8 mb-4;
+    @apply border-l-4 border-[var(--prose-accent)] pl-4;
 }
 
 .prose h2 {
-    @apply text-2xl font-semibold tracking-tight mt-8 mb-3;
+    font-size: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+    line-height: 1.3;
+    @apply font-semibold tracking-tight mt-8 mb-3;
     @apply relative pb-2;
 }
 
@@ -92,13 +117,15 @@
 }
 
 .prose h3 {
-    @apply text-xl font-semibold tracking-tight mt-6 mb-2;
+    font-size: clamp(1.125rem, 1rem + 0.5vw, 1.25rem);
+    line-height: 1.3;
+    @apply font-semibold tracking-tight mt-6 mb-2;
     @apply relative pl-4;
 }
 
 .prose h3::before {
     content: '';
-    @apply absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-blue-400;
+    @apply absolute left-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[var(--prose-accent-light)];
 }
 
 .prose p {
@@ -126,7 +153,7 @@
 }
 
 .prose pre {
-    @apply bg-[#1a1a1a] text-[#e5e5e5] p-4 rounded-lg overflow-x-auto my-4;
+    @apply bg-[var(--color-code-bg)] text-[var(--color-code-fg)] p-4 rounded-lg overflow-x-auto my-4;
 }
 
 .prose pre code {
@@ -137,56 +164,52 @@
     @apply border-l-4 border-border pl-4 italic my-4 text-muted-foreground;
 }
 
+/* Typography - Small variant */
+.prose-sm {
+    @apply text-sm;
+}
+
+.prose-sm p {
+    @apply leading-6 mb-3;
+}
+
+.prose-sm h2 {
+    @apply text-base font-semibold mt-4 mb-2;
+}
+
+.prose-sm h3 {
+    @apply text-sm font-semibold mt-3 mb-1;
+}
+
+.prose-sm pre {
+    @apply text-xs p-2;
+}
+
+.prose-sm code {
+    @apply text-xs;
+}
+
+.prose-sm ul, .prose-sm ol {
+    @apply my-2 pl-4;
+}
+
+.prose-sm li {
+    @apply mb-1;
+}
+
 /* Code highlighting */
 pre code.nextra-code > span[data-highlighted-line] {
     display: block;
-    background: rgba(99, 102, 241, 0.1);
-    border-left: 3px solid #6366f1;
+    background: color-mix(in srgb, var(--color-code-highlight) 10%, transparent);
+    border-left: 3px solid var(--color-code-highlight);
     padding-left: 0.75rem;
     margin-left: -0.75rem;
 }
 
 /* Container */
 .container {
-    @apply max-w-4xl mx-auto px-4 sm:px-6;
-}
-
-/* Article Layout with Dictionary Panel */
-.article-layout {
-    @apply relative;
-}
-
-.article-content {
-    @apply mx-auto;
-}
-
-/* Dictionary Panel */
-.dictionary-panel {
-    @apply fixed top-20 right-4 w-80 transition-all duration-300 opacity-0 pointer-events-none;
-}
-
-.dictionary-panel-open {
-    @apply opacity-100 pointer-events-auto;
-}
-
-@media (min-width: 1280px) {
-    .dictionary-panel {
-        @apply right-8;
-    }
-}
-
-@media (min-width: 1536px) {
-    .dictionary-panel {
-        right: calc((100vw - 896px) / 2 - 340px);
-    }
-}
-
-.dictionary-panel-content {
-    @apply p-4 bg-secondary/30 rounded-lg border border-border;
-}
-
-.dictionary-panel-placeholder {
-    @apply p-4 bg-secondary/30 rounded-lg border border-border border-dashed flex flex-col items-center justify-center min-h-[200px];
+    max-width: var(--container-max-width);
+    @apply mx-auto px-4 sm:px-6 lg:px-8;
 }
 
 /* Dictionary Term Link */
@@ -206,39 +229,6 @@ pre code.nextra-code > span[data-highlighted-line] {
 .dictionary-term-active {
     background-color: var(--secondary);
     text-decoration-color: var(--primary);
-}
-
-/* Dictionary Panel Prose */
-.dictionary-panel .prose {
-    @apply text-sm;
-}
-
-.dictionary-panel .prose h2 {
-    @apply text-base font-semibold mt-4 mb-2;
-}
-
-.dictionary-panel .prose h3 {
-    @apply text-sm font-semibold mt-3 mb-1;
-}
-
-.dictionary-panel .prose p {
-    @apply leading-6 mb-3;
-}
-
-.dictionary-panel .prose pre {
-    @apply text-xs p-2;
-}
-
-.dictionary-panel .prose code {
-    @apply text-xs;
-}
-
-.dictionary-panel .prose ul, .dictionary-panel .prose ol {
-    @apply my-2 pl-4;
-}
-
-.dictionary-panel .prose li {
-    @apply mb-1;
 }
 
 /* Common Figure Caption */
@@ -291,5 +281,5 @@ pre code.nextra-code > span[data-highlighted-line] {
 }
 
 .code-block-dark {
-    @apply bg-[#1a1a1a];
+    @apply bg-[var(--color-code-bg)];
 }
