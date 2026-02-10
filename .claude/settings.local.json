@@ -29,7 +29,9 @@
       "Bash(npx next build:*)",
       "Bash(node:*)",
       "Bash(ls:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(for dir in \"/d/cursor/private/blog/content/learn\"/*/)",
+      "Bash(npm uninstall:*)"
     ]
   }
 }
