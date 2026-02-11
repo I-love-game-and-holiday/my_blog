@@ -21,6 +21,12 @@ export function SiteFooter() {
                         プライバシーポリシー
                     </Link>
                     <Link
+                        href="/contact"
+                        className="hover:text-foreground transition-colors"
+                    >
+                        お問い合わせ
+                    </Link>
+                    <Link
                         href="https://x.com/tanaka101com"
                         target="_blank"
                         rel="noopener noreferrer"
