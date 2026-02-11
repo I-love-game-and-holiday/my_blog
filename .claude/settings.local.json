@@ -46,7 +46,8 @@
       "WebFetch(domain:www.eleken.co)",
       "WebFetch(domain:www.artsycourseexperts.com)",
       "WebFetch(domain:componentlibrary.moodle.com)",
-      "WebFetch(domain:www.nngroup.com)"
+      "WebFetch(domain:www.nngroup.com)",
+      "Bash(npm ls:*)"
     ]
   }
 }
