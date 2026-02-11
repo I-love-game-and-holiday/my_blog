@@ -1,4 +1,5 @@
 import { Head } from 'nextra/components'
+import { Analytics } from "@vercel/analytics/next"
 import '@/styles/globals.css'
 import { SiteHeader } from '@/components/layout/site-header'
 import { SiteFooter } from '@/components/layout/site-footer'
@@ -44,6 +45,7 @@ export default function RootLayout({
                         <SiteFooter />
                     </CourseProgressProvider>
                 </ThemeProvider>
+                <Analytics />
             </body>
         </html>
     )
