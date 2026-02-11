@@ -1,3 +1,5 @@
+/* CSS設計ルール: CLAUDE.md「CSS設計（3レイヤーレスポンシブ）」を参照 */
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
