@@ -14,6 +14,9 @@ export const metadata: Metadata = {
         template: '%s | tanaka101',
     },
     description: 'プロゲートを終えた非エンジニア向け。実践的なハンズオンで次のステップへ。',
+    other: {
+        'google-adsense-account': 'ca-pub-6394268468794969',
+    },
 }
 
 const inter = Inter({
