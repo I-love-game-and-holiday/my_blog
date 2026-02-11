@@ -1,6 +1,8 @@
 # CLAUDE.md
 
-このファイルはClaude Codeがこのリポジトリで作業する際のガイダンスを提供します。
+このファイルはプロジェクトの**唯一のドキュメント**である。設計方針・命名規約・コーディングガイドラインなど、プロジェクトに関するすべての規約をここに集約する。Claude Codeと開発者の双方がこのファイルを参照する。
+
+> **分割の目安**: このファイルが800行を超えた場合、セクション単位での分離を検討すること。
 
 ---
 
@@ -20,8 +22,6 @@
 |------|------|
 | **Learn** | ステップバイステップ学習コース（進捗表示付き） |
 | **Blog** | 技術記事・備忘録 |
-| **検索** | Pagefindによるオンサイト検索 |
-| **自動ツイート** | Vercelデプロイ時にX(Twitter)へ自動投稿 |
 | **SEO最適化** | 自動サイトマップ・RSS・メタデータ生成 |
 
 ---
@@ -34,7 +34,6 @@
 | 言語 | TypeScript 5.9 |
 | UI | React 19, Tailwind CSS 4, shadcn/ui |
 | コンテンツ | MDX, Nextra 4, next-mdx-remote |
-| 検索 | Pagefind |
 | アイコン | Lucide, Tabler Icons |
 | デプロイ | Vercel |
 
@@ -66,9 +65,6 @@ blog/
 │   │   └── highlight.ts # コードハイライト（shiki）
 │   └── styles/          # グローバルスタイル
 ├── public/              # 静的ファイル
-└── .github/
-    ├── scripts/         # 自動化スクリプト
-    └── workflows/       # GitHub Actions
 ```
 
 ---
@@ -84,9 +80,6 @@ npm run build
 
 # 本番サーバー起動
 npm run start
-
-# 検索インデックス生成
-npm run postbuild
 ```
 
 ---
@@ -131,6 +124,16 @@ tags:
 
    レッスン本文...
    ```
+
+### コンテンツ文字数ガイドライン
+
+| 対象 | 目安 | 理由 |
+|------|------|------|
+| コース/ガイドのタイトル | **20文字以内** | スマホ幅で2行以内に収めるため |
+| コース/ガイドの説明 | 制限なし | `text-sm` 表示のため長くても視覚的に重くならない |
+
+- タイトルには「何を作るか」を端的に書き、技術名や補足は description に任せる
+- 例: `はじめてのTodoアプリ`（11文字）✅ / `はじめての Web アプリ - Todo アプリを作ろう`（24文字）❌
 
 ---
 
@@ -256,8 +259,77 @@ import { SiteHeader } from '@/components/site-header';
 
 ---
 
+## CSS設計（3レイヤーレスポンシブ）
+
+コンポーネントに `md:text-xl` や `sm:p-8` のようなbreakpointを都度書かない。レスポンシブ対応は以下の3レイヤーで責務を分離する。
+
+### Layer 1: レイアウト層（breakpoint許可）
+
+**レイアウトの離散的な構造切替**のみbreakpointを使用する。表示/非表示、フロー方向、グリッド列数など、連続値で表現できない二値の判断が対象。
+
+```tsx
+// OK: 構造の切替（表示する/しない、縦/横）
+<nav className="hidden md:flex">
+<div className="flex flex-col-reverse sm:flex-row">
+<div className="grid gap-6 sm:grid-cols-2">
+
+// NG: サイズや余白の段階的変化
+<div className="p-4 sm:p-6 md:p-8">
+<h1 className="text-2xl md:text-3xl">
+```
+
+**使用場所**: レイアウトコンポーネント（`site-header.tsx`等）やページファイルのグリッド定義。
+
+### Layer 2: コンテナ層（@container）
+
+親のサイズに応じてコンポーネントが適応する。現在は未使用だが、サイドバー内ウィジェットなどコンテキスト依存のレイアウトに使う想定。
+
+### Layer 3: デザイントークン層（breakpoint禁止）
+
+`clamp()` を使い、ビューポート幅に応じて値が**滑らかに**変化する。コンポーネント側ではクラス名を1つ書くだけ。
+
+定義場所: `src/styles/globals.css` の `Fluid Utilities (Layer 3)` セクション
+
+#### 現在のトークン一覧
+
+| クラス名 | 用途 | 範囲 |
+|----------|------|------|
+| `.text-page-title` | 記事タイトル、CTA見出し | 24px → 30px |
+| `.text-page-subtitle` | ホームのサブテキスト | 18px → 20px |
+| `.py-section-hero` | ヒーローセクション余白 | 64px → 96px |
+| `.p-card-cta` | CTAカード内パディング | 32px → 40px |
+| `.size-hero-icon` | ヒーローアイコン | 96px → 128px |
+
+#### 新規トークン追加時のルール
+
+1. `globals.css` の `Fluid Utilities (Layer 3)` セクションに追加する
+2. 日本語コメントで **用途** と **px範囲** を明記する
+3. クラス名は `{プロパティ}-{コンテキスト}` の形式にする（例: `text-page-title`, `p-card-cta`）
+4. `clamp(最小値, 推奨値, 最大値)` で定義する
+
+```css
+/* 用途の説明 (最小px → 最大px) */
+.text-section-heading {
+    font-size: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+    line-height: 1.3;
+}
+```
+
+### 判断基準
+
+| 変化の性質 | レイヤー | 手法 |
+|-----------|---------|------|
+| 表示/非表示 | Layer 1 | `hidden md:block` |
+| 縦並び/横並び | Layer 1 | `flex-col sm:flex-row` |
+| 1列/2列 | Layer 1 | `sm:grid-cols-2` |
+| フォントサイズ | Layer 3 | `clamp()` ユーティリティ |
+| パディング・マージン | Layer 3 | `clamp()` ユーティリティ |
+| 幅・高さ | Layer 3 | `clamp()` ユーティリティ |
+
+**迷ったときの原則**: 「その値は0か1か（離散）、それとも連続的に変化するか？」 → 離散ならLayer 1、連続ならLayer 3。
+
+---
+
 ## 注意事項
 
 - コンテンツは `content/` 配下のMDXファイルで管理（DBは使用しない）
-- ビルド後に `npm run postbuild` で検索インデックスを生成
-- GitHub Secretsに Twitter API キーを設定することで自動ツイート機能が有効化

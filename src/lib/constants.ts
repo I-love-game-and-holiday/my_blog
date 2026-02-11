@@ -5,10 +5,7 @@
 /** メインコンテンツの最大幅（Tailwind CSS クラス名） */
 export const CONTENT_MAX_WIDTH = 'max-w-2xl'
 
-/** コンテナの最大幅（Tailwind CSS クラス名） */
-export const CONTAINER_MAX_WIDTH = 'max-w-4xl'
-
-/** ヘッダーの高さ（px） */
+/** ヘッダーの高さ（px）。CSS変数 --header-height (3.5rem) と同期 */
 export const HEADER_HEIGHT = 56
 
 /**

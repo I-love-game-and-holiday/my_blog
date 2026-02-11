@@ -21,28 +21,24 @@ export default async function GuidesPage() {
             {guides.length === 0 ? (
                 <p className="text-muted-foreground">まだガイドがありません。</p>
             ) : (
-                <div className="grid gap-6">
+                <div className="grid gap-6 sm:grid-cols-2">
                     {guides.map((guide) => (
                         <ClickableCard
                             key={guide.route}
                             href={guide.route}
                             padding="none"
-                            className="p-6"
+                            className="flex flex-col gap-3 p-6"
                         >
-                            <div className="flex items-start justify-between gap-4">
-                                <div>
-                                    <h2 className="text-xl font-semibold mb-1 group-hover:underline">
-                                        {guide.frontMatter?.title || guide.title}
-                                    </h2>
-                                    {guide.frontMatter?.description && (
-                                        <p className="text-muted-foreground text-sm">
-                                            {guide.frontMatter.description}
-                                        </p>
-                                    )}
-                                </div>
-                                <div className="text-sm text-muted-foreground shrink-0">
-                                    {guide.sections.length} sections
-                                </div>
+                            <h2 className="text-xl font-semibold group-hover:underline">
+                                {guide.frontMatter?.title || guide.title}
+                            </h2>
+                            {guide.frontMatter?.description && (
+                                <p className="text-muted-foreground text-sm">
+                                    {guide.frontMatter.description}
+                                </p>
+                            )}
+                            <div className="text-sm text-muted-foreground">
+                                {guide.sections.length} sections
                             </div>
                         </ClickableCard>
                     ))}

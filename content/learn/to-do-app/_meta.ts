@@ -1,5 +1,5 @@
 export default {
-    title: 'はじめての Web アプリ - Todo アプリを作ろう',
+    title: 'Todo アプリを作る',
     description: 'HTML/CSS/JavaScriptでTodoアプリを作成し、Vercelにデプロイするまでを学びます。',
     order: 2,
     goals: [
