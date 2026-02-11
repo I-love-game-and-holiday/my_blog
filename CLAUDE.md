@@ -1,6 +1,8 @@
 # CLAUDE.md
 
-このファイルはClaude Codeがこのリポジトリで作業する際のガイダンスを提供します。
+このファイルはプロジェクトの**唯一のドキュメント**である。設計方針・命名規約・コーディングガイドラインなど、プロジェクトに関するすべての規約をここに集約する。Claude Codeと開発者の双方がこのファイルを参照する。
+
+> **分割の目安**: このファイルが800行を超えた場合、セクション単位での分離を検討すること。
 
 ---
 
@@ -20,8 +22,6 @@
 |------|------|
 | **Learn** | ステップバイステップ学習コース（進捗表示付き） |
 | **Blog** | 技術記事・備忘録 |
-| **検索** | Pagefindによるオンサイト検索 |
-| **自動ツイート** | Vercelデプロイ時にX(Twitter)へ自動投稿 |
 | **SEO最適化** | 自動サイトマップ・RSS・メタデータ生成 |
 
 ---
@@ -34,7 +34,6 @@
 | 言語 | TypeScript 5.9 |
 | UI | React 19, Tailwind CSS 4, shadcn/ui |
 | コンテンツ | MDX, Nextra 4, next-mdx-remote |
-| 検索 | Pagefind |
 | アイコン | Lucide, Tabler Icons |
 | デプロイ | Vercel |
 
@@ -66,9 +65,6 @@ blog/
 │   │   └── highlight.ts # コードハイライト（shiki）
 │   └── styles/          # グローバルスタイル
 ├── public/              # 静的ファイル
-└── .github/
-    ├── scripts/         # 自動化スクリプト
-    └── workflows/       # GitHub Actions
 ```
 
 ---
@@ -84,9 +80,6 @@ npm run build
 
 # 本番サーバー起動
 npm run start
-
-# 検索インデックス生成
-npm run postbuild
 ```
 
 ---
@@ -330,5 +323,3 @@ import { SiteHeader } from '@/components/site-header';
 ## 注意事項
 
 - コンテンツは `content/` 配下のMDXファイルで管理（DBは使用しない）
-- ビルド後に `npm run postbuild` で検索インデックスを生成
-- GitHub Secretsに Twitter API キーを設定することで自動ツイート機能が有効化
