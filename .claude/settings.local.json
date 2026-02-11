@@ -31,7 +31,22 @@
       "Bash(ls:*)",
       "Bash(findstr:*)",
       "Bash(for dir in \"/d/cursor/private/blog/content/learn\"/*/)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "WebFetch(domain:bricxlabs.com)",
+      "WebFetch(domain:prototypr.io)",
+      "WebFetch(domain:www.uidesigndaily.com)",
+      "WebFetch(domain:news.codecademy.com)",
+      "WebFetch(domain:app.uxcel.com)",
+      "WebFetch(domain:www.codecademy.com)",
+      "WebFetch(domain:www.mockplus.com)",
+      "WebFetch(domain:progate.com)",
+      "WebFetch(domain:www.udemy.com)",
+      "WebFetch(domain:www.freecodecamp.org)",
+      "WebFetch(domain:www.justinmind.com)",
+      "WebFetch(domain:www.eleken.co)",
+      "WebFetch(domain:www.artsycourseexperts.com)",
+      "WebFetch(domain:componentlibrary.moodle.com)",
+      "WebFetch(domain:www.nngroup.com)"
     ]
   }
 }
