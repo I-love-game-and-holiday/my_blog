@@ -15,7 +15,6 @@ export default function PrivacyPage() {
                 </h1>
 
                 <div className="space-y-8 text-muted-foreground leading-relaxed">
-                    {/* TODO: AdSense審査通過後にコメントアウトを解除する
                     <section>
                         <h2 className="text-xl font-semibold text-foreground mb-3">
                             広告について
@@ -39,7 +38,6 @@ export default function PrivacyPage() {
                             をご確認ください。
                         </p>
                     </section>
-                    */}
 
                     <section>
                         <h2 className="text-xl font-semibold text-foreground mb-3">
