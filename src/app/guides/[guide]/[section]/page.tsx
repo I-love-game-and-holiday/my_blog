@@ -104,7 +104,7 @@ export default async function SectionPage(props: PageProps) {
                 {/* 記事本文 */}
                 <article className="prose max-w-none">
                     <header className="mb-8 not-prose">
-                        <h1 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">
+                        <h1 className="text-page-title font-bold tracking-tight mb-2">
                             {metadata?.title}
                         </h1>
                         {metadata?.description && (
@@ -120,7 +120,7 @@ export default async function SectionPage(props: PageProps) {
 
                 {/* Navigation */}
                 <nav className="mt-12 pt-8 border-t border-border">
-                    <div className="flex justify-between items-center gap-4">
+                    <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between sm:items-center sm:gap-4">
                         {prevSection ? (
                             <Link
                                 href={prevSection.route}

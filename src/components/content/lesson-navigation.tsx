@@ -26,7 +26,7 @@ export function LessonNavigation({
 
     return (
         <nav className="mt-12 pt-8 border-t border-border">
-            <div className="flex justify-between items-center gap-4">
+            <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between sm:items-center sm:gap-4">
                 {prevLesson ? (
                     <Link
                         href={prevLesson.route}

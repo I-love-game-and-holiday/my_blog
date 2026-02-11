@@ -92,6 +92,52 @@
     }
 }
 
+/* ============================================
+ * Fluid Utilities (Layer 3)
+ *
+ * breakpoint(md:, sm:等)を使わずに
+ * ビューポート幅に応じて値が滑らかに変化するユーティリティ。
+ * コンポーネント側では単一クラスを書くだけでレスポンシブになる。
+ *
+ * clamp(最小値, 推奨値, 最大値) の計算式:
+ *   推奨値 = 最小値 + (最大値 - 最小値) の割合を vw で表現
+ * ============================================ */
+
+/* --- Fluid Typography --- */
+
+/* 記事ページタイトル、CTAの見出し等 (24px → 30px) */
+.text-page-title {
+    font-size: clamp(1.5rem, 1.25rem + 1vw, 1.875rem);
+    line-height: 1.3;
+}
+
+/* ホームのサブテキスト等 (18px → 20px) */
+.text-page-subtitle {
+    font-size: clamp(1.125rem, 1.05rem + 0.3vw, 1.25rem);
+    line-height: 1.5;
+}
+
+/* --- Fluid Spacing --- */
+
+/* ホームページのヒーローセクション余白 (64px → 96px) */
+.py-section-hero {
+    padding-top: clamp(4rem, 3rem + 4vw, 6rem);
+    padding-bottom: clamp(4rem, 3rem + 4vw, 6rem);
+}
+
+/* CTA等の大きめカード内パディング (32px → 40px) */
+.p-card-cta {
+    padding: clamp(2rem, 1.75rem + 1vw, 2.5rem);
+}
+
+/* --- Fluid Sizing --- */
+
+/* ヒーローアイコン (96px → 128px) */
+.size-hero-icon {
+    width: clamp(6rem, 5rem + 4vw, 8rem);
+    height: clamp(6rem, 5rem + 4vw, 8rem);
+}
+
 /* Typography */
 .prose {
     @apply max-w-none;
@@ -206,10 +252,11 @@ pre code.nextra-code > span[data-highlighted-line] {
     margin-left: -0.75rem;
 }
 
-/* Container */
+/* Container — padding-inlineをclampで滑らかに変化 (16px → 32px) */
 .container {
     max-width: var(--container-max-width);
-    @apply mx-auto px-4 sm:px-6 lg:px-8;
+    margin-inline: auto;
+    padding-inline: clamp(1rem, 0.5rem + 2vw, 2rem);
 }
 
 /* Dictionary Term Link */

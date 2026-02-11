@@ -21,7 +21,7 @@ export default async function GuidesPage() {
             {guides.length === 0 ? (
                 <p className="text-muted-foreground">まだガイドがありません。</p>
             ) : (
-                <div className="grid gap-6">
+                <div className="grid gap-6 sm:grid-cols-2">
                     {guides.map((guide) => (
                         <ClickableCard
                             key={guide.route}
