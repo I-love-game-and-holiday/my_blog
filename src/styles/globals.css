@@ -127,6 +127,12 @@
     padding-bottom: clamp(4rem, 3rem + 4vw, 6rem);
 }
 
+/* About・Privacyなど静的ページの上下余白 (64px → 96px) */
+.py-section-static {
+    padding-top: clamp(4rem, 3rem + 4vw, 6rem);
+    padding-bottom: clamp(4rem, 3rem + 4vw, 6rem);
+}
+
 /* CTA等の大きめカード内パディング (32px → 40px) */
 .p-card-cta {
     padding: clamp(2rem, 1.75rem + 1vw, 2.5rem);
