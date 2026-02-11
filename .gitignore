@@ -5,4 +5,5 @@ _pagefind/
 /.env
 
 
-draft.md
+# 草案ディレクトリ
+drafts/
