@@ -2,7 +2,7 @@ export function HeroBlocks() {
     return (
         <svg
             viewBox="0 0 100 100"
-            className="w-24 h-24 md:w-32 md:h-32"
+            className="size-hero-icon"
             aria-hidden="true"
         >
             {/* 上段左 - 101テキスト */}

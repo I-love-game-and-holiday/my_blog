@@ -24,7 +24,7 @@ export default async function LearnPage() {
             {courses.length === 0 ? (
                 <p className="text-muted-foreground">まだコースがありません。</p>
             ) : (
-                <div className="grid gap-6">
+                <div className="grid gap-6 sm:grid-cols-2">
                     {courses.map((course) => (
                         <ClickableCard
                             key={course.route}

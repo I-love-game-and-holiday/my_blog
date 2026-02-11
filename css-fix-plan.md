@@ -278,9 +278,37 @@ L215-260:   .content-table / .code-block（CSS変数化済み）
 
 ---
 
-## 将来課題（今回のスコープ外）
+## Phase 5: SiteHeader モバイルナビゲーション
 
-- **Phase 5: @container 対応** — コンポーネント層のコンテナクエリ導入
-- **SiteHeaderのレスポンシブ対応** — モバイルナビゲーション（ハンバーガーメニュー等）
+### 対象: `src/components/layout/site-header.tsx`
+- md: (768px)をブレークポイント。ハンバーガーメニュー + ドロップダウン
+- ThemeToggleはモバイルでも常時表示
+
+## Phase 6: 一覧ページのグリッドレスポンシブ化
+
+### 対象: `src/app/learn/page.tsx`, `src/app/guides/page.tsx`
+- `grid gap-6` → `grid gap-6 sm:grid-cols-2`
+- blog/page.tsxは変更しない（時系列リストは単一列が適切）
+
+## Phase 7: レッスン/ガイドナビゲーションの小画面対応
+
+### 対象: `src/components/content/lesson-navigation.tsx`, `src/app/guides/[guide]/[section]/page.tsx`
+- `flex justify-between` → `flex flex-col-reverse gap-3 sm:flex-row sm:justify-between sm:items-center`
+
+## Phase 8: @container インフラ整備
+
+### 対象: `src/styles/globals.css`
+- `.container-query { container-type: inline-size; }` 追加
+
+## Phase 9: ホームページ微調整
+
+### 対象: `src/app/page.tsx`
+- `p-8 md:p-10` → `p-6 sm:p-8 md:p-10`
+
+---
+
+## 将来課題（スコープ外）
+
 - **constants.tsのINTERACTIVE_*定数** — @applyベースユーティリティへの移行検討
 - **他コンポーネントのハードコード色** — callout.tsx, box-diagram.tsx, alert.tsx等のblue/green/red
+- **@container の実コンポーネント適用** — push-layout sidebar導入時
