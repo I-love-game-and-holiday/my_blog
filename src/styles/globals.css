@@ -138,7 +138,7 @@
     height: clamp(6rem, 5rem + 4vw, 8rem);
 }
 
-/* Typography */
+/* --- Typography --- */
 .prose {
     @apply max-w-none;
 }
@@ -210,7 +210,7 @@
     @apply border-l-4 border-border pl-4 italic my-4 text-muted-foreground;
 }
 
-/* Typography - Small variant */
+/* --- Typography Small --- */
 .prose-sm {
     @apply text-sm;
 }
@@ -243,7 +243,7 @@
     @apply mb-1;
 }
 
-/* Code highlighting */
+/* --- Code Highlighting --- */
 pre code.nextra-code > span[data-highlighted-line] {
     display: block;
     background: color-mix(in srgb, var(--color-code-highlight) 10%, transparent);
@@ -259,7 +259,7 @@ pre code.nextra-code > span[data-highlighted-line] {
     padding-inline: clamp(1rem, 0.5rem + 2vw, 2rem);
 }
 
-/* Dictionary Term Link */
+/* --- Dictionary Term --- */
 .dictionary-term {
     @apply inline cursor-pointer text-inherit;
     text-decoration: underline;
@@ -278,12 +278,12 @@ pre code.nextra-code > span[data-highlighted-line] {
     text-decoration-color: var(--primary);
 }
 
-/* Common Figure Caption */
+/* --- Figure Caption --- */
 .figure-caption {
     @apply mt-2 text-center text-sm text-muted-foreground;
 }
 
-/* Table Styles */
+/* --- Table --- */
 .content-table {
     @apply w-full text-sm;
     border-collapse: separate;
@@ -322,7 +322,7 @@ pre code.nextra-code > span[data-highlighted-line] {
     @apply border-b border-border;
 }
 
-/* Code Block Styles */
+/* --- Code Block --- */
 .code-block-header {
     @apply border-b border-border;
 }
