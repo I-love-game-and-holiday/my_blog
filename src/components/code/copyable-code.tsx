@@ -19,7 +19,7 @@ export function CopyableCode({ children }: CopyableCodeProps) {
     return (
         <CodeBlockWrapper>
             <div className="relative">
-                <div className="absolute top-1 right-1 z-10">
+                <div className="absolute top-1 right-1 z-(--z-base)">
                     <CopyButton getText={getCodeText} />
                 </div>
                 <CodeBlockContent ref={contentRef}>{children}</CodeBlockContent>

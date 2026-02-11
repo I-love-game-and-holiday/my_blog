@@ -2,7 +2,6 @@
 
 import { type ReactNode } from 'react'
 import { ChevronsRight, ChevronsLeft } from 'lucide-react'
-import { HEADER_HEIGHT } from '@/lib/constants'
 
 type PanelPosition = 'left' | 'right'
 
@@ -52,11 +51,11 @@ export function SlidePanel({
             {/* エッジトリガーエリア */}
             <button
                 onClick={() => onOpenChange(true)}
-                style={{ top: HEADER_HEIGHT }}
+                style={{ top: 'var(--header-height)' }}
                 className={`
-                    fixed ${edgePosition} h-[calc(100%-56px)] w-12
+                    fixed ${edgePosition} h-[calc(100%-var(--header-height))] w-12
                     bg-transparent hover:bg-muted-foreground/20
-                    transition-colors cursor-pointer z-40
+                    transition-colors cursor-pointer z-(--z-panel-trigger)
                     ${isOpen ? 'pointer-events-none' : ''}
                 `}
                 aria-label={`${title}を開く`}
@@ -64,9 +63,9 @@ export function SlidePanel({
 
             {/* 開くインジケーター */}
             <div
-                style={{ top: HEADER_HEIGHT + 12 }}
+                style={{ top: 'calc(var(--header-height) + 0.75rem)' }}
                 className={`
-                    fixed ${indicatorPosition} z-40
+                    fixed ${indicatorPosition} z-(--z-panel-trigger)
                     pointer-events-none transition-opacity
                     ${isOpen ? 'opacity-0' : 'opacity-100'}
                 `}
@@ -76,9 +75,9 @@ export function SlidePanel({
 
             {/* スライドパネル */}
             <div
-                style={{ top: HEADER_HEIGHT }}
+                style={{ top: 'var(--header-height)' }}
                 className={`
-                    fixed ${edgePosition} ${panelBorder} h-[calc(100%-56px)] ${width} z-50
+                    fixed ${edgePosition} ${panelBorder} h-[calc(100%-var(--header-height))] ${width} z-(--z-panel)
                     bg-background border-border shadow-xl
                     transform transition-transform duration-300 ease-in-out
                     ${panelTransform}

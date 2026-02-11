@@ -51,7 +51,7 @@ export default async function BlogPostPage(props: PageProps) {
 
                 <article className="prose max-w-none">
                     <header className="mb-8 not-prose">
-                        <h1 className="text-3xl font-bold tracking-tight mb-2">
+                        <h1 className="text-page-title font-bold tracking-tight mb-2">
                             {metadata?.title}
                         </h1>
                         {metadata?.date && (

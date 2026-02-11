@@ -4,12 +4,12 @@ import { ClickableCard } from '@/components/ui/clickable-card'
 
 export default function HomePage() {
     return (
-        <div className="container py-16 md:py-24">
+        <div className="container py-section-hero">
             {/* Hero Section */}
             <section className="text-center mb-16">
-                <p className={`text-lg md:text-xl text-muted-foreground ${CONTENT_MAX_WIDTH} mx-auto`}>
-                    基礎を学んだあなたが、
-                    自分でアプリを作れるようになるまで。
+                <p className={`text-page-subtitle text-muted-foreground ${CONTENT_MAX_WIDTH} mx-auto`}>
+                    基礎を学んだあなたが、<br className="md:hidden" />
+                    自分でアプリを作るまで。
                 </p>
             </section>
 
@@ -17,19 +17,18 @@ export default function HomePage() {
             <section className={`${CONTENT_MAX_WIDTH} mx-auto mb-8`}>
                 <Link
                     href="/learn"
-                    className="group block p-8 md:p-10 bg-foreground text-background rounded-lg hover:bg-foreground/90 transition-colors"
+                    className="group block p-card-cta bg-foreground text-background rounded-lg hover:bg-foreground/90 transition-colors"
                 >
                     <div className="mb-4">
                         <span className="inline-block px-2 py-1 text-xs font-medium bg-background/20 rounded">
                             Learn
                         </span>
                     </div>
-                    <h2 className="text-2xl md:text-3xl font-semibold mb-3 group-hover:underline">
-                        学習コースを始める
+                    <h2 className="text-page-title font-semibold mb-3 group-hover:underline">
+                        学習コース
                     </h2>
                     <p className="text-background/80">
-                        ステップバイステップで実践スキルを身につける。<br />
-                        基礎の次に進むためのハンズオン教材。
+                        ハンズオンで基礎を身に着ける
                     </p>
                 </Link>
             </section>
