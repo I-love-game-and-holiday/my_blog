@@ -97,6 +97,7 @@ export async function getDictionaryEntry(slug: string): Promise<DictionaryEntryW
         components: mdxComponents,
         options: {
             parseFrontmatter: false,
+            blockJS: false,
             mdxOptions: {
                 rehypePlugins: [rehypeSlug, [rehypePrettyCode, { theme: 'github-dark' }]],
             },
