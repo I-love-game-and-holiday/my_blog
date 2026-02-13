@@ -47,7 +47,10 @@
       "WebFetch(domain:www.artsycourseexperts.com)",
       "WebFetch(domain:componentlibrary.moodle.com)",
       "WebFetch(domain:www.nngroup.com)",
-      "Bash(npm ls:*)"
+      "Bash(npm ls:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(npm view:*)"
     ]
   }
 }

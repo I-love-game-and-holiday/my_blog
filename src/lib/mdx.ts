@@ -76,6 +76,7 @@ export async function getPostContent(slug: string) {
         components: mdxComponents,
         options: {
             parseFrontmatter: false,
+            blockJS: false,
             mdxOptions: {
                 rehypePlugins: [rehypeSlug, [rehypePrettyCode, { theme: 'github-dark' }]],
             },
@@ -106,6 +107,7 @@ export async function getLessonContent(courseSlug: string, lessonSlug: string) {
         components: mdxComponents,
         options: {
             parseFrontmatter: false,
+            blockJS: false,
             mdxOptions: {
                 rehypePlugins: [rehypeSlug, [rehypePrettyCode, { theme: 'github-dark' }]],
             },
@@ -137,6 +139,7 @@ export async function getSectionContent(guideSlug: string, sectionSlug: string) 
         components: mdxComponents,
         options: {
             parseFrontmatter: false,
+            blockJS: false,
             mdxOptions: {
                 rehypePlugins: [rehypeSlug, [rehypePrettyCode, { theme: 'github-dark' }]],
             },
