@@ -8,7 +8,8 @@ description: 同じ要素に複数のスタイルが当たったとき、どれ�
 
 CSSは **Cascading Style Sheets** の略です。「Cascade（カスケード）」は「**上から順に流れ落ちる**」という意味です。
 
-滝の水が上から下へ流れていくように、CSSのスタイルも上から下へと適用されていきます。もし同じ要素に複数のスタイルが書かれていたら、基本的には**後に書いた方が優先**されます。
+滝の水が上から下へ流れていくように、CSSのスタイルも上から下へと適用されていきます。
+もし同じ要素に複数のスタイルが書かれていたら、基本的には**後に書いた方が優先**されます。
 
 ```css title="style.css"
 p {
@@ -26,7 +27,7 @@ p {
 
 <CodePlayground
   height={100}
-  title="後に書いた方が勝つ"
+  title=""
   html={`<p>この文字は何色？</p>`}
   css={`
     p {
@@ -40,6 +41,8 @@ p {
 
 赤くなっていますね。これがカスケードの基本です。
 
+カラーコード（#228B22など）も利用できるのでぜひエディタを編集して試してみてください！
+
 ## 同じ要素に複数のスタイルが当たったら？
 
 実際のプロジェクトでは、1つの要素に対して複数のスタイルが当たることがよくあります。
@@ -49,42 +52,44 @@ p {
 ```
 
 ```css title="style.css"
-p {
-  color: blue;
+#hero-text {
+  color: red;
 }
 
 .intro {
   color: green;
 }
 
-#hero-text {
-  color: red;
+p {
+  color: blue;
 }
 ```
 
-この `<p>` 要素には3つのルールが当たっています。文字色は何色になるでしょうか？
+この `<p>` 要素には3つのルールが当たっています。
+
+「後に書いた方が優先される」ルールに従うと青色になるはずですが…
 
 <CodePlayground
   height={100}
-  title="3つのルールが当たる要素"
+  title=""
   html={`<p class="intro" id="hero-text">こんにちは</p>`}
   css={`
-    p {
-      color: blue;
+    #hero-text {
+      color: red;
     }
     .intro {
       color: green;
     }
-    #hero-text {
-      color: red;
+    p {
+      color: blue;
     }
   `}
 />
 
-**赤** になりました。でもこれは「出現順」ではなく、**セレクタの種類**によって強さが違うからです。CSSにはスタイルの優先順位を決める明確なルールがあります。
+赤色になりましたね。
+実は、CSSは順番以外にも、**セレクタの種類**によって優先順位が決まっています。
 
 ## 優先順位を決める3つのルール
-
 CSSがどのスタイルを採用するかは、次の3つのルールで決まります。上にあるルールほど優先されます。
 
 <ContentTable
@@ -159,143 +164,6 @@ p {
   color: red;
 }
 ```
-
-## 詳細度クイズ
-
-ここまでの知識で、「どちらが勝つか」を考えてみましょう。まず自分で予想してから、プレビューで答え合わせしてください。
-
-### 第1問
-
-```css title="style.css"
-.title {
-  color: green;
-}
-
-h1 {
-  color: blue;
-}
-```
-
-`<h1 class="title">見出し</h1>` の文字色は何色？
-
-<CodePlayground
-  height={100}
-  title="第1問の答え"
-  html={`<h1 class="title">見出し</h1>`}
-  css={`
-    .title {
-      color: green;
-    }
-    h1 {
-      color: blue;
-    }
-  `}
-/>
-
-<Callout type="info">
-**答え: 緑**
-
-`.title`（classセレクタ）は `h1`（要素セレクタ）より詳細度が高いので、出現順に関係なく `.title` が勝ちます。
-</Callout>
-
-### 第2問
-
-```css title="style.css"
-#main .title {
-  color: red;
-}
-
-.content .title {
-  color: blue;
-}
-```
-
-`<div id="main" class="content"><h1 class="title">見出し</h1></div>` の文字色は何色？
-
-<CodePlayground
-  height={100}
-  title="第2問の答え"
-  html={`<div id="main" class="content"><h1 class="title">見出し</h1></div>`}
-  css={`
-    #main .title {
-      color: red;
-    }
-    .content .title {
-      color: blue;
-    }
-  `}
-/>
-
-<Callout type="info">
-**答え: 赤**
-
-`#main .title` には idセレクタが含まれています。`.content .title` は classセレクタだけです。idセレクタを含む方が詳細度が高いので、`color: red` が勝ちます。
-</Callout>
-
-### 第3問
-
-```css title="style.css"
-.intro {
-  color: green;
-}
-
-.highlight {
-  color: orange;
-}
-```
-
-`<p class="intro highlight">テキスト</p>` の文字色は何色？
-
-<CodePlayground
-  height={100}
-  title="第3問の答え"
-  html={`<p class="intro highlight">テキスト</p>`}
-  css={`
-    .intro {
-      color: green;
-    }
-    .highlight {
-      color: orange;
-    }
-  `}
-/>
-
-<Callout type="info">
-**答え: オレンジ**
-
-どちらもclassセレクタ1つで詳細度が同じです。詳細度が同じ場合は**出現順**のルールが適用され、後に書いた `.highlight` が勝ちます。
-</Callout>
-
-<LearnMore>
-自分でCSSを書き換えて試してみたい方は、HTMLファイルを作って手元で実験するのがおすすめです。
-
-VSCodeの準備がまだの方は <a href="/guides/editor-basics">エディタ入門</a> を参考にセットアップしてください。セットアップ後、Live Server 拡張機能を使えばファイルを保存するたびにブラウザで結果を確認できます。
-
-```html title="index.html"
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>カスケードの実験</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <p class="intro" id="hero-text">この文字は何色？</p>
-  <h1 class="title">見出し</h1>
-  <p class="intro highlight">2つのクラス</p>
-</body>
-</html>
-```
-
-```css title="style.css"
-p { color: blue; }
-.intro { color: green; }
-#hero-text { color: red; }
-```
-
-CSSの順番やセレクタを変えてみて、色がどう変わるか試してみてください。
-</LearnMore>
 
 ## グローバルCSSはなぜ詳細度を低くするのか
 
