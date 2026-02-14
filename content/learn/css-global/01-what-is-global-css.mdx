@@ -4,79 +4,87 @@ order: 1
 description: なぜ「アプリ全体に適用されるCSS」が必要なのか。コンポーネントCSSとの違いと、グローバルCSSの役割を理解します。
 ---
 
-## CSSファイルにはいくつか種類がある
+## CSSには2つの適用範囲がある
 
-Webアプリを作っていると、CSSの書き方にはいくつか種類があることに気づきます。
+CSSにはスタイルの**適用範囲**によって、大きく2つの種類があります。
 
 <ContentTable
-  headers={["種類", "スコープ", "例"]}
+  headers={["種類", "適用範囲", "例"]}
   rows={[
-    ["グローバルCSS", "サイト全体", "globals.css, index.css, style.css"],
-    ["CSSモジュール", "1つのコンポーネント", "button.module.css"],
-    ["CSS-in-JS", "1つのコンポーネント", "styled-components, emotion"],
-    ["ユーティリティCSS", "1つの要素", "Tailwind CSS のクラス"],
+    ["グローバルCSS", "サイト全体", "サイト全体のスタイルを定義するCSSファイル（`globals.css`）"],
+    ["コンポーネントCSS", "特定の部品だけ", "ボタンやカードなど、個別の部品に閉じたスタイル"],
   ]}
 />
 
 <Callout type="info">
-上の表が難しいと感じた人は **『cssにはアプリ全体に適用されるものと、小さい部品に適用されるものがあるんだな～』**
-と思ってください。
+コンポーネントCSSの実現方法には、CSSモジュールやユーティリティCSS（Tailwind CSS）などがあります。
 
+このコースではグローバルCSSに集中するため、それらの詳細は扱いません。
 </Callout>
-## グローバルCSSの役割
+
+### グローバルCSSの役割
 
 グローバルCSSは「**どのページを開いても適用されるCSS**」です。
-
-具体的例を見てみましょう。
 
 - サイト全体の**色**（背景色、文字色、ボーダー色など）
 - サイト全体の**デザイントークン**（余白やフォントサイズのルール）
 - **ダークモード**の色定義
 - ベースとなるタイポグラフィ（フォント、行間、見出しサイズ）
-- CSSリセット（ブラウザのデフォルトスタイルをそろえる）
+
+例えば、ダークモードの色定義はグローバルCSSに書きます。どのページを開いても同じ配色になるからです。
+
+<LearnMore>
+このサイトでもダークモードを有効にすると、すべてのページに下記のスタイルが適用されます。これは `globals.css` 内の定義の一部です。
 
 <ContentImage
   src="/learn/css-global/dark_mode.jpg"
-  alt="グローバルCSSの例"
+  alt="このブログのダークモードを有効にしたときのスタイル"
   caption=""
-  width={500}
+  width={350}
+  height={450}
+/>
+</LearnMore>
+
+### コンポーネントCSSの役割
+
+コンポーネントCSSはグローバルCSSとは反対に、「**特定の部品だけに効くCSS**」です。
+
+例えば、「お問い合わせボタン」だけを青くしたいとき、グローバルCSSに書くとサイト中のボタンが全部青くなってしまいます。そこで、このボタン専用のスタイルを別に書きます。
+
+```css title="button.css"
+.contact-button {
+  background-color: #2563eb;
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 4px;
+}
+```
+
+この `.contact-button` はお問い合わせボタンだけに効くスタイルです。他のボタンやページには影響しません。
+
+このように、コンポーネントCSSは特定の部品にだけ影響します。グローバルCSSとは役割が明確に分かれています。
+
+<LearnMore>
+このサイトでは Tailwind CSS というユーティリティCSSフレームワークを使って、コンポーネントCSSを書いています。例えば、下の画像にある `<br className="md:hidden" />` は「画面幅が狭いときだけ改行する」という、この要素だけのスタイルです。
+
+<ContentImage
+  src="/learn/css-global/br.jpg"
+  alt="改行"
+  caption=""
+  width={800}
   height={450}
 />
 
-## どのフレームワークにもこの概念がある
+スマホでアクセスすると、テキストが改行されて表示されます。
 
-「グローバルCSS」はフレームワーク固有の機能ではなく、**Web開発に共通する概念**です。ファイル名や読み込み方が違うだけで、どの環境にも存在します。
-
-<ContentTable
-  headers={["環境", "ファイル名の例", "読み込み方"]}
-  rows={[
-    ["素のHTML", "style.css", "<link> タグで読み込み"],
-    ["Next.js", "globals.css", "layout.tsx で import"],
-    ["Vite (React)", "index.css", "main.tsx で import"],
-    ["Nuxt", "main.css", "nuxt.config.ts で設定"],
-    ["SvelteKit", "app.css", "+layout.svelte で import"],
-  ]}
+<ContentImage
+  src="/learn/css-global/home-md.jpg"
+  alt="ホームページ（モバイル）"
+  caption="スマホで開いたときのホームページ"
+  width={400}
+  height={450}
 />
-
-名前は違いますが、役割は同じです。**アプリ全体に影響するスタイルを1箇所で定義する**というのが共通の考え方です。
-
-## 素のHTMLでの読み込み方
-
-もっともシンプルな例を見てみましょう。素のHTMLでは、`<link>` タグで1回読み込むだけです。
-
-```html title="index.html"
-<!DOCTYPE html>
-<html>
-<head>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <h1>Hello</h1>
-</body>
-</html>
-```
-
-これだけで、サイト内のすべてのページに `style.css` のスタイルが適用されます。フレームワークを使う場合も、やっていることの本質はこれと同じです。
+</LearnMore>
 
 ## グローバルCSSの中身を覗いてみよう
 
@@ -112,7 +120,7 @@ h1 { font-size: clamp(1.5rem, 1.25rem + 1vw, 1.875rem); }
 - クラス名が衝突する（`.title` が別の場所で上書きされる）
 - 変更の影響範囲が分からない（1行直したら別のページが崩れる）
 
-だから、**サイト全体に関わるものだけ**グローバルCSSに書き、コンポーネント固有のスタイルは別の方法（CSSモジュールやユーティリティCSS）で管理します。
+だから、**サイト全体に関わるものだけ**グローバルCSSに書き、コンポーネント固有のスタイルはコンポーネントCSSで管理します。
 
 <ContentTable
   headers={["書く場所", "内容"]}
@@ -121,6 +129,28 @@ h1 { font-size: clamp(1.5rem, 1.25rem + 1vw, 1.875rem); }
     ["コンポーネント側", "ボタンの大きさ、カードのレイアウト、アニメーション"],
   ]}
 />
+
+## どのフレームワークにもこの概念がある
+
+「グローバルCSS」はフレームワーク固有の機能ではなく、**Web開発に共通する概念**です。ファイル名や読み込み方が違うだけで、どの環境にも存在します。
+
+<ContentTable
+  headers={["環境", "ファイル名の例", "読み込み方"]}
+  rows={[
+    ["素のHTML", "style.css", "<link> タグで読み込み"],
+    ["Next.js", "globals.css", "layout.tsx で import"],
+    ["Vite (React)", "index.css", "main.tsx で import"],
+    ["Nuxt", "main.css", "nuxt.config.ts で設定"],
+    ["SvelteKit", "app.css", "+layout.svelte で import"],
+  ]}
+/>
+
+名前は違いますが、役割は同じです。**アプリ全体に影響するスタイルを1箇所で定義する**というのが共通の考え方です。
+
+<Callout type="info">
+このコースでは **グローバルCSS** と呼びます。<br />
+同じフロントエンジニアでもフレームワークによって呼び方が違うことがあります。
+</Callout>
 
 ## 次のステップ
 
