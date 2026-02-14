@@ -50,7 +50,8 @@
       "Bash(npm ls:*)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:www.npmjs.com)",
-      "Bash(npm view:*)"
+      "Bash(npm view:*)",
+      "WebFetch(domain:every-layout.dev)"
     ]
   }
 }
