@@ -12,7 +12,7 @@ import { FlowDiagram } from '@/components/content/flow-diagram'
 import { SectionSummary } from '@/components/content/section-summary'
 import { Callout } from '@/components/content/callout'
 import { HtmlPreview } from '@/components/content/html-preview'
-import { CollapsibleCode, CopyableCode, OsCommandTabs, OsCodeBlock } from '@/components/code'
+import { CollapsibleCode, CopyableCode, OsCommandTabs, OsCodeBlock, CodePlayground } from '@/components/code'
 import { OsTable } from '@/components/os/os-table'
 import { FileTree, FileTreeFolder, FileTreeFile } from '@/components/content/file-tree'
 import { LearnMore } from '@/components/content/learn-more'
@@ -34,6 +34,7 @@ const mdxComponents = {
     FileTreeFile,
     HtmlPreview,
     LearnMore,
+    CodePlayground,
 }
 
 const CONTENT_DIR = path.join(process.cwd(), 'content')

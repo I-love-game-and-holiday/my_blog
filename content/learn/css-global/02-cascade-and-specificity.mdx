@@ -1,0 +1,362 @@
+---
+title: カスケードと詳細度
+order: 2
+description: 同じ要素に複数のスタイルが当たったとき、どれが勝つのか。CSSの優先順位ルールを理解します。
+---
+
+## CSSの「カスケード」って何？
+
+CSSは **Cascading Style Sheets** の略です。「Cascade（カスケード）」は「**上から順に流れ落ちる**」という意味です。
+
+滝の水が上から下へ流れていくように、CSSのスタイルも上から下へと適用されていきます。もし同じ要素に複数のスタイルが書かれていたら、基本的には**後に書いた方が優先**されます。
+
+```css title="style.css"
+p {
+  color: blue;
+}
+
+p {
+  color: red;
+}
+```
+
+この場合、`p` 要素の文字色は **赤** になります。後に書いた `color: red;` が前の `color: blue;` を上書きするからです。
+
+実際に確認してみましょう。
+
+<CodePlayground
+  height={100}
+  title="後に書いた方が勝つ"
+  html={`<p>この文字は何色？</p>`}
+  css={`
+    p {
+      color: blue;
+    }
+    p {
+      color: red;
+    }
+  `}
+/>
+
+赤くなっていますね。これがカスケードの基本です。
+
+## 同じ要素に複数のスタイルが当たったら？
+
+実際のプロジェクトでは、1つの要素に対して複数のスタイルが当たることがよくあります。
+
+```html title="index.html"
+<p class="intro" id="hero-text">こんにちは</p>
+```
+
+```css title="style.css"
+p {
+  color: blue;
+}
+
+.intro {
+  color: green;
+}
+
+#hero-text {
+  color: red;
+}
+```
+
+この `<p>` 要素には3つのルールが当たっています。文字色は何色になるでしょうか？
+
+<CodePlayground
+  height={100}
+  title="3つのルールが当たる要素"
+  html={`<p class="intro" id="hero-text">こんにちは</p>`}
+  css={`
+    p {
+      color: blue;
+    }
+    .intro {
+      color: green;
+    }
+    #hero-text {
+      color: red;
+    }
+  `}
+/>
+
+**赤** になりました。でもこれは「出現順」ではなく、**セレクタの種類**によって強さが違うからです。CSSにはスタイルの優先順位を決める明確なルールがあります。
+
+## 優先順位を決める3つのルール
+
+CSSがどのスタイルを採用するかは、次の3つのルールで決まります。上にあるルールほど優先されます。
+
+<ContentTable
+  headers={["優先度", "ルール", "説明"]}
+  rows={[
+    ["高", "重要度", "!important がついたスタイルは最優先"],
+    ["中", "詳細度", "セレクタの種類によって強さが決まる"],
+    ["低", "出現順", "同じ強さなら後に書いた方が勝つ"],
+  ]}
+/>
+
+### 1. 重要度
+
+`!important` がついたスタイルは、他のすべてのスタイルに勝ちます。
+
+```css title="style.css"
+p {
+  color: blue !important;
+}
+
+#hero-text {
+  color: red;
+}
+```
+
+通常なら `#hero-text` が勝ちますが、`!important` がついている `color: blue` が優先されます。
+
+<CodePlayground
+  height={100}
+  title="!important は最強"
+  html={`<p id="hero-text">!important がついたスタイルが勝つ</p>`}
+  css={`
+    p {
+      color: blue !important;
+    }
+    #hero-text {
+      color: red;
+    }
+  `}
+/>
+
+<Callout type="warning">
+`!important` は強力すぎるため、普段のスタイリングでは使いません。「どうしても上書きできない」緊急時の手段と考えてください。
+</Callout>
+
+### 2. 詳細度（セレクタの強さ）
+
+セレクタには種類ごとに強さがあります。これを**詳細度**と呼びます。
+
+<ContentTable
+  headers={["セレクタの種類", "例", "強さ"]}
+  rows={[
+    ["idセレクタ", "#hero-text", "強い"],
+    ["classセレクタ", ".intro", "中くらい"],
+    ["要素セレクタ", "p, h1, body", "弱い"],
+  ]}
+/>
+
+先ほどの例で `#hero-text`（idセレクタ）が勝ったのは、idセレクタが最も詳細度が高いからです。
+
+### 3. 出現順
+
+詳細度が同じ場合は、**後に書いた方が勝ち**ます。最初に見た例がこれにあたります。
+
+```css title="style.css"
+p {
+  color: blue;
+}
+
+/* 同じ要素セレクタ → 後に書いた方が勝つ */
+p {
+  color: red;
+}
+```
+
+## 詳細度クイズ
+
+ここまでの知識で、「どちらが勝つか」を考えてみましょう。まず自分で予想してから、プレビューで答え合わせしてください。
+
+### 第1問
+
+```css title="style.css"
+.title {
+  color: green;
+}
+
+h1 {
+  color: blue;
+}
+```
+
+`<h1 class="title">見出し</h1>` の文字色は何色？
+
+<CodePlayground
+  height={100}
+  title="第1問の答え"
+  html={`<h1 class="title">見出し</h1>`}
+  css={`
+    .title {
+      color: green;
+    }
+    h1 {
+      color: blue;
+    }
+  `}
+/>
+
+<Callout type="info">
+**答え: 緑**
+
+`.title`（classセレクタ）は `h1`（要素セレクタ）より詳細度が高いので、出現順に関係なく `.title` が勝ちます。
+</Callout>
+
+### 第2問
+
+```css title="style.css"
+#main .title {
+  color: red;
+}
+
+.content .title {
+  color: blue;
+}
+```
+
+`<div id="main" class="content"><h1 class="title">見出し</h1></div>` の文字色は何色？
+
+<CodePlayground
+  height={100}
+  title="第2問の答え"
+  html={`<div id="main" class="content"><h1 class="title">見出し</h1></div>`}
+  css={`
+    #main .title {
+      color: red;
+    }
+    .content .title {
+      color: blue;
+    }
+  `}
+/>
+
+<Callout type="info">
+**答え: 赤**
+
+`#main .title` には idセレクタが含まれています。`.content .title` は classセレクタだけです。idセレクタを含む方が詳細度が高いので、`color: red` が勝ちます。
+</Callout>
+
+### 第3問
+
+```css title="style.css"
+.intro {
+  color: green;
+}
+
+.highlight {
+  color: orange;
+}
+```
+
+`<p class="intro highlight">テキスト</p>` の文字色は何色？
+
+<CodePlayground
+  height={100}
+  title="第3問の答え"
+  html={`<p class="intro highlight">テキスト</p>`}
+  css={`
+    .intro {
+      color: green;
+    }
+    .highlight {
+      color: orange;
+    }
+  `}
+/>
+
+<Callout type="info">
+**答え: オレンジ**
+
+どちらもclassセレクタ1つで詳細度が同じです。詳細度が同じ場合は**出現順**のルールが適用され、後に書いた `.highlight` が勝ちます。
+</Callout>
+
+<LearnMore>
+自分でCSSを書き換えて試してみたい方は、HTMLファイルを作って手元で実験するのがおすすめです。
+
+VSCodeの準備がまだの方は <a href="/guides/editor-basics">エディタ入門</a> を参考にセットアップしてください。セットアップ後、Live Server 拡張機能を使えばファイルを保存するたびにブラウザで結果を確認できます。
+
+```html title="index.html"
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>カスケードの実験</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <p class="intro" id="hero-text">この文字は何色？</p>
+  <h1 class="title">見出し</h1>
+  <p class="intro highlight">2つのクラス</p>
+</body>
+</html>
+```
+
+```css title="style.css"
+p { color: blue; }
+.intro { color: green; }
+#hero-text { color: red; }
+```
+
+CSSの順番やセレクタを変えてみて、色がどう変わるか試してみてください。
+</LearnMore>
+
+## グローバルCSSはなぜ詳細度を低くするのか
+
+前回のレッスンで見たグローバルCSSを思い出してください。
+
+```css title="style.css（構成の概要）"
+/* 1. CSSリセット */
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
+
+/* 2. デザイントークン（CSS変数） */
+:root { --background: #ffffff; --text: #171717; }
+
+/* 4. ベーススタイル */
+body { background-color: var(--background); color: var(--text); }
+
+/* 5. タイポグラフィ */
+h1, h2, h3 { line-height: 1.3; }
+```
+
+使われているセレクタは `*`、`:root`、`body`、`h1` など、すべて**要素セレクタ**（最も弱いセレクタ）です。classセレクタやidセレクタは使われていません。
+
+これは意図的な設計です。
+
+グローバルCSSはサイト全体の「**土台**」です。土台のスタイルは、コンポーネント側で簡単に上書きできなければいけません。もしグローバルCSSに `#main .title` のような強いセレクタを使ってしまうと、コンポーネント側で上書きするのが難しくなります。
+
+次のプレビューで、グローバルCSS（要素セレクタ）をコンポーネントCSS（classセレクタ）が上書きしている様子を確認してみましょう。
+
+<CodePlayground
+  height={180}
+  title="グローバルCSS（土台）をコンポーネントCSSが上書きする"
+  html={`
+    <h1>普通の見出し（グローバルCSSの色）</h1>
+    <h1 class="accent">アクセント見出し（コンポーネントCSSで上書き）</h1>
+  `}
+  css={`
+    /* グローバルCSS: 要素セレクタ（弱い） */
+    h1 {
+      color: #333;
+      font-size: 20px;
+      margin: 12px;
+    }
+
+    /* コンポーネントCSS: classセレクタ（強い） */
+    .accent {
+      color: #2563eb;
+    }
+  `}
+/>
+
+`.accent` は classセレクタなので、要素セレクタの `h1` より詳細度が高く、自然に上書きできています。グローバルCSSの詳細度が低いからこそ、この仕組みがうまく機能するのです。
+
+<ContentTable
+  headers={["CSS", "使うセレクタ", "詳細度", "理由"]}
+  rows={[
+    ["グローバルCSS", "要素セレクタ（body, h1 など）", "低い", "上書きされやすい土台を作るため"],
+    ["コンポーネントCSS", "classセレクタ（.button など）", "高い", "土台の上に個別のスタイルを重ねるため"],
+  ]}
+/>
+
+**グローバルCSSは詳細度を低く保つ**。これが、コンポーネントCSSと共存するための重要な設計ルールです。
+
+## 次のステップ
+
+カスケードと詳細度のルールが分かったところで、グローバルCSSの中身を1つずつ見ていきましょう。次のレッスンでは、**CSSリセットとベーススタイル**を学びます。
