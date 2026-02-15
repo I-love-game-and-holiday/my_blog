@@ -1,0 +1,244 @@
+---
+title: ダークモード
+order: 5
+description: CSS変数を切り替えるだけでダークモードを実現する仕組みを学びます。
+---
+
+## ダークモードの正体は「変数の切り替え」
+
+前回のレッスンで、CSS変数を使って色を1箇所で管理する方法を学びました。
+
+```css title="style.css"
+:root {
+  --background: #ffffff;
+  --text: #171717;
+}
+body {
+  background-color: var(--background);
+  color: var(--text);
+}
+```
+
+ダークモードの仕組みはとてもシンプルです。この変数の**値だけを別のセットに切り替える**だけで実現できます。
+
+新しいCSSの機能を覚える必要はありません。前回学んだCSS変数と、02で学んだカスケードの**組み合わせ**です。
+
+## :root と .dark で2セットの色を定義する
+
+ライトモード用の色は `:root` に、ダークモード用の色は `.dark` に定義します。
+
+```css title="style.css"
+/* ライトモード（デフォルト） */
+:root {
+  --background: #ffffff;
+  --text: #171717;
+}
+
+/* ダークモード */
+.dark {
+  --background: #171717;
+  --text: #fafafa;
+}
+```
+
+ポイントは、**変数名は同じで値だけが違う**ことです。
+
+<ContentTable
+  headers={["変数名", "ライトモード（:root）", "ダークモード（.dark）"]}
+  rows={[
+    ["--background", "#ffffff（白）", "#171717（濃いグレー）"],
+    ["--text", "#171717（濃いグレー）", "#fafafa（明るいグレー）"],
+  ]}
+/>
+
+`body` のベーススタイルは `var(--background)` と `var(--text)` を参照しているだけなので、変数の値が変われば見た目も自動的に変わります。
+
+## HTMLに .dark クラスをつけるだけで切り替わる
+
+ダークモードへの切り替えは、HTMLの `<html>` 要素に `.dark` クラスを付けるだけです。
+
+```html title="ライトモード"
+<html>
+  ...
+</html>
+```
+
+```html title="ダークモード"
+<html class="dark">
+  ...
+</html>
+```
+
+実際に切り替わる様子を確認してみましょう。
+
+<CodePlayground
+  height={300}
+  title="ダークモードの切り替え"
+  html={`
+    <div id="app">
+      <h1>見出しテキスト</h1>
+      <p>本文テキストです。背景色と文字色がCSS変数で管理されています。</p>
+      <button onclick="document.getElementById('app').classList.toggle('dark')">
+        ダークモードを切り替える
+      </button>
+    </div>
+  `}
+  css={`
+    :root {
+      --background: #ffffff;
+      --text: #171717;
+    }
+    .dark {
+      --background: #171717;
+      --text: #fafafa;
+    }
+    #app {
+      background-color: var(--background);
+      color: var(--text);
+      padding: 20px;
+      min-height: 100%;
+    }
+    h1 {
+      margin-bottom: 8px;
+    }
+    button {
+      margin-top: 12px;
+      padding: 8px 16px;
+      cursor: pointer;
+      border: 1px solid var(--text);
+      background-color: var(--background);
+      color: var(--text);
+    }
+  `}
+/>
+
+ボタンを押すと、背景色と文字色が切り替わります。CSSは一切変更していません。`.dark` クラスの付け外しだけで、変数の値が切り替わっているのです。
+
+## なぜ .dark が :root を上書きできるのか
+
+ここで02のレッスンで学んだ**詳細度**を思い出してください。
+
+`:root` は疑似クラスセレクタで、`.dark` はclassセレクタです。どちらも詳細度は同じ（classセレクタ相当）ですが、`.dark` が `:root` の**後に**書かれているため、カスケードの「出現順」ルールで `.dark` の値が優先されます。
+
+<ContentTable
+  headers={["セレクタ", "詳細度", "出現順"]}
+  rows={[
+    [":root", "classセレクタ相当", "先に書かれている"],
+    [".dark", "classセレクタ相当", "後に書かれている → こちらが勝つ"],
+  ]}
+/>
+
+02で学んだ「同じ詳細度なら後に書いた方が勝つ」というルールがここで活きています。
+
+<Callout type="info">
+`.dark` クラスが `<html>` 要素についていないとき、`.dark` のルールは**どの要素にもマッチしない**ため、`:root` の値がそのまま使われます。
+</Callout>
+
+## 色を増やしてみよう
+
+実際のサイトでは背景色と文字色だけでなく、ボーダーの色やアクセントカラーなども管理します。
+
+<CodePlayground
+  height={350}
+  title="複数の色をダークモード対応にする"
+  html={`
+    <div id="app2">
+      <div class="card">
+        <h2>カードタイトル</h2>
+        <p>カードの本文テキストです。</p>
+        <a href="#">リンクテキスト</a>
+      </div>
+      <button onclick="document.getElementById('app2').classList.toggle('dark')">
+        ダークモードを切り替える
+      </button>
+    </div>
+  `}
+  css={`
+    :root {
+      --background: #ffffff;
+      --text: #171717;
+      --border: #e5e5e5;
+      --accent: #2563eb;
+    }
+    .dark {
+      --background: #171717;
+      --text: #fafafa;
+      --border: #404040;
+      --accent: #60a5fa;
+    }
+    #app2 {
+      background-color: var(--background);
+      color: var(--text);
+      padding: 20px;
+    }
+    .card {
+      border: 1px solid var(--border);
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .card h2 {
+      margin-bottom: 4px;
+    }
+    .card a {
+      color: var(--accent);
+    }
+    button {
+      padding: 8px 16px;
+      cursor: pointer;
+      border: 1px solid var(--text);
+      background-color: var(--background);
+      color: var(--text);
+    }
+  `}
+/>
+
+変数が4つに増えましたが、やっていることは同じです。`:root` と `.dark` で2セットの値を定義して、コンポーネント側では `var()` で参照するだけ。色を何個追加しても、この仕組みは変わりません。
+
+<LearnMore>
+このサイトでもダークモードにCSS変数を使っています。
+
+**`ダークモード 色相`** などで検索すると検証してくれてる人がたくさんいるので参考にするとよいです。
+</LearnMore>
+
+## 構成の概要を振り返ろう
+
+4番目まで理解できましたね。
+
+<CollapsibleCode title="style.css（構成の概要）" defaultOpen={false}>
+```css
+/* 1. CSSリセット */
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
+
+/* 2. ベーススタイル */
+body { font-family: system-ui, sans-serif; line-height: 1.6; }
+
+/* 3. デザイントークン（CSS変数） */
+:root { --background: #ffffff; --text: #171717; }
+
+/* 4. ダークモードの色定義 */
+.dark { --background: #171717; --text: #ffffff; }
+
+/* 5. レスポンシブなサイズ定義 */
+h1 { font-size: clamp(1.5rem, 1.25rem + 1vw, 1.875rem); }
+```
+</CollapsibleCode>
+
+```css title="style.css（ここまで理解できた部分）"
+/* 1. CSSリセット ✅ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
+
+/* 2. ベーススタイル ✅ */
+body { font-family: system-ui, sans-serif; line-height: 1.6; }
+
+/* 3. デザイントークン（CSS変数） ✅ */
+:root { --background: #ffffff; --text: #171717; }
+
+/* 4. ダークモードの色定義 ✅ */
+.dark { --background: #171717; --text: #ffffff; }
+```
+
+残りは **5. レスポンシブなサイズ定義** です。
+
+## 次のステップ
+
+ダークモードの仕組みを学びました。次のレッスンでは、よりモダンな手法として、画面幅に応じてサイズを滑らかに変化させる **clamp()** を学びます。
