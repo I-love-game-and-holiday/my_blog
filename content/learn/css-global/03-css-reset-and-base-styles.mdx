@@ -1,0 +1,266 @@
+---
+title: CSSリセットとベーススタイル
+order: 3
+description: ブラウザごとに違うデフォルトスタイルを揃える「CSSリセット」と、サイト全体の土台となるベーススタイルを学びます。
+---
+
+## ブラウザにはデフォルトスタイルがある
+
+CSSを何も書かなくても、ブラウザはHTMLに最低限のスタイルを適用します。
+
+<CodePlayground
+  height={200}
+  title=""
+  html={`
+    <h1>見出し</h1>
+    <p>段落テキスト</p>
+    <ul>
+      <li>リスト項目</li>
+    </ul>
+  `}
+/>
+
+CSSを一切書いていないのに、見出しは大きく太字になり、リストには点がつき、要素の間に余白があります。
+
+これはブラウザが持っている**デフォルトスタイル**（ユーザーエージェントスタイルシート）のおかげです。
+
+<LearnMore>
+ブラウザのデフォルトスタイルは、開発者ツール（F12）の「スタイル」パネルで確認できます。
+
+`user agent stylesheet` と表示されているものがデフォルトスタイルです。
+
+<ContentImage
+  src="/learn/css-global/user_agent_sheet.jpg"
+  alt="ユーザーエージェントスタイルシート"
+  caption=""
+  width={600}
+  height={450}
+/>
+
+
+
+</LearnMore>
+
+## デフォルトスタイルはブラウザごとに違う
+
+このデフォルトスタイルは、ブラウザごとに**微妙に異なります**。
+
+<ContentTable
+  headers={["プロパティ", "Chrome", "Safari", "Firefox"]}
+  rows={[
+    ["bodyのmargin", "8px", "8px", "8px"],
+    ["h1のfont-size", "2em", "2em", "2em"],
+    ["ulのpadding-left", "40px", "40px", "40px"],
+    ["buttonのfont-family", "システムフォント", "異なるフォント", "異なるフォント"],
+  ]}
+/>
+
+主要な値はほぼ同じですが、フォームの要素（ボタン、入力欄）などで違いが出ることがあります。
+
+同じHTMLなのにブラウザによって見た目が揃わなかったり、開発者の意図したデザインの邪魔になる場合があります。
+この問題を解決するのが**CSSリセット**です。
+
+## CSSリセットで揃える
+
+CSSリセットの考え方はシンプルです。
+
+> ブラウザのデフォルトスタイルを**まっさらにしてから**、自分でスタイルを定義する。
+
+**『グローバルCSSとは何か』** レッスンで例示したグローバルCSSを再度確認してみましょう。
+
+<CollapsibleCode title="style.css（構成の概要）" defaultOpen={false}>
+```css
+/* 1. CSSリセット */
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
+
+/* 2. ベーススタイル */
+body { font-family: system-ui, sans-serif; line-height: 1.6; }
+
+/* 3. デザイントークン（CSS変数） */
+:root { --background: #ffffff; --text: #171717; }
+
+/* 4. ダークモードの色定義 */
+.dark { --background: #171717; --text: #ffffff; }
+
+/* 5. レスポンシブなサイズ定義 */
+h1 { font-size: clamp(1.5rem, 1.25rem + 1vw, 1.875rem); }
+```
+</CollapsibleCode>
+
+```css title="style.css（構成の概要）"
+/* 1. CSSリセット */
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
+```
+
+この1行がCSSリセットの役割を担います。
+
+## よく使われるリセットコードを読んでみよう
+
+### すべての要素を選択する（ `*` セレクタ）
+
+`*`（アスタリスク）は**ユニバーサルセレクタ**と呼ばれ、ページ上のすべての要素を選択します。
+
+```css title="style.css"
+* {
+  /* ここに書いたスタイルは、すべての要素に適用される */
+}
+```
+
+### 疑似要素も含める（ `*::before, *::after` セレクタ）
+
+`::before` と `::after` は、要素の前後にコンテンツを追加するための**疑似要素**です。
+
+`*` だけでは疑似要素は含まれないため、`*::before` と `*::after` も一緒にリセットします。
+
+<LearnMore>
+疑似要素は CSS の `content` プロパティで追加のコンテンツを挿入する仕組みです。
+HTMLを変えずに、CSSだけで装飾を追加できます。
+
+<CodePlayground
+  height={120}
+  title="::before でテキストの前に絵文字を追加"
+  html={`
+    <p class="notice">サイトをリニューアルしました</p>
+  `}
+  css={`
+    .notice::before {
+      content: "📢 ";
+    }
+  `}
+/>
+
+HTMLには普通のテキストしか書いていませんが、`::before` で先頭に絵文字が追加されています。
+
+疑似要素を利用するとHTMLの構造を汚さずに装飾を追加できます。
+複雑なデザインが求められるLPを作成する場合などでよく使われます。
+
+[MDN - 疑似要素](https://developer.mozilla.org/ja/docs/Web/CSS/Reference/Selectors/Pseudo-elements) 。
+</LearnMore>
+
+### サイズ計算を直感的にする（ `box-sizing: border-box` プロパティ）
+
+これはCSSリセットの中でも特に重要なプロパティです。
+
+CSSのデフォルトでは、`width: 200px` と指定しても、パディングやボーダーを足した値が実際の幅になります。
+
+<ContentTable
+  headers={["box-sizing", "width: 200px + padding: 20px の結果"]}
+  rows={[
+    ["content-box（デフォルト）", "実際の幅 = 240px（200 + 20 + 20）"],
+    ["border-box", "実際の幅 = 200px（パディングを含む）"],
+  ]}
+/>
+
+`content-box`（デフォルト）だと、パディングを増やすたびに要素がどんどん大きくなります。`border-box` にすると、指定した幅の**中に**パディングが含まれるので、サイズが予測しやすくなります。
+
+<CodePlayground
+  height={250}
+  title="content-box vs border-box"
+  html={`
+    <div class="content-box">content-box: width 200px</div>
+    <div class="border-box">border-box: width 200px</div>
+  `}
+  css={`
+    .content-box {
+      box-sizing: content-box;
+      width: 200px;
+      padding: 20px;
+      background-color: #fee2e2;
+      border: 2px solid #ef4444;
+      margin: 8px;
+    }
+    .border-box {
+      box-sizing: border-box;
+      width: 200px;
+      padding: 20px;
+      background-color: #dbeafe;
+      border: 2px solid #3b82f6;
+      margin: 8px;
+    }
+  `}
+/>
+
+赤い要素（`content-box`）の方が広くなっていますね。`width: 200px` にパディングとボーダーが**足されている**からです。
+
+青い要素（`border-box`）は `width: 200px` の中にパディングとボーダーが**含まれている**ので、指定通りの幅になっています。
+
+CSSのデフォルトは赤い要素（`content-box`）ですが、青い要素の手法（`border-box`）が直観的であるため、こちらを利用することが多いです。
+
+### デフォルトの余白をリセットする（ `margin: 0` プロパティ）
+
+ブラウザのデフォルトスタイルでは、`body`、`h1`〜`h6`、`p`、`ul` などに余白（`margin`）が設定されています。
+
+`margin: 0` でこれをリセットすることで、すべての余白を自分でコントロールできるようになります。
+
+<CodePlayground
+  height={200}
+  title="margin をリセットした場合"
+  html={`
+    <h1>見出し</h1>
+    <p>段落テキスト</p>
+    <ul>
+      <li>リスト項目</li>
+    </ul>
+  `}
+  css={`
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+    }
+  `}
+/>
+
+リセットしてから、好みの余白を自分で追加していきます。
+
+## リセットの次は「ベーススタイル」で土台を整える
+
+CSSリセットで「まっさら」にしたら、次はサイト全体の**土台**を整えます。これが**ベーススタイル**です。
+
+<FlowDiagram
+  steps={["ブラウザのデフォルト", "CSSリセットで「まっさら」に", "ベーススタイルで土台を整える"]}
+  caption="リセット → ベーススタイル の流れ"
+/>
+
+### フォントを統一する
+
+```css title="style.css"
+body {
+  font-family: system-ui, sans-serif;
+}
+```
+
+`system-ui` は、ユーザーのOS標準フォントを使う指定です。WindowsならSegoe UI、macOSならSan Franciscoなどが自動的に選ばれます。
+
+フォントが統一されることで、どの環境でも読みやすい見た目になります。
+
+### 行間を読みやすくする
+
+```css title="style.css"
+body {
+  line-height: 1.6;
+}
+```
+
+`line-height: 1.6` は、文字サイズの1.6倍の行間を確保します。行間が狭いと文章が読みにくくなるため、本文には1.5〜1.8程度の値がよく使われます。
+
+<CodePlayground
+  height={250}
+  title="行間の違い"
+  html={`
+    <p class="narrow">line-height: 1.0 の文章です。行間が狭く文字が詰まって見えます。長い文章になると特に読みにくくなります。</p>
+    <br />
+    <p class="wide">line-height: 1.6 の文章です。適度な行間があり読みやすくなっています。長い文章でも快適に読めます。</p>
+  `}
+  css={`
+    .narrow {
+      line-height: 1.0;
+    }
+    .wide {
+      line-height: 1.6;
+    }
+  `}
+/>
+
+## 次のステップ
+
+CSSリセットもベーススタイルも、前回学んだ通り「サイト全体の土台」としてグローバルCSSに書きます。土台ができたところで、次は色やサイズを1箇所で管理できる**CSS変数（カスタムプロパティ）**を学びましょう。
