@@ -28,67 +28,100 @@ CSSでレスポンシブ対応を実現する主要な方法は**2つ**ありま
 この2つ以外に、**コンテナクエリ**（`@container`）という方法もあります。メディアクエリが「画面全体の幅」で切り替えるのに対し、コンテナクエリは「親要素の幅」で切り替えます。同じコンポーネントをサイドバーにもメインカラムにも配置できる場面で便利です。2023年に主要ブラウザすべてで対応し、実務でも採用が進んでいます。
 </LearnMore>
 
-## メディアクエリ — ブレークポイントで「切り替える」
+## メディアクエリはブレークポイントで「切り替える」
 
 **メディアクエリ**（`@media`）は、画面幅がある値を超えたらスタイルを切り替える方法です。
 
 ```css title="style.css"
 h1 {
-  font-size: 24px;
+  font-size: 18px;
 }
 
 @media (min-width: 768px) {
   h1 {
-    font-size: 30px;
+    font-size: 32px;
   }
 }
 ```
 
-これは「画面幅が768px以上になったら、`h1` のフォントサイズを30pxに変える」という意味です。
+これは「画面幅が768px以上になったら、`h1` のフォントサイズを32pxに変える」という意味です。
 
 この方法でも目的は達成できますが、1つ問題があります。
 
 <ContentTable
   headers={["画面幅", "フォントサイズ", "変化"]}
   rows={[
-    ["767px", "24px", ""],
-    ["768px", "30px", "← ここで一気に6px大きくなる"],
-    ["1920px", "30px", ""],
+    ["767px", "18px", ""],
+    ["768px", "32px", "← ここで一気に14px大きくなる"],
+    ["1920px", "32px", ""],
   ]}
 />
 
-768pxを境に、フォントサイズが**一気に切り替わります**。画面幅をゆっくり広げていくと、ある瞬間に「カクッ」と大きくなるのが分かります。
+768pxを境に、フォントサイズが**一気に切り替わります**。スライダーを動かして、768px付近で「カクッ」と変わる瞬間を確認してみましょう。
 
-{/* TODO: リサイズ可能なプレビューコンポーネントでメディアクエリの「カクッ」を体験できるデモを追加 */}
+<ResponsivePreview
+  title="メディアクエリ: 768pxで「カクッ」と切り替わる"
+  height={210}
+  minWidth={320}
+  maxWidth={1280}
+  defaultWidth={600}
+  markers={[768]}
+  html={`<div class="card"><h1>見出しテキスト</h1><p>スライダーを768px付近でゆっくり動かしてみてください。</p></div>`}
+  css={`
+    body { font-family: system-ui, sans-serif; margin: 16px; }
+    .card {
+      padding: 16px;
+      background: #f0f9ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+    }
+    h1 { font-size: 18px; margin-bottom: 8px; }
+    p { color: #737373; font-size: 14px; line-height: 1.5; }
+    @media (min-width: 768px) {
+      .card { padding: 32px; background: #eff6ff; }
+      h1 { font-size: 32px; }
+      p { font-size: 16px; }
+    }
+  `}
+/>
 
 メディアクエリはレイアウトの**構造を切り替える**場面で力を発揮します。「スマホでは縦並び、PCでは横並び」「スマホではメニューを隠す」といった、**表示するかしないかの二択**に向いています。
 
 一方で、フォントサイズや余白のように**少しずつ変えたい**値には、次に紹介する `clamp()` が適しています。
 
-## clamp() — 画面幅に応じて「滑らかに」変化させる
+## clamp() は画面幅に応じて「滑らかに」変化させる
 
 `clamp()` を使うと、画面幅に応じてフォントサイズが**滑らかに**変化します。
 
 ```css title="style.css"
 h1 {
-  font-size: clamp(1.5rem, 1.25rem + 1vw, 1.875rem);
+  font-size: clamp(1.125rem, 0.6rem + 2.2vw, 2rem);
 }
 ```
 
 メディアクエリのような「境界線」はありません。画面幅に連動して、最小値と最大値の間を滑らかに移動します。
 
-<ContentTable
-  headers={["画面幅", "フォントサイズ", "変化"]}
-  rows={[
-    ["320px", "24px（最小値）", ""],
-    ["500px", "約25.6px", "↕ 滑らかに変化"],
-    ["768px", "約27.4px", "↕ 滑らかに変化"],
-    ["1024px", "約29px", "↕ 滑らかに変化"],
-    ["1280px以上", "30px（最大値）", ""],
-  ]}
+<ResponsivePreview
+  title="clamp(): 画面幅に応じて滑らかに変化する"
+  height={210}
+  minWidth={320}
+  maxWidth={1280}
+  defaultWidth={600}
+  html={`<div class="card"><h1>見出しテキスト</h1><p>スライダーをゆっくり動かしてみてください。滑らかに変化します。</p></div>`}
+  css={`
+    body { font-family: system-ui, sans-serif; margin: 16px; }
+    .card {
+      padding: clamp(1rem, 0.5rem + 2vw, 2rem);
+      background: #f0f9ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+    }
+    h1 { font-size: clamp(1.125rem, 0.6rem + 2.2vw, 2rem); margin-bottom: 8px; }
+    p { color: #737373; font-size: clamp(0.875rem, 0.8rem + 0.3vw, 1rem); line-height: 1.5; }
+  `}
 />
 
-## clamp() の3つの引数
+### clamp() の3つの引数
 
 `clamp()` には3つの値を渡します。
 
@@ -99,25 +132,25 @@ clamp(最小値, 推奨値, 最大値)
 <ContentTable
   headers={["引数", "役割", "例"]}
   rows={[
-    ["最小値", "これより小さくならない", "1.5rem（24px）"],
-    ["推奨値", "画面幅に応じて計算される値", "1.25rem + 1vw"],
-    ["最大値", "これより大きくならない", "1.875rem（30px）"],
+    ["最小値", "これより小さくならない", "1.125rem（18px）"],
+    ["推奨値", "画面幅に応じて計算される値", "0.6rem + 2.2vw"],
+    ["最大値", "これより大きくならない", "2rem（32px）"],
   ]}
 />
 
-構成の概要の実際のコードを分解してみましょう。
+実際のコードを分解してみましょう。
 
 ```css title="style.css"
 h1 {
-  font-size: clamp(1.5rem, 1.25rem + 1vw, 1.875rem);
+  font-size: clamp(1.125rem, 0.6rem + 2.2vw, 2rem);
 }
 ```
 
-- **`1.5rem`**（24px）: スマホでもこれ以上は小さくならない
-- **`1.25rem + 1vw`**: ビューポート幅に応じて計算される値。`1vw` は画面幅の1%
-- **`1.875rem`**（30px）: PCでもこれ以上は大きくならない
+- **`1.125rem`**（18px）: スマホでもこれ以上は小さくならない
+- **`0.6rem + 2.2vw`**: ビューポート幅に応じて計算される値。`1vw` は画面幅の1%
+- **`2rem`**（32px）: PCでもこれ以上は大きくならない
 
-推奨値の `1vw` がポイントです。画面幅が広がると `1vw` の値も大きくなるため、フォントサイズが連動して変化します。
+推奨値の `2.2vw` がポイントです。画面幅が広がると `vw` の値も大きくなるため、フォントサイズが連動して変化します。
 
 <LearnMore>
 `rem` はルート要素（`html`）のフォントサイズを基準とした単位です。ブラウザのデフォルトでは `1rem = 16px` です。
@@ -125,8 +158,8 @@ h1 {
 <ContentTable
   headers={["値", "計算", "結果"]}
   rows={[
-    ["1.5rem", "16px × 1.5", "24px"],
-    ["1.875rem", "16px × 1.875", "30px"],
+    ["1.125rem", "16px × 1.125", "18px"],
+    ["2rem", "16px × 2", "32px"],
   ]}
 />
 
@@ -140,7 +173,7 @@ h1 {
 ```css title="style.css"
 /* 余白を滑らかに変化させる */
 .section {
-  padding: clamp(2rem, 1.5rem + 2vw, 4rem);
+  padding: clamp(0.75rem, 0.1rem + 3vw, 3.5rem);
 }
 
 /* コンテンツ幅を滑らかに変化させる */
@@ -149,27 +182,32 @@ h1 {
 }
 ```
 
-<CodePlayground
-  height={250}
+<ResponsivePreview
   title="clamp() でパディングを滑らかに変化させる"
+  height={260}
+  minWidth={320}
+  maxWidth={1280}
+  defaultWidth={500}
   html={`
     <div class="section">
       <h1>見出しテキスト</h1>
-      <p>このセクションのパディング（内側の余白）は、画面幅に応じて滑らかに変化します。</p>
+      <p>このセクションのパディング（内側の余白）は、スライダーに連動して滑らかに変化します。</p>
     </div>
   `}
   css={`
+    body { font-family: system-ui, sans-serif; margin: 0; }
     .section {
-      padding: clamp(1rem, 0.5rem + 2vw, 3rem);
+      padding: clamp(0.75rem, 0.1rem + 3vw, 3.5rem);
       background-color: #f0f9ff;
       border: 1px solid #bfdbfe;
     }
     h1 {
-      font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+      font-size: clamp(1.125rem, 0.6rem + 2.2vw, 2rem);
       margin-bottom: 8px;
     }
     p {
       line-height: 1.6;
+      font-size: clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
     }
   `}
 />

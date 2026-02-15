@@ -365,3 +365,52 @@ pre code.nextra-code > span[data-highlighted-line] {
     background-color: var(--color-code-bg);
     min-height: 3rem;
 }
+
+/* --- Responsive Preview Slider --- */
+.responsive-preview-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--border);
+    outline: none;
+    cursor: pointer;
+}
+
+.responsive-preview-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--primary);
+    border: 2px solid var(--background);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.responsive-preview-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+}
+
+.responsive-preview-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--primary);
+    border: 2px solid var(--background);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.responsive-preview-slider::-moz-range-thumb:hover {
+    transform: scale(1.15);
+}
+
+.responsive-preview-slider::-moz-range-track {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--border);
+}
