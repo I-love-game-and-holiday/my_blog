@@ -13,6 +13,7 @@ import { Callout } from '@/components/content/callout'
 import { OsCommandTabs, OsCodeBlock } from '@/components/code'
 import { OsTable } from '@/components/os/os-table'
 import { LearnMore } from '@/components/content/learn-more'
+import { isValidTermBoundary } from '@/lib/term-boundary'
 
 const mdxComponents = {
     ContentImage,
@@ -196,10 +197,21 @@ export function findDictionaryTermsInContent(
         const termsToCheck = [entry.term, ...entry.aliases]
 
         for (const term of termsToCheck) {
-            if (lowerContent.includes(term.toLowerCase())) {
-                foundSlugs.add(entry.slug)
-                break // 1つのエントリで複数マッチしても1回だけ追加
+            const lowerTerm = term.toLowerCase()
+            let searchIndex = 0
+
+            while (searchIndex <= lowerContent.length - lowerTerm.length) {
+                const index = lowerContent.indexOf(lowerTerm, searchIndex)
+                if (index === -1) break
+
+                if (isValidTermBoundary(mdxContent, index, lowerTerm.length, term)) {
+                    foundSlugs.add(entry.slug)
+                    break
+                }
+                searchIndex = index + 1
             }
+
+            if (foundSlugs.has(entry.slug)) break
         }
     }
 
