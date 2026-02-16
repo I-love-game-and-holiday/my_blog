@@ -3,6 +3,7 @@
 import { useMemo, type ReactNode, type ReactElement, Children, isValidElement } from 'react'
 import { DictionaryTerm } from './dictionary-term'
 import type { DictionaryEntry } from '@/lib/get-dictionary'
+import { isValidTermBoundary } from '@/lib/term-boundary'
 
 type TermMatch = {
     term: string
@@ -38,7 +39,7 @@ function createTermMatcher(entries: DictionaryEntry[]) {
                     ([start, end]) => index < end && index + term.length > start
                 )
 
-                if (!isOverlapping) {
+                if (!isOverlapping && isValidTermBoundary(text, index, term.length, term)) {
                     matches.push({
                         term: text.slice(index, index + term.length),
                         slug: termMap.get(term)!,

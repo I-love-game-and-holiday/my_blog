@@ -1,5 +1,6 @@
 import { DictionaryTerm } from '@/components/dictionary/dictionary-term'
 import type { DictionaryEntry } from '@/lib/get-dictionary'
+import { isValidTermBoundary } from '@/lib/term-boundary'
 
 type TermMatch = {
     term: string
@@ -35,25 +36,14 @@ export function createTermMatcher(entries: DictionaryEntry[]) {
                     ([start, end]) => index < end && index + term.length > start
                 )
 
-                if (!isOverlapping) {
-                    const beforeChar = text[index - 1]
-                    const afterChar = text[index + term.length]
-
-                    const isWordBoundaryBefore = !beforeChar || /[\s,.!?;:'"()[\]{}]/.test(beforeChar)
-                    const isWordBoundaryAfter = !afterChar || /[\s,.!?;:'"()[\]{}]/.test(afterChar)
-
-                    const isJapanese = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/.test(term)
-                    const isValidBoundary = isJapanese || (isWordBoundaryBefore && isWordBoundaryAfter)
-
-                    if (isValidBoundary) {
-                        matches.push({
-                            term: text.slice(index, index + term.length),
-                            slug: termMap.get(term)!,
-                            index,
-                            length: term.length,
-                        })
-                        usedRanges.push([index, index + term.length])
-                    }
+                if (!isOverlapping && isValidTermBoundary(text, index, term.length, term)) {
+                    matches.push({
+                        term: text.slice(index, index + term.length),
+                        slug: termMap.get(term)!,
+                        index,
+                        length: term.length,
+                    })
+                    usedRanges.push([index, index + term.length])
                 }
 
                 searchIndex = index + 1
