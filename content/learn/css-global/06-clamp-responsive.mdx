@@ -18,21 +18,24 @@ CSSでレスポンシブ対応を実現する主要な方法は**2つ**ありま
   headers={["方法", "変化の仕方", "得意なこと"]}
   rows={[
     ["メディアクエリ（@media）", "ブレークポイントで切り替わる", "レイアウトの構造変更（表示/非表示、縦並び↔横並び）"],
-    ["clamp()", "画面幅に応じて滑らかに変化する", "フォントサイズ、余白、幅などのサイズ値"],
+    ["クランプ（clamp()）", "画面幅に応じて滑らかに変化する", "フォントサイズ、余白、幅などのサイズ値"],
   ]}
 />
 
 どちらが優れているかではなく、**得意な場面が違います**。このレッスンでは両方の特徴を理解した上で、`clamp()` の書き方を学びます。
 
 <LearnMore>
-この2つ以外に、**コンテナクエリ**（`@container`）という方法もあります。メディアクエリが「画面全体の幅」で切り替えるのに対し、コンテナクエリは「親要素の幅」で切り替えます。同じコンポーネントをサイドバーにもメインカラムにも配置できる場面で便利です。2023年に主要ブラウザすべてで対応し、実務でも採用が進んでいます。
+この2つ以外に、**コンテナクエリ**（`@container`）という方法もあります。<br />
+メディアクエリが「画面全体の幅」で切り替えるのに対し、コンテナクエリは「親要素の幅」で切り替えます。
+
+<a href="https://web.dev/learn/css/container-queries?hl=ja" target="_blank" rel="noopener noreferrer">参考: コンテナクエリ</a>
 </LearnMore>
 
 ## メディアクエリはブレークポイントで「切り替える」
 
 **メディアクエリ**（`@media`）は、画面幅がある値を超えたらスタイルを切り替える方法です。
 
-```css title="style.css"
+```css title="globals.css"
 h1 {
   font-size: 18px;
 }
@@ -85,6 +88,12 @@ h1 {
   `}
 />
 
+<div className="lg:hidden">
+  <Callout type="info">
+  スマホやタブレットでご覧の場合、CSSが正常に反映されない場合があります。
+  ぜひ、PCでご確認ください！
+  </Callout>
+</div>
 メディアクエリはレイアウトの**構造を切り替える**場面で力を発揮します。「スマホでは縦並び、PCでは横並び」「スマホではメニューを隠す」といった、**表示するかしないかの二択**に向いています。
 
 一方で、フォントサイズや余白のように**少しずつ変えたい**値には、次に紹介する `clamp()` が適しています。
@@ -93,7 +102,7 @@ h1 {
 
 `clamp()` を使うと、画面幅に応じてフォントサイズが**滑らかに**変化します。
 
-```css title="style.css"
+```css title="globals.css"
 h1 {
   font-size: clamp(1.125rem, 0.6rem + 2.2vw, 2rem);
 }
@@ -140,7 +149,7 @@ clamp(最小値, 推奨値, 最大値)
 
 実際のコードを分解してみましょう。
 
-```css title="style.css"
+```css title="globals.css"
 h1 {
   font-size: clamp(1.125rem, 0.6rem + 2.2vw, 2rem);
 }
@@ -164,13 +173,24 @@ h1 {
 />
 
 `px` ではなく `rem` を使う理由は、ユーザーがブラウザの文字サイズ設定を変更したときに、サイト全体のフォントサイズが連動して変わるようにするためです。アクセシビリティの観点から、フォントサイズには `rem` を使うのが推奨されています。
+
+
+推奨値の計算式（`1.25rem + 1vw` のような部分）を自分で考えるのは大変です。最小値と最大値を入力すると、推奨値を自動計算してくれるツールがあります。
+
+- [Utopia](https://utopia.fyi/type/calculator/) — フォントサイズや余白のclamp()を自動生成
+- [clamp() Calculator](https://www.marcbacon.com/tools/clamp-calculator/) — シンプルなclamp()計算機
+
+最小値・最大値・対応する画面幅を入力するだけで、推奨値を含む `clamp()` 式が生成されます。
+
+
+
+
 </LearnMore>
 
-## フォントサイズ以外にも使える
-
+<Callout type="info">
 `clamp()` はフォントサイズ専用の機能ではありません。**サイズを表すあらゆるプロパティ**に使えます。
 
-```css title="style.css"
+```css title="globals.css"
 /* 余白を滑らかに変化させる */
 .section {
   padding: clamp(0.75rem, 0.1rem + 3vw, 3.5rem);
@@ -182,73 +202,13 @@ h1 {
 }
 ```
 
-<ResponsivePreview
-  title="clamp() でパディングを滑らかに変化させる"
-  height={260}
-  minWidth={320}
-  maxWidth={1280}
-  defaultWidth={500}
-  html={`
-    <div class="section">
-      <h1>見出しテキスト</h1>
-      <p>このセクションのパディング（内側の余白）は、スライダーに連動して滑らかに変化します。</p>
-    </div>
-  `}
-  css={`
-    body { font-family: system-ui, sans-serif; margin: 0; }
-    .section {
-      padding: clamp(0.75rem, 0.1rem + 3vw, 3.5rem);
-      background-color: #f0f9ff;
-      border: 1px solid #bfdbfe;
-    }
-    h1 {
-      font-size: clamp(1.125rem, 0.6rem + 2.2vw, 2rem);
-      margin-bottom: 8px;
-    }
-    p {
-      line-height: 1.6;
-      font-size: clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
-    }
-  `}
-/>
-
-<Callout type="info">
-冒頭で見た2つのアプローチを思い出しましょう。構造の切り替え（表示/非表示、縦/横）は**メディアクエリ**、サイズ値の滑らかな変化は **`clamp()`**。それぞれの得意分野を使い分けるのがポイントです。
 </Callout>
-
-<LearnMore>
-推奨値の計算式（`1.25rem + 1vw` のような部分）を自分で考えるのは大変です。最小値と最大値を入力すると、推奨値を自動計算してくれるツールがあります。
-
-- [Utopia](https://utopia.fyi/type/calculator/) — フォントサイズや余白のclamp()を自動生成
-- [clamp() Calculator](https://www.marcbacon.com/tools/clamp-calculator/) — シンプルなclamp()計算機
-
-最小値・最大値・対応する画面幅を入力するだけで、推奨値を含む `clamp()` 式が生成されます。
-</LearnMore>
 
 ## 構成の概要を振り返ろう
 
-これで構成の概要の5項目すべてを理解できました。
+メジャーなグローバルCSSの構成を理解できるようになりましたね。
 
-<CollapsibleCode title="style.css（構成の概要）" defaultOpen={false}>
-```css
-/* 1. CSSリセット */
-*, *::before, *::after { box-sizing: border-box; margin: 0; }
-
-/* 2. ベーススタイル */
-body { font-family: system-ui, sans-serif; line-height: 1.6; }
-
-/* 3. デザイントークン（CSS変数） */
-:root { --background: #ffffff; --text: #171717; }
-
-/* 4. ダークモードの色定義 */
-.dark { --background: #171717; --text: #ffffff; }
-
-/* 5. レスポンシブなサイズ定義 */
-h1 { font-size: clamp(1.5rem, 1.25rem + 1vw, 1.875rem); }
-```
-</CollapsibleCode>
-
-```css title="style.css（すべて理解できた！）"
+```css title="globals.css"
 /* 1. CSSリセット ✅ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; }
 
@@ -267,4 +227,6 @@ h1 { font-size: clamp(1.5rem, 1.25rem + 1vw, 1.875rem); }
 
 ## 次のステップ
 
-01で見せたグローバルCSSの構成をすべて読み解けるようになりました。次のレッスンでは、CSSファイルが増えてきたときに読み込み順を整理する **@layer** を学びます。
+1つのグローバルCSSファイルで管理していると、
+アプリの規模が大きくなるにつれて管理が大変になりますね。<br />
+次のレッスンでは、CSSファイルが増えてきたときに読み込み順を整理する **@layer** を学びます。

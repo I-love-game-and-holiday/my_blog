@@ -1,0 +1,240 @@
+---
+title: "@layer で整理する"
+order: 7
+description: CSSの読み込み順による上書き問題を @layer で解決する方法を学びます。
+---
+
+## CSSが増えると「順番」が問題になる
+
+ここまでのレッスンで、グローバルCSSに書く内容を学んできました。
+
+```css title="globals.css"
+/* 1. CSSリセット */
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
+
+/* 2. ベーススタイル */
+body { font-family: system-ui, sans-serif; line-height: 1.6; }
+
+/* 3. デザイントークン（CSS変数） */
+:root { --background: #ffffff; --text: #171717; }
+
+/* 4. ダークモードの色定義 */
+.dark { --background: #171717; --text: #ffffff; }
+
+/* 5. レスポンシブなサイズ定義 */
+h1 { font-size: clamp(1.5rem, 1.25rem + 1vw, 1.875rem); }
+```
+
+1つのファイルに書いているうちは問題ありません。<br />
+しかし、プロジェクトが大きくなると、CSSは**複数のファイル**に分ける必要があるでしょう。
+
+```
+styles/
+├── reset.css         ← CSSリセット
+├── base.css          ← ベーススタイル
+├── components.css    ← ボタンやカードのスタイル
+└── utilities.css     ← ユーティリティクラス
+```
+
+ここで思い出してほしいのが、レッスン2で学んだカスケードの「出現順」ルールです。
+
+> **同じ詳細度なら、後に書いた方が勝つ。**
+
+つまり、CSSファイルの**読み込み順**がそのまま優先順位になります。
+
+## 読み込み順を間違えるとどうなる？
+
+次の例を見てください。2つのCSSファイルがあるとします。
+
+- `base.css` — ボタン全体のスタイル（`button` セレクタ）
+- `theme.css` — テーマ用のボタンスタイル（`button` セレクタで色を変更）
+
+<CodePlayground
+  height={200}
+  title="正しい順番: base.css → theme.css"
+  html={`
+    <button>テーマカラーのボタン</button>
+  `}
+  css={`
+    /* --- base.css --- */
+    button {
+      padding: 8px 16px;
+      background-color: blue;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* --- theme.css（後に読み込む → 上書きできる） --- */
+    button {
+      background-color: green;
+    }
+  `}
+/>
+
+ボタンは緑色になっています。`theme.css` が後に読み込まれたので、同じ `button` セレクタ同士で「出現順」ルールが適用され、緑色が勝ちました。
+
+では、読み込み順を**逆にしたら**どうなるでしょうか？
+
+<CodePlayground
+  height={200}
+  title="逆の順番: theme.css → base.css"
+  html={`
+    <button>テーマカラーのボタン</button>
+  `}
+  css={`
+    /* --- theme.css（先に読み込まれてしまった） --- */
+    button {
+      background-color: green;
+    }
+
+    /* --- base.css（後に読み込まれた → こちらが勝ってしまう） --- */
+    button {
+      padding: 8px 16px;
+      background-color: blue;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  `}
+/>
+
+テーマの緑色が、ベースの青色に上書きされてしまいました。どちらも同じ `button` セレクタ（同じ詳細度）なので、**後に書いた方が勝つ**という出現順ルールがそのまま効いてしまうのです。
+
+ファイルが2つならまだ管理できます。しかし、ファイルやセレクタ等が10個、20個...と増えたとき、すべての読み込み順を正しく保つのは困難です。
+
+## @layer で「層」を作る
+
+この問題を解決するのが `@layer` です。
+
+`@layer` は、CSSに**レイヤー（層）**を作って、優先順位を**明示的に宣言する**仕組みです。
+
+先ほどの `base.css` と `theme.css` の問題を解決してみましょう。
+
+まず、レイヤーの優先順位を宣言します。
+
+```css title="globals.css"
+/* base → theme の順に優先度が上がる */
+@layer base, theme;
+```
+
+各レイヤーにスタイルを配置するには、`@layer レイヤー名 { ... }` と書きます。
+
+```css title="globals.css"
+@layer base, theme;
+
+@layer base {
+  button {
+    padding: 8px 16px;
+    background-color: blue;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+}
+
+@layer theme {
+  button {
+    background-color: green;
+  }
+}
+```
+
+こう書くと、**ファイル内でどこに書いても**、`theme` レイヤーは `base` レイヤーより優先されます。
+
+実際に確認してみましょう。あえて `theme` を先に、`base` を後に書いています。
+
+<CodePlayground
+  height={200}
+  title="@layer: 書く順番に関係なく優先順位が決まる"
+  html={`
+    <button>テーマカラーのボタン</button>
+  `}
+  css={`
+    /* 優先順位を宣言 */
+    @layer base, theme;
+
+    /* あえてthemeを先に書く */
+    @layer theme {
+      button {
+        background-color: green;
+      }
+    }
+
+    /* baseを後に書いても、宣言順で優先度が決まる */
+    @layer base {
+      button {
+        padding: 8px 16px;
+        background-color: blue;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+    }
+  `}
+/>
+
+`theme` を先に、`base` を後に書いていますが、テーマの緑色がちゃんと反映されています。最初の `@layer base, theme;` の宣言で優先順位が決まっているからです。
+
+## レイヤーの優先順位
+
+`@layer` の優先順位は、**レッスン2 『カスケードと詳細度』** で学んだカスケードと同じ原則です。
+
+> **後に宣言したレイヤーが優先される。**
+
+レイヤーは2つだけでなく、いくつでも作れます。実際のプロジェクトでは3層に分けるのが定番です。
+
+```css title="globals.css"
+@layer base, components, utilities;
+/*     ↑弱い                ↑強い    */
+```
+
+<ContentTable
+  headers={["レイヤー", "優先度", "用途"]}
+  rows={[
+    ["base", "低い", "リセット、ベーススタイル"],
+    ["components", "中くらい", "ボタン、カードなどのコンポーネント"],
+    ["utilities", "高い", "個別に上書きしたいユーティリティ"],
+  ]}
+/>
+
+<LearnMore>
+`@layer` の宣言がなく、どのレイヤーにも属さないスタイルは、**すべてのレイヤーより優先**されます。
+
+```css title="globals.css"
+@layer base {
+  p { color: blue; }
+}
+
+/* レイヤーに属さないスタイル → 最も強い */
+p { color: red; }
+```
+
+この場合、`p` の文字色は赤になります。レイヤー外のスタイルが常に最優先されるためです。
+</LearnMore>
+
+## 複数ファイルでも安心
+
+`@layer` の最大の利点は、**ファイルが分かれていても優先順位が壊れない**ことです。
+
+```css title="globals.css"
+/* 最初に優先順位を宣言 */
+@layer base, components, utilities;
+
+/* 各ファイルを読み込む（順番はもう気にしなくてよい） */
+@import './reset.css' layer(base);
+@import './components.css' layer(components);
+@import './utilities.css' layer(utilities);
+```
+
+<Callout type="info">
+`@import` でファイルを読み込むとき、`layer()` を付けると、そのファイルのスタイルを指定のレイヤーに配置できます。
+</Callout>
+
+読み込み順を入れ替えても、レイヤーの宣言順で優先度が決まるため、スタイルが壊れることはありません。
+
+## 次のステップ
+
+`@layer` を使えば、「このファイルはこのファイルの前に読み込まないと壊れる」という暗黙の依存を**明示的なルール**に変えられます。
+
+これで、グローバルCSSの主要な概念をすべて学びました。次のレッスンでは、コース全体を振り返り、学んだ知識を整理します。

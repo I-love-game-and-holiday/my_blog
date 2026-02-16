@@ -11,7 +11,7 @@ description: 色やサイズを1箇所で管理できる「CSS変数（カスタ
 
 例えば、サイトの背景色に `#ffffff`、文字色に `#171717` を使うとします。
 
-```css title="style.css"
+```css title="globals.css"
 body {
   background-color: #ffffff;
   color: #171717;
@@ -40,7 +40,7 @@ body {
 
 CSS変数（カスタムプロパティ）を使うと、値に**名前**をつけて1箇所で管理できます。
 
-```css title="style.css"
+```css title="globals.css"
 :root {
   --background: #ffffff;
   --text: #171717;
@@ -49,7 +49,7 @@ CSS変数（カスタムプロパティ）を使うと、値に**名前**をつ�
 
 定義した変数は `var()` で呼び出します。
 
-```css title="style.css"
+```css title="globals.css"
 body {
   background-color: var(--background);
   color: var(--text);
@@ -107,7 +107,7 @@ body {
 
 CSS変数は**どのセレクタの中でも**定義できます。しかし、グローバルCSSでは `:root` に書くのが定番です。
 
-```css title="style.css"
+```css title="globals.css"
 /* :root = HTML文書のルート要素（html要素）*/
 :root {
   --background: #ffffff;
@@ -130,7 +130,7 @@ CSS変数は**どのセレクタの中でも**定義できます。しかし、�
 <LearnMore>
 `:root` と `html` セレクタはほぼ同じ要素を指しますが、`:root` は**疑似クラス**のため詳細度がわずかに高くなります。
 
-02で学んだ詳細度を思い出してみましょう。
+レッスン2で学んだ詳細度を思い出してみましょう。
 
 <ContentTable
   headers={["セレクタ", "種類", "詳細度"]}
@@ -147,7 +147,7 @@ CSS変数は**どのセレクタの中でも**定義できます。しかし、�
 
 前回のレッスンで、ベーススタイルに `font-family` と `line-height` を定義しました。
 
-```css title="style.css"
+```css title="globals.css"
 /* 2. ベーススタイル */
 body {
   font-family: system-ui, sans-serif;
@@ -157,7 +157,7 @@ body {
 
 CSS変数を組み合わせると、ここに**背景色と文字色**も追加できます。
 
-```css title="style.css"
+```css title="globals.css"
 /* 3. デザイントークン（CSS変数） */
 :root {
   --background: #ffffff;
@@ -199,7 +199,7 @@ body {
 <LearnMore>
 変数の名前は、色そのもの（`--blue`、`--white`）ではなく**役割**（`--background`、`--text`、`--primary`）でつけるのがおすすめです。
 
-```css title="style.css"
+```css title="globals.css"
 /* 避けたい命名 */
 :root {
   --white: #ffffff;
@@ -220,7 +220,7 @@ body {
 
 ここまでのレッスンで、構成の概要の3番目まで理解できました。
 
-<CollapsibleCode title="style.css（構成の概要）" defaultOpen={false}>
+<CollapsibleCode title="globals.css（構成の概要）" defaultOpen={false}>
 ```css
 /* 1. CSSリセット */
 *, *::before, *::after { box-sizing: border-box; margin: 0; }
@@ -239,7 +239,7 @@ h1 { font-size: clamp(1.5rem, 1.25rem + 1vw, 1.875rem); }
 ```
 </CollapsibleCode>
 
-```css title="style.css（ここまで理解できた部分）"
+```css title="globals.css（ここまで理解できた部分）"
 /* 1. CSSリセット ✅ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; }
 
@@ -253,4 +253,4 @@ body { font-family: system-ui, sans-serif; line-height: 1.6; }
 ## 次のステップ
 
 CSS変数で色を1箇所で管理できるようになりましたね。もし、`:root` に定義した変数の**値だけを別のセットに切り替えたら**、何が起きるでしょうか？ 
-次のレッスンでは**、CSS変数を活用した**ダークモード**の仕組みを学びます。
+次のレッスンでは、CSS変数を活用した**ダークモード**の仕組みを学びます。

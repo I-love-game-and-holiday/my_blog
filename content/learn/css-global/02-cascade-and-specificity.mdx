@@ -11,7 +11,7 @@ CSSは **Cascading Style Sheets** の略です。「Cascade（カスケード）
 滝の水が上から下へ流れていくように、CSSのスタイルも上から下へと適用されていきます。
 もし同じ要素に複数のスタイルが書かれていたら、基本的には**後に書いた方が優先**されます。
 
-```css title="style.css"
+```css title="globals.css"
 p {
   color: blue;
 }
@@ -51,7 +51,7 @@ p {
 <p class="intro" id="hero-text">こんにちは</p>
 ```
 
-```css title="style.css"
+```css title="globals.css"
 #hero-text {
   color: red;
 }
@@ -105,7 +105,7 @@ CSSがどのスタイルを採用するかは、次の3つのルールで決ま�
 
 `!important` がついたスタイルは、他のすべてのスタイルに勝ちます。
 
-```css title="style.css"
+```css title="globals.css"
 p {
   color: blue !important;
 }
@@ -154,7 +154,7 @@ p {
 
 詳細度が同じ場合は、**後に書いた方が勝ち**ます。最初に見た例がこれにあたります。
 
-```css title="style.css"
+```css title="globals.css"
 p {
   color: blue;
 }
@@ -169,7 +169,7 @@ p {
 
 前回のレッスンで見たグローバルCSSを思い出してください。
 
-```css title="style.css（構成の概要）"
+```css title="globals.css（構成の概要）"
 /* 1. CSSリセット */
 *, *::before, *::after { box-sizing: border-box; margin: 0; }
 
