@@ -68,7 +68,7 @@ CSSリセットの考え方はシンプルです。
 
 **『グローバルCSSとは何か』** レッスンで例示したグローバルCSSを再度確認してみましょう。
 
-<CollapsibleCode title="style.css（構成の概要）" defaultOpen={false}>
+<CollapsibleCode title="globals.css（構成の概要）" defaultOpen={false}>
 ```css
 /* 1. CSSリセット */
 *, *::before, *::after { box-sizing: border-box; margin: 0; }
@@ -87,7 +87,7 @@ h1 { font-size: clamp(1.5rem, 1.25rem + 1vw, 1.875rem); }
 ```
 </CollapsibleCode>
 
-```css title="style.css（構成の概要）"
+```css title="globals.css（構成の概要）"
 /* 1. CSSリセット */
 *, *::before, *::after { box-sizing: border-box; margin: 0; }
 ```
@@ -100,7 +100,7 @@ h1 { font-size: clamp(1.5rem, 1.25rem + 1vw, 1.875rem); }
 
 `*`（アスタリスク）は**ユニバーサルセレクタ**と呼ばれ、ページ上のすべての要素を選択します。
 
-```css title="style.css"
+```css title="globals.css"
 * {
   /* ここに書いたスタイルは、すべての要素に適用される */
 }
@@ -223,7 +223,7 @@ CSSリセットで「まっさら」にしたら、次はサイト全体の**土
 
 ### フォントを統一する
 
-```css title="style.css"
+```css title="globals.css"
 body {
   font-family: system-ui, sans-serif;
 }
@@ -235,7 +235,7 @@ body {
 
 ### 行間を読みやすくする
 
-```css title="style.css"
+```css title="globals.css"
 body {
   line-height: 1.6;
 }
@@ -263,4 +263,5 @@ body {
 
 ## 次のステップ
 
-CSSリセットもベーススタイルも、前回学んだ通り「サイト全体の土台」としてグローバルCSSに書きます。土台ができたところで、次は色やサイズを1箇所で管理できる**CSS変数（カスタムプロパティ）**を学びましょう。
+CSSリセットもベーススタイルも、前回学んだ通り「サイト全体の土台」としてグローバルCSSに書きます。
+土台ができたところで、次は色やサイズを1箇所で管理できる **CSS変数（カスタムプロパティ）** を学びましょう。

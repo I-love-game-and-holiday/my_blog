@@ -8,7 +8,7 @@ description: CSS変数を切り替えるだけでダークモードを実現す�
 
 前回のレッスンで、CSS変数を使って色を1箇所で管理する方法を学びました。
 
-```css title="style.css"
+```css title="globals.css"
 :root {
   --background: #ffffff;
   --text: #171717;
@@ -21,13 +21,13 @@ body {
 
 ダークモードの仕組みはとてもシンプルです。この変数の**値だけを別のセットに切り替える**だけで実現できます。
 
-新しいCSSの機能を覚える必要はありません。前回学んだCSS変数と、02で学んだカスケードの**組み合わせ**です。
+新しいCSSの機能を覚える必要はありません。前回学んだCSS変数と、レッスン2で学んだカスケードの**組み合わせ**です。
 
 ## :root と .dark で2セットの色を定義する
 
 ライトモード用の色は `:root` に、ダークモード用の色は `.dark` に定義します。
 
-```css title="style.css"
+```css title="globals.css"
 /* ライトモード（デフォルト） */
 :root {
   --background: #ffffff;
@@ -116,7 +116,7 @@ body {
 
 ## なぜ .dark が :root を上書きできるのか
 
-ここで02のレッスンで学んだ**詳細度**を思い出してください。
+ここでレッスン2 『カスケードと詳細度』で学んだ**詳細度**を思い出してください。
 
 `:root` は疑似クラスセレクタで、`.dark` はclassセレクタです。どちらも詳細度は同じ（classセレクタ相当）ですが、`.dark` が `:root` の**後に**書かれているため、カスケードの「出現順」ルールで `.dark` の値が優先されます。
 
@@ -128,7 +128,7 @@ body {
   ]}
 />
 
-02で学んだ「同じ詳細度なら後に書いた方が勝つ」というルールがここで活きています。
+レッスン2で学んだ「同じ詳細度なら後に書いた方が勝つ」というルールがここで活きています。
 
 <Callout type="info">
 `.dark` クラスが `<html>` 要素についていないとき、`.dark` のルールは**どの要素にもマッチしない**ため、`:root` の値がそのまま使われます。
@@ -204,7 +204,7 @@ body {
 
 4番目まで理解できましたね。
 
-<CollapsibleCode title="style.css（構成の概要）" defaultOpen={false}>
+<CollapsibleCode title="globals.css（構成の概要）" defaultOpen={false}>
 ```css
 /* 1. CSSリセット */
 *, *::before, *::after { box-sizing: border-box; margin: 0; }
@@ -223,7 +223,7 @@ h1 { font-size: clamp(1.5rem, 1.25rem + 1vw, 1.875rem); }
 ```
 </CollapsibleCode>
 
-```css title="style.css（ここまで理解できた部分）"
+```css title="globals.css（ここまで理解できた部分）"
 /* 1. CSSリセット ✅ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; }
 
