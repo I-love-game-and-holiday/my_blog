@@ -10,7 +10,7 @@ import { BoxDiagram } from '@/components/content/box-diagram'
 import { FlowDiagram } from '@/components/content/flow-diagram'
 import { SectionSummary } from '@/components/content/section-summary'
 import { Callout } from '@/components/content/callout'
-import { OsCommandTabs, OsCodeBlock } from '@/components/code'
+import { OsCommandTabs, OsCodeBlock, CodePlayground } from '@/components/code'
 import { OsTable } from '@/components/os/os-table'
 import { LearnMore } from '@/components/content/learn-more'
 import { isValidTermBoundary } from '@/lib/term-boundary'
@@ -26,6 +26,7 @@ const mdxComponents = {
     OsCodeBlock,
     OsTable,
     LearnMore,
+    CodePlayground,
 }
 
 const DICTIONARY_DIR = path.join(process.cwd(), 'content', 'dictionary')

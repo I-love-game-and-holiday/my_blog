@@ -1,0 +1,189 @@
+---
+term: preventDefault
+reading: ぷりべんとでふぉると
+aliases: ["デフォルト動作の無効化", "デフォルトの挙動をキャンセル"]
+---
+
+`preventDefault()` は、ブラウザが自動的に行う動作（デフォルト動作）を**キャンセル**するためのメソッドです。
+
+個人情報を入力するフォームを例に説明します。
+
+## `preventDefault()`がないフォームでデータを送信してみると...
+
+名前に何も入力しないで「送信」ボタンを押すと、エラーメッセージを表示するフォームを作りました。
+
+以下のフォームで、**名前を空のまま**「送信」ボタンを押してみてください。
+
+<CodePlayground
+  height={200}
+  title="preventDefaultなし（困る例）"
+  html={`
+<form id="myForm">
+  <label for="name">名前：</label>
+  <input type="text" id="name" placeholder="名前を入力" />
+  <button type="submit">送信</button>
+  <p id="result"></p>
+</form>
+  `}
+  css={`
+form {
+  padding: 16px;
+  font-family: sans-serif;
+}
+input {
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-right: 8px;
+}
+button {
+  padding: 6px 16px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+#result {
+  margin-top: 12px;
+  font-weight: bold;
+}
+.error { color: #dc2626; }
+.success { color: #16a34a; }
+  `}
+  js={`
+const form = document.querySelector('#myForm');
+
+form.addEventListener('submit', (event) => {
+  // ここに preventDefault() がない！
+
+  const name = document.querySelector('#name').value;
+  const result = document.querySelector('#result');
+
+  if (name === '') {
+    result.textContent = '⚠ 名前を入力してください';
+    result.className = 'error';
+  } else {
+    result.textContent = '✅ 送信しました：' + name;
+    result.className = 'success';
+  }
+});
+  `}
+/>
+
+バリデーションのメッセージが**一瞬だけ表示されて、すぐに消えてしまう**のを確認できましたか？
+
+これは「フォームの送信ボタンが押されたらページを再読み込みする」というブラウザのデフォルト動作が働いているためです。<br/>
+JavaScriptがチェック処理を行っても、ブラウザがページを再読み込みしてしまうので、結果が消えてしまいます。
+
+## ブラウザのデフォルト動作とは
+
+ブラウザは、ユーザーの特定の操作に対して**あらかじめ決められた動作**を行います。これを **「デフォルト動作」** と呼びます。
+
+<ContentTable
+  headers={["操作", "デフォルト動作"]}
+  rows={[
+    ["フォームのsubmitボタンを押す", "ページが再読み込みされる"],
+    ["リンク（<a>タグ）をクリックする", "指定されたURLに移動する"],
+    ["チェックボックスをクリックする", "チェックのON/OFFが切り替わる"],
+    ["テキスト入力欄でキーを押す", "入力欄に文字が入力される"],
+  ]}
+/>
+
+これらはJavaScriptを書かなくてもブラウザが自動的に行います。
+
+さきほどのフォームでは、「フォームの送信ボタンを押す → ページが再読み込みされる」というデフォルト動作のせいで、JavaScriptの処理結果が消えていたのです。
+
+## preventDefaultで解決しよう
+
+`event.preventDefault()` を1行追加するだけで、このデフォルト動作をキャンセルできます。
+
+さっきと同じフォームに `preventDefault()` を追加しました。<br/>
+名前を空のまま「送信」してみてください。今度はメッセージが消えずに残ります。
+
+<CodePlayground
+  height={200}
+  title="preventDefaultあり（解決）"
+  html={`
+<form id="myForm">
+  <label for="name">名前：</label>
+  <input type="text" id="name" placeholder="名前を入力" />
+  <button type="submit">送信</button>
+  <p id="result"></p>
+</form>
+  `}
+  css={`
+form {
+  padding: 16px;
+  font-family: sans-serif;
+}
+input {
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-right: 8px;
+}
+button {
+  padding: 6px 16px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+#result {
+  margin-top: 12px;
+  font-weight: bold;
+}
+.error { color: #dc2626; }
+.success { color: #16a34a; }
+  `}
+  js={`
+const form = document.querySelector('#myForm');
+
+form.addEventListener('submit', (event) => {
+  event.preventDefault(); // ← これを追加！
+
+  const name = document.querySelector('#name').value;
+  const result = document.querySelector('#result');
+
+  if (name === '') {
+    result.textContent = '⚠ 名前を入力してください';
+    result.className = 'error';
+  } else {
+    result.textContent = '✅ 送信しました：' + name;
+    result.className = 'success';
+  }
+});
+  `}
+/>
+
+変わったのは `event.preventDefault();` の1行だけです。
+
+この1行で「ページを再読み込みする」というブラウザのデフォルト動作がキャンセルされ、自分で書いたJavaScriptの処理だけが実行されるようになりました。
+
+## コードの解説
+
+```js
+form.addEventListener('submit', (event) => {
+  event.preventDefault(); // デフォルト動作をキャンセル
+  // ...この先の処理が安全に実行される
+});
+```
+
+ポイントは `event` の部分です。
+
+イベントが発火すると、ブラウザは「何が起きたか」の情報を**イベントオブジェクト**として渡してくれます。<br/>
+`addEventListener` の関数の引数（ここでは `event`）で受け取れます。
+
+このイベントオブジェクトが持っている `preventDefault()` メソッドを呼ぶと、デフォルト動作がキャンセルされます。
+
+## まとめ
+
+<SectionSummary
+  points={[
+    "preventDefault()はブラウザのデフォルト動作をキャンセルする",
+    "フォーム送信時のページ再読み込みを止めるのが最もよくある使い方",
+    "自分で書いた処理だけを実行したいときに使う",
+  ]}
+/>

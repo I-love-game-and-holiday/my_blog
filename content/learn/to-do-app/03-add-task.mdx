@@ -178,7 +178,7 @@ function renderTodos() {
 ```js title="main.js"
 // フォーム送信時の処理
 form.addEventListener('submit', (e) => {
-  // ページのリロードを防ぐ
+
   e.preventDefault();
 
   // ========================================
@@ -196,6 +196,9 @@ form.addEventListener('submit', (e) => {
 
 });
 ```
+<Callout type="info">
+**preventDefault** はブラウザのデフォルト動作をキャンセルするメソッドです。
+</Callout>
 
 <Callout type="warning">
 **まずは自分で考えてみましょう！**
