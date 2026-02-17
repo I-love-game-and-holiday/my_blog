@@ -1,0 +1,123 @@
+---
+term: コールバック関数
+reading: こーるばっくかんすう
+aliases: ["Callback Function", "コールバック"]
+---
+
+コールバック関数とは、**他の関数に渡して、あとから呼び出してもらう関数**のことです。
+
+「この処理が終わったら、この関数を実行してね」と頼んでおくイメージです。
+
+コールバック関数はJavaScript、Python、Java、Rubyなど**どの言語にも共通する概念**です。<br/>
+この記事ではJavaScriptを例に説明します。
+
+## ボタンをクリックしたらメッセージを表示してみよう
+
+以下のコードでは、ボタンをクリックすると「クリックされました！」と表示されます。
+
+実際に「クリック」ボタンを押してみてください。
+
+<CodePlayground
+  height={180}
+  title="コールバック関数の例"
+  html={`
+<button id="myButton">クリック</button>
+<p id="result"></p>
+  `}
+  css={`
+body {
+  padding: 16px;
+  font-family: sans-serif;
+}
+button {
+  padding: 8px 20px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+#result {
+  margin-top: 12px;
+  font-weight: bold;
+  color: #16a34a;
+}
+  `}
+  js={`
+const button = document.querySelector('#myButton');
+const result = document.querySelector('#result');
+
+function showMessage() {
+  result.textContent = 'クリックされました！';
+}
+
+button.addEventListener('click', showMessage);
+  `}
+/>
+
+このコードの最後の行に注目してください。
+
+```js
+button.addEventListener('click', showMessage);
+```
+
+`addEventListener` に `showMessage` という関数を渡しています。<br/>
+この渡された `showMessage` が**コールバック関数**です。
+
+`showMessage` は自分で実行しているわけではありません。<br/>
+ボタンがクリックされたタイミングで、`addEventListener` が代わりに実行してくれます。
+
+## 自分で呼ぶのか、呼んでもらうのか
+
+普通の関数呼び出しとコールバック関数の違いを整理しましょう。
+
+```js
+// 普通の呼び出し：自分で今すぐ実行する
+showMessage();
+
+// コールバック：あとで呼んでもらう（()をつけない）
+button.addEventListener('click', showMessage);
+```
+
+`showMessage()` のように **`()` をつける**と、その場ですぐに実行されます。<br/>
+`showMessage` のように **`()` をつけない**と、関数そのものを渡すだけで、まだ実行されません。
+
+<ContentTable
+  headers={["書き方", "意味"]}
+  rows={[
+    ["showMessage()", "今すぐ実行する"],
+    ["showMessage", "関数を渡すだけ（あとで呼んでもらう）"],
+  ]}
+/>
+
+コールバック関数では `()` をつけずに渡す、というのがポイントです。
+
+## コールバック関数が使われる場面
+
+ボタンのクリック以外にも、コールバック関数は**あらゆる場面**で使われます。
+
+<ContentTable
+  headers={["場面", "やりたいこと", "コールバックの役割"]}
+  rows={[
+    ["ユーザーの操作", "ボタンが押されたら処理したい", "クリックされたときに呼び出される"],
+    ["データの加工", "リストの各要素を変換したい", "1つずつ要素を受け取って処理する"],
+    ["時間の経過", "3秒後に処理を実行したい", "指定時間が経ったら呼び出される"],
+    ["外部との通信", "サーバーからデータを取得したい", "データが届いたら呼び出される"],
+  ]}
+/>
+
+すべてに共通するのは、**「ある条件が揃ったときに、渡しておいた関数を呼び出す」** というパターンです。
+
+これはJavaScriptに限った話ではありません。<br/>
+たとえばPythonのリスト操作やJavaのイベント処理など、どの言語でもコールバック関数は登場します。
+
+## まとめ
+
+<SectionSummary
+  points={[
+    "コールバック関数は、他の関数に渡してあとから呼び出してもらう関数",
+    "渡すときは()をつけない。()をつけるとその場で実行されてしまう",
+    "イベント処理、配列操作、非同期処理など幅広く使われる",
+  ]}
+/>

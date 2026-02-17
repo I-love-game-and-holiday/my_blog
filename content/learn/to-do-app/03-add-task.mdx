@@ -166,13 +166,16 @@ function renderTodos() {
 
 `addEventListener()`を使うと、「このボタンがクリックされたら〇〇する」のような処理を設定できます。
 
+<Callout type="info">
+`addEventListener()` の第2引数に渡している関数のように、**他の関数に渡して、あとから呼び出してもらう関数**のことを**コールバック関数**と呼びます。ここでは「フォームが送信されたら呼び出してね」と関数を渡しています。
+</Callout>
 
 <LearnMore>
 `addEventListener()`はDOM要素が持つメソッドです。
 
-第1引数にイベント名（`'click'`、`'submit'`など）、第2引数に実行したい関数を渡します。
+第1引数にイベント名（`'click'`、`'submit'`など）、第2引数にコールバック関数を渡します。
 
-今回はHTMLのフォームでsubmitイベントが発火すると、第2引数の関数が実行されます。
+今回はHTMLのフォームでsubmitイベントが発火すると、第2引数のコールバック関数が実行されます。
 </LearnMore>
 
 ```js title="main.js"
