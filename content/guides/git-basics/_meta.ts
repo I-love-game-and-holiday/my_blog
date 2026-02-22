@@ -1,6 +1,6 @@
 export default {
-    title: 'Git',
+    title: 'Git & GitHub',
     description:
-        'バージョン管理の基本概念を理解する。Gitの仕組みからGitHubまで。',
+        'Gitの仕組み・基本コマンド・GitHubの使い方をゼロから学ぶ',
     order: 6,
 }
