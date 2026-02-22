@@ -15,7 +15,7 @@ export default async function LearnPage() {
             <div className="mb-8">
                 <h1 className="text-3xl font-bold tracking-tight mb-2">Learn</h1>
                 <p className="text-muted-foreground">
-                    作りながら学ぶ実践コース
+                    手を動かし学ぶ基礎コース
                 </p>
             </div>
 
