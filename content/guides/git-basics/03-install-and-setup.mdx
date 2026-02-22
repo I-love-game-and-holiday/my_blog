@@ -1,0 +1,82 @@
+---
+title: インストールと初期設定
+order: 3
+description: GitをインストールしてユーザーIDとメールアドレスを設定しよう
+---
+
+## Git をインストールする
+
+お使いの OS に合わせてインストールしてください。
+
+### Windows
+
+ターミナル（PowerShell）を開いて、以下のコマンドを実行します。
+
+```bash
+winget install Git.Git
+```
+
+インストールが完了したら、**ターミナルを一度閉じて再度開いてください**。
+
+### Mac
+
+ターミナルを開いて、以下のコマンドを実行します。
+
+```bash
+xcode-select --install
+```
+
+表示されるダイアログに従ってインストールしてください。Xcode のコマンドラインツールと一緒に Git がインストールされます。
+
+<Callout type="info">
+Homebrew を使っている場合は `brew install git` でもインストールできます。
+</Callout>
+
+### インストールの確認
+
+ターミナルで以下のコマンドを実行してください。
+
+```bash
+git --version
+```
+
+```txt title="実行結果の例"
+git version 2.47.1
+```
+
+バージョン番号が表示されれば、インストール成功です。
+
+## 初期設定
+
+Git を使い始める前に、**ユーザー名** と **メールアドレス** を設定します。
+この情報はコミット（変更の記録）に「誰が変更したか」として記録されます。
+
+```bash
+git config --global user.name "あなたの名前"
+git config --global user.email "your@email.com"
+```
+
+<Callout type="info">
+名前は本名でもニックネームでも構いません。メールアドレスは後で GitHub に登録するものと同じにしておくとスムーズです。
+</Callout>
+
+### 設定の確認
+
+正しく設定できたか確認しましょう。
+
+```bash
+git config --global user.name
+git config --global user.email
+```
+
+設定した名前とメールアドレスが表示されれば完了です。
+
+## セクションまとめ
+
+<SectionSummary
+  points={[
+    "OS に合わせた方法で Git をインストールする",
+    "git --version でインストールを確認する",
+    "git config でユーザー名とメールアドレスを設定する",
+  ]}
+/>
