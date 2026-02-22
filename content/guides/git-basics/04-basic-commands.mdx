@@ -1,0 +1,81 @@
+---
+title: 基本コマンド一覧
+order: 4
+description: 日常的に使う Git コマンドをまとめて紹介します
+---
+
+## 基本コマンドの全体像
+
+Git の基本コマンドは、大きく分けて **3つの場面** で使います。
+
+1. **リポジトリの準備**
+2. **変更の記録**
+3. **履歴の確認**
+
+覚えなくて大丈夫です。[Learn: Git を使ってみよう](/learn/git-hands-on) で実際に手を動かして覚えましょう。
+
+## リポジトリの準備
+
+<ContentTable
+  headers={["コマンド", "何をするか"]}
+  rows={[
+    ["git init", "フォルダを Git リポジトリにする（最初に1回だけ）"],
+  ]}
+/>
+
+## 変更の記録
+
+<FlowDiagram
+  steps={[
+    "ファイルを編集",
+    "git add（ステージに追加）",
+    "git commit（コミット）",
+  ]}
+/>
+
+<ContentTable
+  headers={["コマンド", "何をするか"]}
+  rows={[
+    ["git add ファイル名", "変更をステージに追加する"],
+    ["git commit -m \"メッセージ\"", "ステージの内容をコミットする"],
+  ]}
+/>
+
+## 履歴の確認
+
+<ContentTable
+  headers={["コマンド", "何をするか"]}
+  rows={[
+    ["git status", "現在の状態を確認する（変更があるか、ステージに何があるか）"],
+    ["git log", "コミット履歴を一覧で見る"],
+    ["git diff", "まだステージしていない変更の差分を見る"],
+  ]}
+/>
+
+<Callout type="info">
+**`git status` は最も使うコマンドです。** 迷ったらまず `git status` を打ちましょう。今何が起きているかを教えてくれます。
+</Callout>
+
+## コマンドの流れ
+
+実際の開発では、このサイクルを繰り返します。
+
+<FlowDiagram
+  steps={[
+    "ファイルを編集",
+    "git status で確認",
+    "git add で選択",
+    "git commit で記録",
+  ]}
+/>
+
+## セクションまとめ
+
+<SectionSummary
+  points={[
+    "git init でリポジトリを作る",
+    "git add → git commit で変更を記録する",
+    "git status / git log / git diff で状態と履歴を確認する",
+    "覚えなくて大丈夫。手を動かして覚えよう",
+  ]}
+/>
