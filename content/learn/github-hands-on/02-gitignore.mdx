@@ -1,0 +1,170 @@
+---
+title: 不要なファイルを除外する
+order: 2
+description: .gitignore を使って、Git に追跡させたくないファイルを管理しましょう。
+---
+
+## .gitignore とは
+
+プロジェクトには「Git で管理すべきでないファイル」が存在します。個人用のメモや、
+パスワードなどの機密情報がこれに当たります。
+
+`.gitignore` は、**Git に「このファイルは無視してね」と伝える設定ファイル**です。
+ここに書かれたファイルやフォルダは `git status` に表示されず、`git add` しても追跡されません。
+
+
+## メモ用ファイルを作成する
+
+まず、個人的なメモ用ファイル `notes.txt` を作ってみましょう。
+
+<CopyableCode>
+```txt
+TODO: 自己紹介ページにリンクを追加する
+メモ: CSSは次のレッスンで学ぶ
+```
+</CopyableCode>
+
+保存したら `git status` で確認しましょう。
+
+<CopyableCode>
+```bash
+git status
+```
+</CopyableCode>
+
+```title="出力例"
+On branch main
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        notes.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+```
+
+`notes.txt` が **Untracked files** に表示されています。Git がこのファイルを認識しているということです。
+
+このままだと、うっかり `git add .` で全ファイルをステージしたときに `notes.txt` も含まれてしまいます。
+個人のメモをチーム全員に公開してしまうことになりかねません。
+
+## .gitignore を作成する
+
+`.gitignore` ファイルをワーキングツリーのルートに作成して、`notes.txt` を除外しましょう。
+
+```txt title=".gitignore"
+notes.txt
+```
+
+<Callout type="info">
+ファイル名は必ず `.gitignore` にしてください。Git はこのファイル名で探しに来るので、`.gitIgnore` や `gitignore`（ドットなし）では機能しません。
+</Callout>
+
+保存したら、もう一度 `git status` を実行してみましょう。
+
+```title="出力例"
+On branch main
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        .gitignore
+
+nothing added to commit but untracked files present (use "git add" to track)
+```
+
+`notes.txt` が消えて、代わりに `.gitignore` だけが表示されています。Git が `notes.txt` を無視するようになりました。
+
+## .gitignore をコミットする
+
+`.gitignore` 自体は Git で管理すべきファイルです。チーム全員が同じ除外ルールを共有するために、コミットしておきましょう。
+
+<CopyableCode>
+```bash
+git add .gitignore
+git commit -m ".gitignoreを追加"
+```
+</CopyableCode>
+
+<Callout type="tip">
+`.gitignore` はプロジェクトの設定ファイルなので、**最初のコミットの直後に作る**のがベストプラクティスです。
+今回はレッスンの都合で後から作りましたが、実際の開発では `git init` の直後に `.gitignore` を用意する習慣をつけましょう。
+</Callout>
+
+<Callout type="info">
+フォルダを除外するときは、末尾に `/` を付けます。`temp/` と書くと、`temp` フォルダの中身がすべて無視されます。
+</Callout>
+
+## よく使うパターン
+
+実際の開発でよく `.gitignore` に書くパターンを紹介します。
+
+<ContentTable
+  headers={["パターン", "意味", "用途"]}
+  rows={[
+    [<code>node_modules/</code>, "node_modules フォルダを除外", "npm パッケージ（容量が大きく、npm install で復元できる）"],
+    [<code>.env</code>, ".env ファイルを除外", "パスワードや API キーなどの秘密情報"],
+    [<code>*.log</code>, "拡張子が .log のファイルをすべて除外", "ログファイル"],
+    [<code>.DS_Store</code>, ".DS_Store を除外", "macOS が自動生成するファイル"],
+    [<code>Thumbs.db</code>, "Thumbs.db を除外", "Windows が自動生成するファイル"],
+  ]}
+/>
+
+<Callout type="warning">
+**`.env` ファイルは必ず `.gitignore` に入れましょう。** パスワードや API キーが GitHub に公開されると、
+悪用されるリスクがあります。一度 Git にコミットした情報は、履歴に残り続けます。
+</Callout>
+
+<LearnMore>
+`*` はワイルドカードと呼ばれ、「任意の文字列」を表します。`*.log` と書くと「ファイル名が何であれ、拡張子が `.log` のファイルすべて」にマッチします。
+
+他にもパターンがあります:
+
+<ContentTable
+  headers={["パターン", "意味"]}
+  rows={[
+    [<code>*</code>, "任意の文字列にマッチ"],
+    [<code>**</code>, "任意の階層のフォルダにマッチ"],
+    [<code>!</code>, "除外の例外（無視しない）を指定"],
+  ]}
+/>
+
+たとえば `!.env.example` と書くと、`.env` は除外しつつ `.env.example`（設定のテンプレート）だけは追跡できます。
+
+`.env`ファイルには機密情報を書きます。`.env.example`は`.env`ファイルの書き方の例を示していて、Github等で管理しておきます。
+プロジェクトに参画した人は、このサンプルを参考に、ローカルに手動で`.env`ファイルを作成します。
+</LearnMore>
+
+## すでに追跡しているファイルを除外したい場合
+
+`.gitignore` に書いても、**すでに `git add` や `git commit` で追跡されているファイルは無視されません。**
+
+もし追跡済みのファイルを除外したくなった場合は、以下のコマンドで追跡を解除できます。
+
+```bash
+git rm --cached ファイル名
+```
+
+<Callout type="info">
+`--cached` オプションを付けると、ファイル自体は削除されず、**Git の追跡だけが解除**されます。その後 `.gitignore` に追記すれば、以降は無視されるようになります。
+</Callout>
+
+<LearnMore>
+`--cached` を付けないと、ファイル自体がディスクから削除されてしまうので注意してください。
+
+手順をまとめると:
+
+1. `.gitignore` にファイル名を追記する
+2. `git rm --cached ファイル名` で追跡を解除する
+3. `git commit` で変更を記録する
+
+この操作が必要になるのは「最初に `.gitignore` を書き忘れてコミットしてしまった」ケースです。
+だからこそ、プロジェクトの最初に `.gitignore` を用意しておくことが大切です。
+</LearnMore>
+
+## このレッスンのまとめ
+
+- `.gitignore` で Git に追跡させたくないファイルを指定できる
+- ファイル名・フォルダ名・ワイルドカード（`*`）でパターンを書ける
+- `.gitignore` 自体はコミットしてチームで共有する
+- `.env` などの秘密情報は必ず除外する
+
+## 次のステップ
+
+次のレッスンでは、間違えて編集してしまったファイルを元に戻す方法を学びます。「間違えても大丈夫」という Git の安心感を体験しましょう。
