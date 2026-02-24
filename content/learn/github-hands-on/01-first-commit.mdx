@@ -1,0 +1,312 @@
+---
+title: はじめてのコミット
+order: 1
+description: プロジェクトを作成し、Git で最初の変更を記録してみましょう。
+---
+
+## このコースで作るもの
+
+自己紹介ページ（HTML）を題材に、**Git の基本操作から GitHub でのチーム開発フロー**までを一気通貫で体験します。
+
+レッスンを進めるごとにページを充実させていき、最終的に GitHub 上に公開された自分のプロフィールページが完成します。
+
+## 前提条件
+
+このコースを始める前に、以下のガイドを完了してください。
+また、GitのインストールとGitHubアカウントの作成が修了している前提で話を進めます。
+
+<ContentTable
+  headers={["ガイド", "内容"]}
+  rows={[
+    [<a href="/guides/git-basics">Git & GitHub</a>, "Git の仕組み・基本コマンド・GitHub の概念を理解する"],
+    [<a href="/guides/cli-basics">CLI入門</a>, "ターミナルの基本的な使い方"],
+    [<a href="/guides/editor-basics">エディタ入門</a>, "VS Code のインストールと基本操作"],
+  ]}
+/>
+
+## プロジェクトフォルダを作る
+
+ターミナルを開いて、お好きな場所にフォルダを作成します。
+
+<CopyableCode>
+```bash
+mkdir git-learn
+cd git-learn
+```
+</CopyableCode>
+
+
+## Git リポジトリを初期化する
+
+ガイドで学んだ `git init` を実際に使ってみましょう。
+
+<CopyableCode>
+```bash
+git init
+```
+</CopyableCode>
+
+<ContentImage
+  src="/learn/github/git-init.jpg"
+  alt="git initコマンドの実行結果"
+  caption=""
+  width={600}
+  height={450}
+/>
+
+
+これでこのフォルダが Git リポジトリになりました。
+
+初期化が終わり、`git-learn`ディレクトリに`.git`フォルダを作成した状態です。
+エディター上には`.git`フォルダは表示されませんが、エクスプローラー等で確認すると`.git`フォルダを確認できるはずです。
+
+ここに変更履歴などを保存していきます。基本的にこのファイルは操作不要です。
+
+次に`git status` で状態を確認してみましょう。
+
+<CopyableCode>
+```bash
+git status
+```
+</CopyableCode>
+
+<ContentImage
+  src="/learn/github/gitstatus.jpg"
+  alt="git statusコマンドの実行結果"
+  caption=""
+  width={600}
+  height={450}
+/>
+
+まだファイルがないので「コミットするものがない」と表示されます。
+
+
+## 自己紹介ページを作る
+
+VS Code で `index.html` を作成しましょう。
+
+<CollapsibleCode title="index.html" defaultOpen={false}>
+```html
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自己紹介</title>
+</head>
+<body>
+    <h1>自己紹介</h1>
+    <p>名前: あなたの名前</p>
+</body>
+</html>
+```
+</CollapsibleCode>
+
+
+保存したら `git status` で確認します。
+
+<ContentImage
+  src="/learn/github/gitstatus2.jpg"
+  alt="git statusコマンドの実行結果その2"
+  caption=""
+  width={800}
+  height={450}
+/>
+
+`index.html` が **Untracked files**（追跡されていないファイル）として表示されています。Git はこのファイルの存在を認識しましたが、まだ管理対象にはしていません。
+
+## 最初のコミットを作る
+
+ガイドで学んだ **add → commit** の2ステップを実践します。
+
+### ステップ 1: ステージに追加する
+
+<CopyableCode>
+```bash
+git add index.html
+```
+</CopyableCode>
+
+<Callout type="info">
+**warning: in the working copy of 'index.html', CRLF will be replaced by LF the next time Git touches it** という警告が出ることがあります。
+
+これは **改行コード** の違いが原因です。Windows は改行に `CRLF`（2文字）を使いますが、Git は `LF`（1文字）を標準としています。そのため「次回 Git が触るとき CRLF を LF に変換するよ」と教えてくれています。
+
+以下のコマンドを実行すると、Git が自動で変換してくれるようになり、この警告は表示されなくなります。
+
+```bash
+git config --global core.autocrlf true
+```
+
+動作に影響はないので、警告が出ても気にせず先に進めて大丈夫です。
+</Callout>
+
+`git status` で確認します。
+
+<ContentImage
+  src="/learn/github/gitstatus3.jpg"
+  alt="git statusコマンドの実行結果その3"
+  caption=""
+  width={800}
+  height={450}
+/>
+
+
+**Changes to be committed**（コミットされる変更）に `index.html` が移動しました。ステージに追加された状態です。
+
+<Callout type="info">
+ガイドで学んだ「ワーキングツリー → ステージ → リポジトリ」の流れを思い出してください。今、ファイルはステージにいます。
+
+復習: <a href="/guides/git-basics/02-how-git-works">Git の仕組み</a>
+</Callout>
+
+### ステップ 2: コミットする
+
+<CopyableCode>
+```bash
+git commit -m "自己紹介ページを作成"
+```
+</CopyableCode>
+
+<ContentImage
+  src="/learn/github/gitstatus4.jpg"
+  alt="git statusコマンドの実行結果その4"
+  caption=""
+  width={800}
+  height={450}
+/>
+
+最初のコミットが作成されました。
+
+<Callout type="tip">
+**コミットメッセージのコツ**
+
+`-m` の後に書くメッセージは、「何をしたか」が伝わるように書きましょう。
+
+- チーム開発なら他の人が混乱しないように簡潔に・具体的に書きましょう
+- 個人開発でも将来の自分を助けるつもりで書きましょう
+</Callout>
+
+## プロフィール情報を追記する
+
+`index.html` を編集して`<body>` にプロフィールを追加しましょう。
+
+<CollapsibleCode title="index.html" defaultOpen={false}>
+```html
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自己紹介</title>
+</head>
+<body>
+    <h1>自己紹介</h1>
+    <p>名前: あなたの名前</p>
+    <h2>プロフィール</h2>
+    <ul>
+        <li>好きな食べ物: ラーメン</li>
+        <li>住んでいるところ: 東京</li>
+        <li>ひとこと: よろしくお願いします！</li>
+    </ul>
+</body>
+</html>
+```
+</CollapsibleCode>
+
+### 差分を確認する
+
+コミットする前に、`git diff` で何が変わったかを確認しましょう。
+
+<CopyableCode>
+```bash
+git diff
+```
+</CopyableCode>
+
+<ContentImage
+  src="/learn/github/gitstatus5.jpg"
+  alt="git statusコマンドの実行結果その4"
+  caption=""
+  width={800}
+  height={450}
+/>
+
+`+` が付いている行が追加された部分です。意図通りの変更であることを確認したら、コミットしましょう。
+
+<LearnMore>
+`git diff` はワーキングツリーとステージの差分を表示するコマンドです。比較対象を変えたいときは、オプションを付けます。
+
+<ContentTable
+  headers={["コマンド", "比較対象"]}
+  rows={[
+    [<code>git diff</code>, "ワーキングツリー ↔ ステージ"],
+    [<code>git diff --staged</code>, "ステージ ↔ 最新コミット（HEAD）"],
+    [<code>git diff HEAD</code>, "ワーキングツリー ↔ 最新コミット（HEAD）"],
+  ]}
+/>
+
+まだステージしていない変更を見たいときは `git diff`、`git add` した後の変更を確認したいときは `git diff --staged` と覚えておくと便利です。
+</LearnMore>
+
+### 2回目のコミット
+
+<CopyableCode>
+```bash
+git add index.html
+git commit -m "プロフィール情報を追加"
+```
+</CopyableCode>
+
+## 履歴を確認する
+
+`git log` でコミット履歴を見てみましょう。
+
+<CopyableCode>
+```bash
+git log
+```
+</CopyableCode>
+
+```title="出力例"
+commit def5678... (HEAD -> main)
+Author: あなたの名前 <your@email.com>
+Date:   Mon Jan 12 10:30:00 2026 +0900
+
+    プロフィール情報を追加
+
+commit abc1234...
+Author: あなたの名前 <your@email.com>
+Date:   Mon Jan 12 10:15:00 2026 +0900
+
+    自己紹介ページを作成
+```
+
+2つのコミットが記録されています。`git config` で設定した名前とメールアドレスが表示されていることも確認してください。
+
+<Callout type="tip">
+履歴を1行ずつ表示したい場合は `--oneline` オプションが便利です。
+
+```bash
+git log --oneline
+```
+
+```title="出力例"
+def5678 (HEAD -> main) プロフィール情報を追加
+abc1234 自己紹介ページを作成
+```
+</Callout>
+
+## このレッスンのまとめ
+
+このレッスンでは、ガイドで学んだ Git の基本コマンドを実際に使ってみました。
+
+- `git init` でリポジトリを作成
+- `git add` → `git commit` で変更を記録
+- `git status` で各ステップの状態を確認
+- `git diff` で変更内容を確認
+- `git log` でコミット履歴を確認
+
+## 次のステップ
+
+次のレッスンでは、Git で管理したくないファイルを除外する `.gitignore` について学びます。
