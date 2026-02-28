@@ -168,7 +168,7 @@ branch 'main' set up to track 'origin/main'.
   height={450}
 />
 
-<Callout type="tip">
+<Callout type="info">
 GitHub のリポジトリページでファイル名をクリックすると、中身を見ることができます。`index.html` をクリックして、ローカルと同じ内容になっているか確認してみてください。
 </Callout>
 
@@ -214,7 +214,7 @@ git push
 ```
 </CopyableCode>
 
-<Callout type="tip">
+<Callout type="info">
 初回のプッシュで `-u` を付けたので、2回目以降は `git push` だけで OK です。
 </Callout>
 
@@ -231,22 +231,15 @@ GitHub のリポジトリページをリロードして、変更が反映され�
 />
 この流れを繰り返してプロジェクトを進めていきます。
 
-## 前半のまとめ
+## このレッスンのまとめ
 
-ここまでのレッスン（01〜04）で、Git の基本操作を一通り実践しました。
-
-<ContentTable
-  headers={["レッスン", "学んだこと"]}
-  rows={[
-    ["01: はじめてのコミット", <code>git init / add / commit / status / diff / log</code>],
-    ["02: 不要なファイルを除外する", <code>.gitignore</code>],
-    ["03: 変更を元に戻す", <code>git restore / git restore --staged</code>],
-    ["04: GitHub に公開する", <code>git remote add / git push</code>],
-  ]}
-/>
-
-次のレッスンからは **GitHub を活用したチーム開発フロー** を体験します。ブランチを切って作業し、プルリクエストでマージするという、実務で使われている開発の流れを学んでいきます。
+<SummaryList>
+- `git remote add origin URL` でリモートリポジトリを登録する
+- `git push -u origin main` で初回のプッシュを行う（2回目以降は `git push` だけでOK）
+- `git remote -v` でリモートの登録状況を確認できる
+- **編集 → add → commit → push** が日常の開発サイクル
+</SummaryList>
 
 ## 次のステップ
 
-次のレッスンでは、テンプレートリポジトリを使って新しいプロジェクトを始めます。後半戦のスタートです！
+次のレッスンでは、引き続きこのリポジトリを使って **ブランチ** を体験します。ブランチを使うと、メインのコードに影響を与えずに新しい機能を開発できます。
