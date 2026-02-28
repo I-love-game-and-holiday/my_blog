@@ -1,0 +1,287 @@
+---
+title: ブランチで作業する
+order: 5
+description: ブランチを使って、メインのコードに影響を与えずに新しい機能を追加してみましょう。
+---
+
+## ブランチを使ってみよう
+
+ここまでのレッスンでは、`main` ブランチだけで作業してきました。一本道のコミット履歴です。
+
+このレッスンでは、ガイドで学んだ **ブランチ** を実際に使ってみます。ブランチを作って作業し、完了したら `main` に統合（マージ）する流れを体験しましょう。
+
+<Callout type="info">
+ブランチの概念を復習したい場合は、<a href="/guides/git-basics/06-branches">ガイドの「ブランチとは何か」</a>を確認してください。
+</Callout>
+
+## ブランチを作成する
+
+自己紹介ページに「趣味セクション」を追加します。`main` を直接編集するのではなく、専用のブランチを作って作業しましょう。
+
+<CopyableCode>
+```bash
+git switch -c add-hobbies
+```
+</CopyableCode>
+
+```title="出力例"
+Switched to a new branch 'add-hobbies'
+```
+
+`-c` は「新しいブランチを作って、そこに切り替える」オプションです。
+
+<Callout type="info">
+ブランチ名は **「何をするか」がわかる名前** にしましょう。`add-hobbies`（趣味を追加）のように、目的がひと目でわかると便利です。
+</Callout>
+
+今どのブランチにいるか確認してみましょう。
+
+<CopyableCode>
+```bash
+git branch
+```
+</CopyableCode>
+
+```title="出力例"
+* add-hobbies
+  main
+```
+
+`*` が付いているのが今いるブランチです。`add-hobbies` ブランチで作業する準備ができました。
+
+## 趣味セクションを追加する
+
+`index.html` を編集して、プロフィールの `</ul>` と `<footer>` の間に趣味セクションを追加しましょう。
+
+<CollapsibleCode title="index.html" defaultOpen={false}>
+```html
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自己紹介</title>
+</head>
+<body>
+    <h1>自己紹介</h1>
+    <p>名前: あなたの名前</p>
+    <h2>プロフィール</h2>
+    <ul>
+        <li>好きな食べ物: ラーメン</li>
+        <li>住んでいるところ: 東京</li>
+        <li>ひとこと: よろしくお願いします！</li>
+    </ul>
+    <h2>趣味</h2>
+    <ul>
+        <li>映画鑑賞</li>
+        <li>散歩</li>
+        <li>プログラミング</li>
+    </ul>
+    <footer>
+        <p>GitHub で学習中！</p>
+    </footer>
+</body>
+</html>
+```
+</CollapsibleCode>
+
+保存したら `git diff` で変更内容を確認しましょう。
+
+<CopyableCode>
+```bash
+git diff
+```
+</CopyableCode>
+
+<ContentImage
+  src="/learn/github/github1.png"
+  alt=""
+  caption=""
+  width={650}
+  height={450}
+/>
+
+趣味セクションが追加されていますね。コミットしましょう。
+
+<CopyableCode>
+```bash
+git add index.html
+git commit -m "趣味セクションを追加"
+```
+</CopyableCode>
+
+## main に戻ってみる
+
+ここでブランチの特性を体験してみましょう！<br/>
+`main` ブランチに戻ります。
+
+<CopyableCode>
+```bash
+git switch main
+```
+</CopyableCode>
+
+```title="出力例"
+Switched to branch 'main'
+```
+
+`index.html` を開いてみてください。
+
+**趣味セクションが消えています。**
+
+驚くかもしれませんが、これが正しい動作です。趣味セクションは `add-hobbies` ブランチにだけ存在していて、`main` にはまだ反映されていません。
+
+<CopyableCode>
+```bash
+git log --oneline
+```
+</CopyableCode>
+
+`main` のログには「趣味セクションを追加」のコミットが表示されないことも確認してみてください。
+
+もう一度 `add-hobbies` に切り替えると、趣味セクションが復活します。確認してみましょう。
+
+<CopyableCode>
+```bash
+git switch add-hobbies
+```
+</CopyableCode>
+
+`index.html` を開くと、趣味セクションが戻っているはずです。ブランチを切り替えるたびに、ファイルの中身がそのブランチの状態に変わるのがわかります。
+
+<Callout>
+この仕様を分かっていなかったり、ブランチを間違えて操作すると面倒くさいことになります。<br/>
+『今操作している場所はどのブランチか？』を確認してからコマンドを叩くようにしましょう。
+</Callout>
+
+
+## main にマージする
+
+趣味セクションの作業が完了したので、`main` に統合（マージ）しましょう。
+
+マージは **取り込む側のブランチ** に切り替えてから実行します。`main` に取り込みたいので、まず `main` に戻ります。
+
+<CopyableCode>
+```bash
+git switch main
+```
+</CopyableCode>
+
+`main` にいる状態で、`add-hobbies` の変更を取り込みます。
+
+<CopyableCode>
+```bash
+git merge add-hobbies
+```
+</CopyableCode>
+
+```title="出力例"
+Updating def5678..abc9012
+Fast-forward
+ index.html | 6 ++++++
+ 1 file changed, 6 insertions(+)
+```
+
+`index.html` を開いてみてください。今度は `main` にも趣味セクションが反映されています！
+
+<LearnMore>
+出力に **Fast-forward** と表示されています。これは「main ブランチが `add-hobbies` の先端まで早送りされた」という意味です。
+
+`main` に追加のコミットがない場合、Git はブランチの分岐点を作らず、`main` のポインタを `add-hobbies` の最新コミットまで進めるだけで済みます。これが Fast-forward マージです。
+
+後のレッスンで、Fast-forward ではないマージ（分岐が発生するケース）も体験します。
+</LearnMore>
+
+## 履歴を確認する
+
+マージ後の履歴を確認してみましょう。
+
+<CopyableCode>
+```bash
+git log --oneline --graph
+```
+</CopyableCode>
+
+```title="出力例"
+* abc9012 (HEAD -> main, add-hobbies) 趣味セクションを追加
+* ghi7890 フッターを追加
+* def5678 .gitignoreを追加
+* bcd4567 プロフィール情報を追加
+* abc1234 自己紹介ページを作成
+```
+
+`--graph` オプションを付けると、ブランチの分岐・合流を視覚的に確認できます。今回は Fast-forward マージなので一直線ですが、分岐が起きた場合は枝分かれした図が表示されます。
+
+`main` と `add-hobbies` が同じコミットを指していることもわかります。
+
+<Callout type="info">
+`--oneline` は各コミットを1行で表示するオプションです。`--graph` と組み合わせると、ブランチの状態を素早く把握できます。
+</Callout>
+
+## ブランチを削除する
+
+マージが完了したブランチは、役割を終えたので削除しておきましょう。
+
+<CopyableCode>
+```bash
+git branch -d add-hobbies
+```
+</CopyableCode>
+
+```title="出力例"
+Deleted branch add-hobbies (was abc9012).
+```
+
+<Callout type="info">
+ブランチを削除しても、コミット履歴は残ります。ブランチはコミットに付けた「ラベル」のようなものなので、ラベルを剥がしても中身は消えません。
+</Callout>
+
+## GitHub にプッシュする
+
+最後に、マージした結果を GitHub にプッシュしておきましょう。
+
+<CopyableCode>
+```bash
+git push
+```
+</CopyableCode>
+
+GitHub のリポジトリページをリロードして、趣味セクションが反映されていることを確認してください。
+
+## ブランチを使った開発の流れ
+
+今回体験した一連の流れを整理します。
+
+<FlowDiagram
+  steps={[
+    "git switch -c ブランチ名（分岐）",
+    "コードを書く → add → commit",
+    "git switch main → git merge（合流）",
+    "git branch -d ブランチ名（削除）",
+  ]}
+/>
+
+実務では、この流れを機能追加やバグ修正のたびに繰り返します。1つの作業ごとにブランチを作ることで、`main` を常に安定した状態に保てます。
+
+<Callout type="info">
+**ブランチはいつ切る？**
+
+個人開発や自主学習でいつブランチを切る(作る)べきかについてですが、
+規模がある程度大きくなるとブランチを切らないと作業が進められなくなってきます。<br/>
+そのときがブランチを切るタイミングです。
+
+</Callout>
+
+## このレッスンのまとめ
+
+<SummaryList>
+- `git switch -c ブランチ名` でブランチを作成して切り替える
+- ブランチを切り替えると、ファイルの中身がそのブランチの状態に変わる
+- `git merge ブランチ名` でブランチの変更を現在のブランチに取り込む
+- `git branch -d ブランチ名` でマージ済みのブランチを削除する
+- ブランチを使えば、`main` に影響を与えずに作業できる
+</SummaryList>
+
+## 次のステップ
+
+今回は自分のPC上で直接マージしましたが、チーム開発では **プルリクエスト** を使ってマージするのが一般的です。次のレッスンでは、GitHub 上でプルリクエストを作成してマージする流れを体験します。
