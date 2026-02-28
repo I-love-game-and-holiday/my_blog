@@ -1,0 +1,246 @@
+---
+title: GitHub に公開する
+order: 4
+description: ローカルのリポジトリを GitHub にプッシュして、コードを公開してみましょう。
+---
+
+## ローカルからリモートへ
+
+ここまでのレッスンで、ローカル（自分のPC）に Git リポジトリを作り、コミットを重ねてきました。
+
+このレッスンでは、そのリポジトリを **GitHub** にアップロード（プッシュ）します。GitHub に公開すると、こんなメリットがあります。
+
+- **バックアップ** — PC が壊れてもコードが残る
+- **共有** — 他の人にコードを見せられる
+- **チーム開発** — 複数人で同じコードを編集できる（後半のレッスンで体験します）
+
+## GitHub でリポジトリを作成する
+
+GitHub にコードを置くには、まず **リモートリポジトリ**（GitHub 上の保管場所）を作る必要があります。
+
+### 1. GitHub にログインする
+
+<a href="https://github.com" target="_blank" rel="noopener noreferrer">github.com</a> にアクセスしてログインしてください。<br/>
+アカウントをまだ作成していない場合は作成してください。
+
+
+### 2. 新しいリポジトリを作成する
+
+画面右上の **+** ボタンから **New repository** をクリックします。
+
+<ContentImage
+  src="/learn/github/myprofile.jpg"
+  alt="GitHubで新しいリポジトリを作成する画面"
+  caption=""
+  width={700}
+  height={450}
+/>
+
+リポジトリ名を入力したら後はデフォルトのままでもOKです。
+
+<ContentTable
+  headers={["項目", "設定値"]}
+  rows={[
+    ["Repository name", <code>my-profile</code>],
+    ["Description", "自己紹介ページ（任意）"],
+    ["Public / Private", "Public（どちらでもOK）"],
+    ["Initialize this repository with:", "すべてチェックなし"],
+  ]}
+/>
+
+<Callout type="warning">
+**「Add a README file」「Add .gitignore」「Choose a license」はすべてチェックしないでください。**
+
+ローカルにすでにリポジトリがあるので、ここで初期ファイルを作ると履歴が衝突してしまいます。
+</Callout>
+
+**Create repository** をクリックすると、セットアップ手順が表示されたページに移動します。
+## リモートリポジトリを登録する
+
+GitHub 上にリポジトリができたので、ローカルの Git に「プッシュ先はここだよ」と教えてあげます。
+
+セットアップページに表示されている **「…or push an existing repository from the command line」** の部分を見てください。
+ここに必要なコマンドが書かれています。コピーしてそのままローカルで利用できます。
+
+<ContentImage
+  src="/learn/github/gitrepo.jpg"
+  alt="GitHubリポジトリのセットアップページ"
+  caption=""
+  width={650}
+  height={450}
+/>
+
+### リモートを追加する
+
+<CopyableCode>
+```bash
+git remote add origin https://github.com/あなたのユーザー名/my-profile.git
+```
+</CopyableCode>
+
+`origin` というのは、リモートリポジトリに付ける名前です。「origin（起源）」という意味で、**メインのリモート先に付ける慣習的な名前**です。
+
+登録できたか確認してみましょう。
+
+<CopyableCode>
+```bash
+git remote -v
+```
+</CopyableCode>
+
+```title="出力例"
+origin  https://github.com/あなたのユーザー名/my-profile.git (fetch)
+origin  https://github.com/あなたのユーザー名/my-profile.git (push)
+```
+
+`fetch`（取得用）と `push`（送信用）の2行が表示されれば OK です。
+
+## GitHub にプッシュする
+
+いよいよローカルのコミットを GitHub に送ります！
+
+<CopyableCode>
+```bash
+git push -u origin main
+```
+</CopyableCode>
+
+<LearnMore>
+各部分の意味を分解すると:
+
+<ContentTable
+  headers={["部分", "意味"]}
+  rows={[
+    [<code>git push</code>, "ローカルのコミットをリモートに送る"],
+    [<code>-u</code>, "今後 git push だけで同じ場所に送れるよう紐付ける（初回のみ必要）"],
+    [<code>origin</code>, "送り先のリモート名"],
+    [<code>main</code>, "送るブランチ名"],
+  ]}
+/>
+
+`-u`（`--set-upstream` の省略）を付けると、次回以降は `git push` だけでプッシュできるようになります。
+</LearnMore>
+
+### 認証を求められたら
+
+初めてプッシュするとき、GitHub の認証を求められます。
+
+ブラウザが開いて GitHub へのログインを促された場合は、画面の指示に従ってログインしてください。
+認証が完了すると、プッシュが実行されます。
+
+### プッシュの結果を確認する
+
+```title="出力例"
+Enumerating objects: 9, done.
+Counting objects: 100% (9/9), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (7/7), done.
+Writing objects: 100% (9/9), 1.02 KiB | 1.02 MiB/s, done.
+Total 9 (delta 1), reused 0 (delta 0)
+To https://github.com/あなたのユーザー名/my-profile.git
+ * [new branch]      main -> main
+branch 'main' set up to track 'origin/main'.
+```
+
+`main -> main` と表示されていれば成功です。
+
+## GitHub で確認する
+
+ブラウザで `https://github.com/あなたのユーザー名/my-profile` にアクセスしてみましょう。
+
+- `index.html` と `.gitignore` がファイル一覧に表示されている
+- `notes.txt` は表示されていない（`.gitignore` で除外したので正しい動作です）
+- コミット履歴が確認できる
+
+自分のコードがインターネット上に公開されました！
+
+<ContentImage
+  src="/learn/github/pushrepoo.jpg"
+  alt="プッシュ後のGitHubリポジトリページ"
+  caption=""
+  width={650}
+  height={450}
+/>
+
+<Callout type="tip">
+GitHub のリポジトリページでファイル名をクリックすると、中身を見ることができます。`index.html` をクリックして、ローカルと同じ内容になっているか確認してみてください。
+</Callout>
+
+## 変更をプッシュしてみる
+
+今後の開発の流れを体験するために、もう一度 **編集 → コミット → プッシュ** のサイクルを回してみましょう。
+
+`index.html` にフッターを追加してみましょう。
+
+<CollapsibleCode title="index.html" defaultOpen={false}>
+```html
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自己紹介</title>
+</head>
+<body>
+    <h1>自己紹介</h1>
+    <p>名前: あなたの名前</p>
+    <h2>プロフィール</h2>
+    <ul>
+        <li>好きな食べ物: ラーメン</li>
+        <li>住んでいるところ: 東京</li>
+        <li>ひとこと: よろしくお願いします！</li>
+    </ul>
+    <footer>
+        <p>GitHub で学習中！</p>
+    </footer>
+</body>
+</html>
+```
+</CollapsibleCode>
+
+保存したら、コミットしてプッシュします。
+
+<CopyableCode>
+```bash
+git add index.html
+git commit -m "フッターを追加"
+git push
+```
+</CopyableCode>
+
+<Callout type="tip">
+初回のプッシュで `-u` を付けたので、2回目以降は `git push` だけで OK です。
+</Callout>
+
+GitHub のリポジトリページをリロードして、変更が反映されていることを確認しましょう。コミット履歴にも「フッターを追加」が追加されているはずです。
+
+これが **日常の開発サイクル** です。
+<FlowDiagram
+  steps={[
+    "コードを書く",
+    "git add",
+    "git commit",
+    "git push"
+  ]}
+/>
+この流れを繰り返してプロジェクトを進めていきます。
+
+## 前半のまとめ
+
+ここまでのレッスン（01〜04）で、Git の基本操作を一通り実践しました。
+
+<ContentTable
+  headers={["レッスン", "学んだこと"]}
+  rows={[
+    ["01: はじめてのコミット", <code>git init / add / commit / status / diff / log</code>],
+    ["02: 不要なファイルを除外する", <code>.gitignore</code>],
+    ["03: 変更を元に戻す", <code>git restore / git restore --staged</code>],
+    ["04: GitHub に公開する", <code>git remote add / git push</code>],
+  ]}
+/>
+
+次のレッスンからは **GitHub を活用したチーム開発フロー** を体験します。ブランチを切って作業し、プルリクエストでマージするという、実務で使われている開発の流れを学んでいきます。
+
+## 次のステップ
+
+次のレッスンでは、テンプレートリポジトリを使って新しいプロジェクトを始めます。後半戦のスタートです！
