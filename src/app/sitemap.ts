@@ -1,5 +1,4 @@
 import type { MetadataRoute } from 'next'
-import { getPosts } from '@/lib/get-posts'
 import { getCourses } from '@/lib/get-courses'
 
 export const dynamic = 'force-static'
@@ -20,22 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             changeFrequency: 'weekly',
             priority: 0.9,
         },
-        {
-            url: `${baseUrl}/blog`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.9,
-        },
     ]
-
-    // Blog posts
-    const posts = await getPosts()
-    const blogEntries: MetadataRoute.Sitemap = posts.map((post) => ({
-        url: `${baseUrl}${post.route}`,
-        lastModified: post.frontMatter?.date ? new Date(post.frontMatter.date) : new Date(),
-        changeFrequency: 'monthly',
-        priority: 0.7,
-    }))
 
     // Learn courses and lessons
     const courses = await getCourses()
@@ -59,5 +43,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         }
     }
 
-    return [...staticPages, ...blogEntries, ...learnEntries]
+    return [...staticPages, ...learnEntries]
 }
