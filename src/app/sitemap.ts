@@ -97,14 +97,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         }
     }
 
-    // Dictionary entries
+    // Dictionary entries (exclude stub pages)
+    // memo : Google広告で価値が低いと審査される可能性のある辞書記事をサイトマップから除外する
+    const stubSlugs = new Set(['cli', 'editor', 'nodejs', 'typescript'])
     const dictionaryEntries = await getDictionaryEntries()
-    const dictionaryPages: MetadataRoute.Sitemap = dictionaryEntries.map((entry) => ({
-        url: `${baseUrl}${entry.route}`,
-        lastModified: new Date(),
-        changeFrequency: 'monthly',
-        priority: 0.6,
-    }))
+    const dictionaryPages: MetadataRoute.Sitemap = dictionaryEntries
+        .filter((entry) => !stubSlugs.has(entry.slug))
+        .map((entry) => ({
+            url: `${baseUrl}${entry.route}`,
+            lastModified: new Date(),
+            changeFrequency: 'monthly',
+            priority: 0.6,
+        }))
 
     return [...staticPages, ...learnEntries, ...guideEntries, ...dictionaryPages]
 }
