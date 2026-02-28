@@ -1,5 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { getCourses } from '@/lib/get-courses'
+import { getGuides } from '@/lib/get-guides'
+import { getDictionaryEntries } from '@/lib/get-dictionary'
 
 export const dynamic = 'force-static'
 
@@ -18,6 +20,36 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.9,
+        },
+        {
+            url: `${baseUrl}/guides`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.9,
+        },
+        {
+            url: `${baseUrl}/dictionary`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.8,
+        },
+        {
+            url: `${baseUrl}/about`,
+            lastModified: new Date(),
+            changeFrequency: 'monthly',
+            priority: 0.5,
+        },
+        {
+            url: `${baseUrl}/contact`,
+            lastModified: new Date(),
+            changeFrequency: 'monthly',
+            priority: 0.5,
+        },
+        {
+            url: `${baseUrl}/privacy`,
+            lastModified: new Date(),
+            changeFrequency: 'monthly',
+            priority: 0.3,
         },
     ]
 
@@ -43,5 +75,36 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         }
     }
 
-    return [...staticPages, ...learnEntries]
+    // Guides and sections
+    const guides = await getGuides()
+    const guideEntries: MetadataRoute.Sitemap = []
+
+    for (const guide of guides) {
+        guideEntries.push({
+            url: `${baseUrl}${guide.route}`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.8,
+        })
+
+        for (const section of guide.sections) {
+            guideEntries.push({
+                url: `${baseUrl}${section.route}`,
+                lastModified: new Date(),
+                changeFrequency: 'monthly',
+                priority: 0.7,
+            })
+        }
+    }
+
+    // Dictionary entries
+    const dictionaryEntries = await getDictionaryEntries()
+    const dictionaryPages: MetadataRoute.Sitemap = dictionaryEntries.map((entry) => ({
+        url: `${baseUrl}${entry.route}`,
+        lastModified: new Date(),
+        changeFrequency: 'monthly',
+        priority: 0.6,
+    }))
+
+    return [...staticPages, ...learnEntries, ...guideEntries, ...dictionaryPages]
 }
