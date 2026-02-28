@@ -9,7 +9,6 @@ import { ThemeToggle } from '@/components/theme-toggle'
 const navigation = [
     { name: 'Learn', href: '/learn' },
     { name: 'Guides', href: '/guides' },
-    { name: 'Blog', href: '/blog' },
     { name: 'Dictionary', href: '/dictionary' },
 ]
 
