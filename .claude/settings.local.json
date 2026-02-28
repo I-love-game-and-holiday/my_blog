@@ -52,7 +52,10 @@
       "WebFetch(domain:www.npmjs.com)",
       "Bash(npm view:*)",
       "WebFetch(domain:every-layout.dev)",
-      "WebFetch(domain:backlog.com)"
+      "WebFetch(domain:backlog.com)",
+      "mcp__Claude_Preview__preview_start",
+      "WebFetch(domain:localhost)",
+      "Bash(python3:*)"
     ]
   }
 }
