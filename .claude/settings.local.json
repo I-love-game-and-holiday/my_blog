@@ -52,7 +52,9 @@
       "WebFetch(domain:www.npmjs.com)",
       "Bash(npm view:*)",
       "WebFetch(domain:every-layout.dev)",
-      "WebFetch(domain:backlog.com)"
+      "WebFetch(domain:backlog.com)",
+      "Bash(git stash:*)",
+      "Bash(sort:*)"
     ]
   }
 }
