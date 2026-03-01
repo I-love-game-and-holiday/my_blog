@@ -53,6 +53,9 @@
       "Bash(npm view:*)",
       "WebFetch(domain:every-layout.dev)",
       "WebFetch(domain:backlog.com)",
+      "mcp__Claude_Preview__preview_start",
+      "WebFetch(domain:localhost)",
+      "Bash(python3:*)"
       "Bash(git stash:*)",
       "Bash(sort:*)"
     ]

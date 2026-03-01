@@ -1,0 +1,334 @@
+---
+title: コンフリクトを解消する
+order: 7
+description: ブランチ同士の変更が衝突したとき、コンフリクトを解消する方法を体験しましょう。
+---
+
+## コンフリクトとは
+
+ここまでのレッスンでは、ブランチのマージがスムーズに進みました。しかし実際の開発では、**同じファイルの同じ箇所を複数のブランチで編集してしまう**ことがあります。
+
+Git はこの状況を自動で解決できないため、**コンフリクト（衝突）** として報告し、人間に判断を委ねます。
+
+このレッスンでは、意図的にコンフリクトを起こし、解消する手順を一通り体験します。
+
+## コンフリクトを起こす準備
+
+コンフリクトを発生させるために、`main` ブランチと別のブランチで **`<footer>` の同じ行を別々に編集** します。
+
+### ステップ 1: main でフッターを変更する
+
+まず `main` ブランチにいることを確認しましょう。
+
+<CopyableCode>
+```bash
+git branch
+```
+</CopyableCode>
+
+```title="出力例"
+* main
+```
+
+`index.html` の `<footer>` を以下のように変更します。
+
+変更前:
+```html
+    <footer>
+        <p>GitHub で学習中！</p>
+    </footer>
+```
+
+変更後:
+```html
+    <footer>
+        <p>© 2026 あなたの名前</p>
+    </footer>
+```
+
+保存したら、コミットします。
+
+<CopyableCode>
+```bash
+git add index.html
+git commit -m "フッターに著作権表示を追加"
+```
+</CopyableCode>
+
+### ステップ 2: 別ブランチで同じ箇所を変更する
+
+次に、**フッターを変更する前の状態**からブランチを作ります。
+
+ここでは少し特殊な操作を使います。<br/>
+コンフリクトを意図的に起こすために、**1つ前のコミットの時点に戻ってブランチを作ります。**
+
+<CopyableCode>
+```bash
+git switch -c update-footer HEAD~1
+```
+</CopyableCode>
+
+```title="出力例"
+Switched to a new branch 'update-footer'
+```
+
+<LearnMore>
+### HEAD とは
+
+`HEAD` は「今いるブランチの最新コミット」を指す特別な名前です。Git が「今どこにいるか」を示すポインタだと考えてください。
+
+`HEAD~1` のように `~数字` を付けると、そこから数えて何個前のコミットかを指定できます。
+
+<ContentTable
+  headers={["表記", "意味"]}
+  rows={[
+    [<code>HEAD</code>, "現在のブランチの最新コミット"],
+    [<code>HEAD~1</code>, "1つ前のコミット"],
+    [<code>HEAD~2</code>, "2つ前のコミット"],
+  ]}
+/>
+
+今回の場合、`main` の最新コミット（HEAD）は「フッターに著作権表示を追加」ですが、`HEAD~1` を指定することで **その1つ前のコミット**（フッターがまだ「GitHub で学習中！」の状態）からブランチを分岐させています。
+
+こうすることで、`main` と `update-footer` が同じ行を別々に変更した状態を作り出せます。
+</LearnMore>
+
+`index.html` を開いてみてください。フッターが「GitHub で学習中！」に戻っているはずです（1つ前のコミットの状態なので）。
+
+このフッターを、`main` とは**違う内容**に変更しましょう。
+
+変更後:
+```html
+    <footer>
+        <p>このページは GitHub で公開しています</p>
+    </footer>
+```
+
+保存したら、コミットします。
+
+<CopyableCode>
+```bash
+git add index.html
+git commit -m "フッターの説明文を更新"
+```
+</CopyableCode>
+
+### 現在の状況を整理する
+
+ここまでの操作で、以下の状態になっています。
+
+<ContentTable
+  headers={["ブランチ", "フッターの内容"]}
+  rows={[
+    [<code>main</code>, <code>© 2026 あなたの名前</code>],
+    [<code>update-footer</code>, <code>このページは GitHub で公開しています</code>],
+  ]}
+/>
+
+2つのブランチが、**同じファイルの同じ行**を違う内容に変更しています。これをマージしようとすると、Git は「どちらを採用すればいいかわからない」状態になります。
+
+## コンフリクトを発生させる
+
+`main` に戻って、`update-footer` をマージしてみましょう。
+
+<CopyableCode>
+```bash
+git switch main
+git merge update-footer
+```
+</CopyableCode>
+
+```title="出力例"
+Auto-merging index.html
+CONFLICT (content): Merge conflict in index.html
+Automatic merge failed; fix conflicts and then commit the result.
+```
+
+**CONFLICT** と表示されました！ Git が自動マージに失敗し、コンフリクトが発生しています。
+
+`git status` で状態を確認しましょう。
+
+<CopyableCode>
+```bash
+git status
+```
+</CopyableCode>
+
+```title="出力例"
+On branch main
+You have unmerged paths.
+  (fix conflicts and run "git commit")
+  (use "git merge --abort" to abort the merge)
+
+Unmerged paths:
+  (use "git add <file>..." to mark resolution)
+        both modified:   index.html
+
+no changes added to commit (use "git add" to track)
+```
+
+`both modified: index.html` と表示されています。両方のブランチが `index.html` を変更したことがわかります。
+
+<Callout type="tip">
+もしコンフリクトの解消が難しいと感じたら、`git merge --abort` でマージ自体を取り消して、マージ前の状態に戻れます。落ち着いてやり直しましょう。
+</Callout>
+
+## コンフリクトマーカーを読む
+
+`index.html` を エディター（VS Code など）で開いてみてください。フッター部分が画像のようになっているはずです。
+
+<ContentImage
+  src="/learn/github/conflict.jpg"
+  alt="コンフリクトしたindex.html"
+  caption=""
+  width={600}
+  height={450}
+
+/>
+
+ **コンフリクトマーカー** が衝突部分を教えてくれています。
+
+<ContentTable
+  headers={["マーカー", "意味"]}
+  rows={[
+    [<code>{"<<<<<<< HEAD"}</code>, "ここから現在のブランチ（main）の変更"],
+    [<code>=======</code>, "区切り線"],
+    [<code>{">>>>>>> update-footer"}</code>, "ここまでマージしようとしたブランチの変更"],
+  ]}
+/>
+
+## コンフリクトを解消する
+
+コンフリクトの解消は、**マーカーを削除して、最終的にどうしたいかを手動で書く**だけです。
+
+今回は両方の変更を活かしましょう。コンフリクトマーカー（`<<<<<<<`、`=======`、`>>>>>>>`）をすべて削除し、以下のように編集してください。
+
+```html
+    <footer>
+        <p>© 2026 あなたの名前</p>
+        <p>このページは GitHub で公開しています</p>
+    </footer>
+```
+
+<Callout type="warning">
+コンフリクトマーカー（`<<<<<<<`、`=======`、`>>>>>>>`）は**必ずすべて削除**してください。残したままコミットすると、マーカーがそのままコードに含まれてしまいます。
+</Callout>
+
+<LearnMore>
+コンフリクトの解消方法は、状況によって異なります。
+
+<ContentTable
+  headers={["方針", "やること", "例"]}
+  rows={[
+    ["両方採用", "両方の変更を残す", "今回のケース"],
+    ["片方を採用", "不要な方を削除する", "同じ修正を別々にやってしまった場合"],
+    ["書き直し", "どちらも使わず新しく書く", "両方の変更を統合して別の形にする場合"],
+  ]}
+/>
+
+どの方針を取るかは、変更の意図を理解した上で判断します。だからこそ Git は自動で解決せず、人間に委ねるのです。
+</LearnMore>
+
+## 解消をコミットする
+
+コンフリクトを解消したら、通常のコミットと同じ手順で記録します。
+
+<CopyableCode>
+```bash
+git add index.html
+```
+</CopyableCode>
+
+`git status` で確認してみましょう。
+
+<CopyableCode>
+```bash
+git status
+```
+</CopyableCode>
+
+```title="出力例"
+On branch main
+All conflicts fixed but you are still merging.
+  (use "git commit" to conclude merge)
+
+Changes to be committed:
+        modified:   index.html
+```
+
+「All conflicts fixed」と表示されています。コミットしましょう。
+
+<CopyableCode>
+```bash
+git commit -m "フッターのコンフリクトを解消"
+```
+</CopyableCode>
+
+これでコンフリクトの解消が完了しました！
+
+## 履歴を確認する
+
+`git log` でマージの履歴を確認してみましょう。
+
+<CopyableCode>
+```bash
+git log --oneline --graph
+```
+</CopyableCode>
+
+```title="出力例"
+*   hij7890 (HEAD -> main) フッターのコンフリクトを解消
+|\
+| * ghi6789 (update-footer) フッターの説明文を更新
+* | fgh5678 フッターに著作権表示を追加
+|/
+* efg4567 スキルセクションを追加
+* def3456 趣味セクションを追加
+* ...
+```
+
+今回は Fast-forward ではなく、**枝分かれが発生したマージ**になっています。`--graph` の出力で、`main` と `update-footer` が分岐して合流した様子が見えます。
+
+レッスン05で「分岐が起きた場合は枝分かれした図が表示されます」と紹介した形です。
+
+## 後片付け
+
+マージ済みのブランチを削除して、GitHub にプッシュしておきましょう。
+
+<CopyableCode>
+```bash
+git branch -d update-footer
+git push
+```
+</CopyableCode>
+
+## コンフリクトが起きやすいケース
+
+実際の開発でコンフリクトが起きやすいのは、こんな場面です。
+
+- **複数人が同じファイルを同時に編集**している
+- **長期間ブランチを分けたまま**にしている（`main` との差が大きくなる）
+- **設定ファイル**（`package.json` など）を複数のブランチで変更した
+
+<Callout type="tip">
+コンフリクトを減らすには、**そもそも衝突が起きにくい状況を作る**ことが大切です。
+
+- チームで **編集する箇所が被らないように分担** を話し合う
+- ブランチでの作業は **短期間で終わらせて、こまめにマージ** する
+
+ブランチを長期間放置するほど `main` との差が広がり、コンフリクトのリスクが高まります。
+</Callout>
+
+## このレッスンのまとめ
+
+<SummaryList>
+- 同じファイルの同じ箇所を複数のブランチで変更するとコンフリクトが発生する
+- コンフリクトマーカー（`<<<<<<<`、`=======`、`>>>>>>>`）で衝突箇所を確認できる
+- マーカーを削除して最終的な内容を手動で書くことで解消する
+- 解消後は `git add` → `git commit` で記録する
+- `git merge --abort` でマージを取り消してやり直すこともできる
+</SummaryList>
+
+## 次のステップ
+
+お疲れさまでした！最後にこのコースで学んだことを振り返りましょう。
