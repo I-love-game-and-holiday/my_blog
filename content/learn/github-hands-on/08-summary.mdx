@@ -1,0 +1,124 @@
+---
+title: まとめ
+order: 8
+description: コース全体で学んだことを振り返り、Git コマンドのチートシートと次の学習ステップを確認します。
+---
+
+## コースの振り返り
+
+このコースでは、自己紹介ページを作りながら Git の基本操作から GitHub でのチーム開発フローまでを体験しました。
+
+<ContentTable
+  headers={["レッスン", "学んだこと"]}
+  rows={[
+    ["はじめてのコミット", "git init → git add → git commit の基本サイクル、git status / git log / git diff での確認"],
+    ["不要なファイルを除外する", ".gitignore でファイルを追跡対象から除外する方法"],
+    ["変更を元に戻す", "git restore でワーキングツリーの変更を取り消し、--staged でステージを取り消し"],
+    ["GitHub に公開する", "git remote add でリモート登録、git push で GitHub に公開"],
+    ["ブランチで作業する", "git switch -c でブランチ作成、git merge でローカルマージ、--graph で分岐を確認"],
+    ["プルリクエストを出す", "ブランチを push して GitHub 上で PR 作成・マージ、git pull でローカルに反映"],
+    ["コンフリクトを解消する", "コンフリクトマーカーの読み方、手動での解消、git merge --abort での取り消し"],
+  ]}
+/>
+
+
+## コマンドチートシート
+
+このコースで使ったコマンドを一覧にまとめます。
+### 基本操作
+
+<ContentTable
+  headers={["コマンド", "やること"]}
+  rows={[
+    [<code>git init</code>, "リポジトリを作成する"],
+    [<code>git status</code>, "現在の状態を確認する"],
+    [<code>git add ファイル名</code>, "変更をステージに追加する"],
+    [<code>git commit -m &quot;メッセージ&quot;</code>, "ステージの変更を記録する"],
+    [<code>git log --oneline</code>, "コミット履歴を一覧で見る"],
+    [<code>git diff</code>, "変更内容を確認する"],
+  ]}
+/>
+
+### 変更の取り消し
+
+<ContentTable
+  headers={["コマンド", "やること"]}
+  rows={[
+    [<code>git restore ファイル名</code>, "ワーキングツリーの変更を取り消す"],
+    [<code>git restore --staged ファイル名</code>, "ステージに追加した変更を取り消す"],
+  ]}
+/>
+
+### リモート操作
+
+<ContentTable
+  headers={["コマンド", "やること"]}
+  rows={[
+    [<code>git remote add origin URL</code>, "リモートリポジトリを登録する"],
+    [<code>git push</code>, "ローカルの変更をリモートに送る"],
+    [<code>git push -u origin ブランチ名</code>, "ブランチを初めてリモートに送る"],
+    [<code>git pull</code>, "リモートの変更をローカルに取り込む"],
+  ]}
+/>
+
+### ブランチ操作
+
+<ContentTable
+  headers={["コマンド", "やること"]}
+  rows={[
+    [<code>git branch</code>, "ブランチの一覧を見る"],
+    [<code>git switch -c ブランチ名</code>, "新しいブランチを作って切り替える"],
+    [<code>git switch ブランチ名</code>, "既存のブランチに切り替える"],
+    [<code>git merge ブランチ名</code>, "指定したブランチを現在のブランチにマージする"],
+    [<code>git branch -d ブランチ名</code>, "マージ済みのブランチを削除する"],
+    [<code>git log --oneline --graph</code>, "分岐・合流を含む履歴を見る"],
+  ]}
+/>
+
+## 身についたスキル
+
+このコースを通して、以下のスキルが身につきました。
+
+### Git の基本操作
+
+- **コミットの習慣** — 変更を記録し、いつでも過去の状態に戻れる開発ができる
+- **差分の確認** — `git diff` や `git status` で、何が変わったかを常に把握できる
+- **安全な取り消し** — 間違えても `git restore` で変更前に戻せる
+
+### GitHub での共同開発
+
+- **リモート連携** — ローカルの変更を GitHub に公開し、チームで共有できる
+- **ブランチ戦略** — 機能ごとにブランチを切り、メインのコードを安全に保てる
+- **プルリクエスト** — コードレビューを通じてマージする開発フローを実践できる
+- **コンフリクト解消** — 衝突が起きても冷静に対処し、手動で解消できる
+
+## このコースで扱わなかったこと
+
+学習に集中するため、以下のトピックは扱いませんでした。気になるものがあれば、次のステップとして調べてみてください。
+
+<ContentTable
+  headers={["トピック", "説明"]}
+  rows={[
+    [<code>git clone</code>, "既存のリポジトリをコピーしてローカルに取得するコマンド。チーム開発やOSSへの参加で最初に使います"],
+    [<code>git stash</code>, "作業中の変更を一時的に退避するコマンド。「ブランチを切り替えたいけど、今の変更はまだコミットしたくない」ときに便利です"],
+    [<code>git rebase</code>, "コミット履歴を整理するコマンド。merge との違いを理解した上で使い分けます"],
+    ["GitHub Issues", "タスクやバグの管理機能。PR と連携させると、課題の追跡がしやすくなります"],
+  ]}
+/>
+
+<LearnMore>
+### GUI ツールという選択肢
+
+このコースでは Git のすべての操作をターミナル（コマンドライン）で行いましたが、**GUI ツール**を使う方法もあります。
+
+- **<a href="https://desktop.github.com/" target="_blank" rel="noopener noreferrer">GitHub Desktop</a>** — GitHub 公式のデスクトップアプリ。視覚的に操作できるので初心者にも使いやすい
+- **VS Code の Git 機能** — エディタに内蔵された Git 操作。コミットやブランチ切り替えがボタンひとつでできる
+
+GUI ツールの裏側で動いているのは、このコースで学んだのと同じ Git コマンドです。コマンドを理解した上で GUI を使えば、何か問題が起きたときにも対処できます。
+</LearnMore>
+
+---
+
+お疲れ様でした！このコースはこれで完了です。
+
+ご意見・ご感想があれば、お気軽に <a href="https://x.com/tanaka101com" target="_blank" rel="noopener noreferrer">X（Twitter）</a> までお寄せください。

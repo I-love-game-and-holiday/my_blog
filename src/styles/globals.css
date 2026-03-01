@@ -330,6 +330,29 @@ pre code.nextra-code > span[data-highlighted-line] {
     @apply border-b border-border;
 }
 
+/* --- Summary List --- */
+/* レッスン / ガイドの末尾まとめ用リストコンポーネント */
+.summary-list {
+    @apply my-6 rounded-lg border border-green-200 bg-green-50/50 p-4 dark:border-green-800 dark:bg-green-950/20;
+}
+
+.summary-list-content ul {
+    @apply m-0 list-none space-y-1.5 p-0;
+}
+
+.summary-list-content li {
+    @apply flex items-start gap-2 text-sm text-foreground/80;
+}
+
+.summary-list-content li::before {
+    content: "✓";
+    @apply mt-px shrink-0 font-bold text-green-600 dark:text-green-400;
+}
+
+.summary-list-content li code {
+    @apply rounded bg-green-100 px-1 py-0.5 text-xs font-mono text-green-800 dark:bg-green-900/40 dark:text-green-300;
+}
+
 /* --- Code Block --- */
 .code-block-header {
     @apply border-b border-border;

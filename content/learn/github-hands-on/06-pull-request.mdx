@@ -1,0 +1,304 @@
+---
+title: プルリクエストを出す
+order: 6
+description: GitHub 上でプルリクエストを作成し、チーム開発で使われるマージの流れを体験しましょう。
+---
+
+## ローカルマージとの違い
+
+前のレッスンでは、ブランチを作って `git merge` で直接 `main` にマージし、GitHub にプッシュするところまで体験しました。引き続き同じリポジトリを使って進めます。
+
+一人で開発しているうちはこれで問題ありませんが、チーム開発では **マージする前に他の人に確認してもらう** のが一般的です。そのための仕組みが **プルリクエスト（PR）** です。
+
+<Callout type="info">
+プルリクエストの概念を復習したい場合は、<a href="/guides/git-basics/07-pull-request">ガイドの「プルリクエストとは何か」</a>を確認してください。
+</Callout>
+
+このレッスンでは、以下の流れを体験します。
+
+<FlowDiagram
+  steps={[
+    "ブランチを作る",
+    "変更してコミット",
+    "GitHub に push",
+    "PR を作成",
+    "マージ",
+    "ローカルに pull",
+  ]}
+/>
+
+## ブランチを作成する
+
+自己紹介ページに「スキルセクション」を追加します。前回と同じく、専用のブランチを作りましょう。
+
+<CopyableCode>
+```bash
+git switch -c add-skills
+```
+</CopyableCode>
+
+```title="出力例"
+Switched to a new branch 'add-skills'
+```
+
+## スキルセクションを追加する
+
+`index.html` を編集して、趣味セクションの `</ul>` と `<footer>` の間にスキルセクションを追加しましょう。
+
+<CollapsibleCode title="index.html" defaultOpen={false}>
+```html
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自己紹介</title>
+</head>
+<body>
+    <h1>自己紹介</h1>
+    <p>名前: あなたの名前</p>
+    <h2>プロフィール</h2>
+    <ul>
+        <li>好きな食べ物: ラーメン</li>
+        <li>住んでいるところ: 東京</li>
+        <li>ひとこと: よろしくお願いします！</li>
+    </ul>
+    <h2>趣味</h2>
+    <ul>
+        <li>映画鑑賞</li>
+        <li>散歩</li>
+        <li>プログラミング</li>
+    </ul>
+    <h2>スキル</h2>
+    <ul>
+        <li>HTML / CSS</li>
+        <li>JavaScript（勉強中）</li>
+        <li>Git / GitHub</li>
+    </ul>
+    <footer>
+        <p>GitHub で学習中！</p>
+    </footer>
+</body>
+</html>
+```
+</CollapsibleCode>
+
+保存したら、コミットしましょう。
+
+<CopyableCode>
+```bash
+git add index.html
+git commit -m "スキルセクションを追加"
+```
+</CopyableCode>
+
+## ブランチを GitHub にプッシュする
+
+前のレッスンでは `main` にマージしてから `git push` しましたが、今回は **ブランチのまま** GitHub にプッシュします。
+
+<CopyableCode>
+```bash
+git push -u origin add-skills
+```
+</CopyableCode>
+
+```title="出力例"
+Enumerating objects: 5, done.
+Counting objects: 100% (5/5), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 400 bytes | 400.00 KiB/s, done.
+Total 3 (delta 1), reused 0 (delta 0)
+To https://github.com/あなたのユーザー名/my-profile.git
+ * [new branch]      add-skills -> add-skills
+branch 'add-skills' set up to track 'origin/add-skills'.
+```
+
+`* [new branch]` と表示されていれば、GitHub 上にブランチが作られています。
+
+<LearnMore>
+レッスン04で `git push -u origin main` を実行したときと同じ構造です。
+
+<ContentTable
+  headers={["部分", "意味"]}
+  rows={[
+    [<code>git push</code>, "ローカルのコミットをリモートに送る"],
+    [<code>-u</code>, "このブランチの送り先を記憶する（初回のみ）"],
+    [<code>origin</code>, "送り先のリモート名"],
+    [<code>add-skills</code>, "送るブランチ名"],
+  ]}
+/>
+
+`main` 以外のブランチも、同じようにプッシュできます。
+</LearnMore>
+
+## GitHub でプルリクエストを作成する
+
+ブラウザで GitHub のリポジトリページを開きましょう。
+
+### 1. プルリクエストの作成画面を開く
+
+**『Compare & pull request』** ボタンをクリックしてプルリクエストを作成しましょう。
+<ContentImage
+  src="/learn/github/pullrequest.jpg"
+  alt="プルリクエストイメージ1"
+  caption=""
+  width={750}
+  height={450}
+/>
+
+<Callout type="tip">
+ボタンが見つからない場合は、 **『Pull requestsタブ』** より以下のように設定して手動で作成しましょう。
+
+<ContentImage
+  src="/learn/github/pullrequest3.jpg"
+  alt="プルリクエストイメージ2"
+  caption=""
+  width={750}
+  height={450}
+/>
+</Callout>
+
+### 2. プルリクエストの内容を記入する
+
+<ContentImage
+  src="/learn/github/pullrequest4.jpg"
+  alt="プルリクエストイメージ3"
+  caption=""
+
+/>
+
+- マージする方向が正しいか確認
+- どんな内容のプルリクか分かるタイトルを付ける
+- プルリクの詳細をコメントに残す
+- 『Create pull request』をクリック
+
+### 3. プルリクエストの中身を確認する
+
+PR が作成されると、以下のような情報が表示されます。
+
+- **Commits**: このブランチで行ったコミットの一覧
+- **Files changed**: 変更されたファイルの差分
+
+**Files changed** タブをクリックすると、`index.html` にスキルセクションが追加された差分が表示されます。チーム開発では、ここを見て他のメンバーがコードをレビューします。
+<ContentImage
+  src="/learn/github/pullrequest5.jpg"
+  alt="プルリクエストイメージ4"
+  caption=""
+
+/>
+<Callout type="info">
+今回は一人での作業なのでレビューはスキップしますが、
+実際のチーム開発では **他のメンバーがここで変更内容を確認** したり、コメントを付けて修正をリクエストしたりします。
+
+チーム開発では権限がある人だけがマージを実行できる場合も多いです。<br/>
+個人開発でもしっかりコメントを残すことで、修正や追加したコードの意図を正確に思い出せるので無駄ではありません。
+
+
+</Callout>
+
+## GitHub 上でマージする
+
+PR の内容に問題がなければ、マージしましょう。
+
+PR のページで **「Merge pull request」** ボタンをクリックし、続けて **「Confirm merge」** をクリックします。
+
+```title="マージ後に表示されるメッセージ"
+Pull request successfully merged and closed
+```
+
+これで、GitHub 上の `main` ブランチにスキルセクションが取り込まれました。
+
+マージ後、**「Delete branch」** ボタンが表示されます。マージ済みのブランチは不要なのでクリックして削除しておきましょう。前のレッスンで `git branch -d` をしたのと同じことを、GitHub 上で行っています。
+
+## ローカルに変更を取り込む
+
+GitHub 上で `main` にマージしましたが、ローカルの `main` はまだ古い状態です。GitHub の変更をローカルに取り込みましょう。
+
+まず `main` ブランチに切り替えます。
+
+<CopyableCode>
+```bash
+git switch main
+```
+</CopyableCode>
+
+GitHub から最新の変更を取得します。
+
+<CopyableCode>
+```bash
+git pull
+```
+</CopyableCode>
+
+```title="出力例"
+remote: Enumerating objects: 1, done.
+remote: Counting objects: 100% (1/1), done.
+remote: Total 1 (delta 0), reused 0 (delta 0), pack-reused 0
+Unpacking objects: 100% (1/1), done.
+From https://github.com/あなたのユーザー名/my-profile
+   abc9012..def3456  main       -> origin/main
+Updating abc9012..def3456
+Fast-forward
+ index.html | 6 ++++++
+ 1 file changed, 6 insertions(+)
+```
+
+`index.html` を開いて、スキルセクションが追加されていることを確認してみましょう。
+
+<LearnMore>
+`git pull` は、**GitHub（リモート）の変更をローカルに取り込む**コマンドです。`git push` の逆の操作と考えるとわかりやすいです。
+
+<ContentTable
+  headers={["コマンド", "方向", "やること"]}
+  rows={[
+    [<code>git push</code>, "ローカル → リモート", "ローカルの変更を GitHub に送る"],
+    [<code>git pull</code>, "リモート → ローカル", "GitHub の変更をローカルに取り込む"],
+  ]}
+/>
+
+チーム開発では、他のメンバーがマージした変更を取り込むために `git pull` を頻繁に使います。
+
+実は `git pull` は内部的に **`git fetch`（リモートの情報を取得）+ `git merge`（ローカルに統合）** を一度に行っています。「まずリモートの状態だけ確認して、マージは後で判断したい」という場合は `git fetch` を単独で使うこともできます。最初のうちは `git pull` だけで十分です。
+</LearnMore>
+
+最後に、ローカルのブランチも削除しておきましょう。
+
+<CopyableCode>
+```bash
+git branch -d add-skills
+```
+</CopyableCode>
+
+## ローカルマージとプルリクエストの比較
+
+レッスン05とレッスン06の流れを比較してみましょう。
+
+<ContentTable
+  headers={["", "レッスン05: ローカルマージ", "レッスン06: プルリクエスト"]}
+  rows={[
+    ["マージする場所", "自分のPC（ターミナル）", "GitHub（ブラウザ）"],
+    ["マージ前の確認", "自分だけ", "チーム全員が差分を確認できる"],
+    ["マージ方法", <code>git merge</code>, "GitHub の「Merge pull request」"],
+    ["マージ後", <><code>git push</code> で GitHub に反映</>, <><code>git pull</code> で ローカルに反映</>],
+  ]}
+/>
+
+どちらも「ブランチを作って作業し、main に統合する」点は同じですが、プルリクエストを使うとマージ前にチームで確認できるのが大きな違いです。
+
+Gitを使うチーム開発ならプルリクエストはほぼ100%利用することになります。とても重要な技術です！
+
+## このレッスンのまとめ
+
+<SummaryList>
+- `git push -u origin ブランチ名` でブランチを GitHub にプッシュできる
+- GitHub 上でプルリクエストを作成し、変更内容を確認してからマージできる
+- `git pull` で GitHub の変更をローカルに取り込む
+- マージ済みのブランチは GitHub 上でもローカルでも削除する
+- チーム開発ではプルリクエスト経由でマージするのが一般的
+</SummaryList>
+
+## 次のステップ
+
+次のレッスンでは、Git を使っていると避けられない **コンフリクト（衝突）** を体験します。
+解消方法を学べばしっかり対応できるようになります！

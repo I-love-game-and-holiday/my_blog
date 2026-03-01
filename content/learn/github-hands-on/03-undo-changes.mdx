@@ -1,0 +1,256 @@
+---
+title: 変更を元に戻す
+order: 3
+description: git restore を使って、間違えた変更を取り消す方法を学びましょう。
+---
+
+## 間違えても大丈夫
+
+コードを書いていると「あ、やっちゃった」という場面は割とあります。（特に疲れているときとか）
+
+- 動いていたコードを壊してしまった
+- 余計なファイルをステージしてしまった
+- さっきの状態に戻したい
+
+Git を使っていれば、こうした「うっかり」を簡単に取り消せます。このレッスンでは `git restore` コマンドを使って、変更を元に戻す方法を実践します。
+
+<Callout type="info">
+`git restore` は **コミットしていない変更** を取り消すコマンドです。すでにコミットした変更を取り消す方法（`git revert` など）はこのコースでは扱いません。
+
+**コミット前の変更を安全に戻す方法**に絞って学びます。
+</Callout>
+
+## ワーキングツリーの変更を取り消す
+
+### ファイルを壊してみる
+
+まず、意図的に `index.html` を壊してみましょう。`<body>` の中身をすべて消して、以下のように書き換えてください。
+
+<CollapsibleCode title="index.html" defaultOpen={false}>
+```html
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自己紹介</title>
+</head>
+<body>
+    <h1>壊れました！！！</h1>
+</body>
+</html>
+```
+</CollapsibleCode>
+
+保存したら `git status` で確認します。
+
+<CopyableCode>
+```bash
+git status
+```
+</CopyableCode>
+
+<ContentImage
+  src="/learn/github/git7.jpg"
+  alt="git statusコマンドの実行結果その6"
+  caption=""
+  width={700}
+  height={450}
+/>
+
+`index.html` が **modified**（変更あり）と表示されています。よく見ると Git が親切に `use "git restore <file>..." to discard changes` と教えてくれています。
+
+`git diff` でどれくらい壊れたか見てみましょう。
+
+<CopyableCode>
+```bash
+git diff
+```
+</CopyableCode>
+
+<ContentImage
+  src="/learn/github/gitdiff.jpg"
+  alt="git diffコマンドの実行結果"
+  caption=""
+  width={650}
+  height={450}
+/>
+
+ 赤い`-`行が消えた部分、緑の`+` 行が追加された部分です。せっかくのプロフィールが消えてしまいました。
+
+### git restore で元に戻す
+
+ `git restore` で最後にコミットした状態に戻してみましょう。
+
+<CopyableCode>
+```bash
+git restore index.html
+```
+</CopyableCode>
+
+`git status` で確認しましょう。
+
+```title="出力例"
+On branch main
+nothing to commit, working tree clean
+```
+
+「変更なし」に戻りました。`index.html` を開いてみてください。プロフィール情報がきちんと復活しているはずです。
+
+<Callout type="warning">
+`git restore` は**最後のコミットの状態に戻す**コマンドです。まだコミットしていない変更はすべて消えてしまいます。
+
+取り消した変更は元に戻せないので、本当に戻していいか確認してから実行しましょう。迷ったときは先に `git diff` で差分を確認するのがおすすめです。
+</Callout>
+
+<LearnMore>
+厳密には、`git restore` はステージ（インデックス）の内容でワーキングツリーを復元します。ステージに何も追加していなければステージは最後のコミットと同じ内容なので、結果的に「最後のコミットに戻る」動作になります。
+
+しかし、もし `git add` でステージに変更を追加した後に `git restore` を実行すると、**最後のコミットではなくステージの状態**に戻ります。
+
+このレッスンではステージしていない変更を取り消すケースだけを扱っているので、「最後のコミットに戻る」という理解で問題ありません。
+</LearnMore>
+
+<Callout type="info">
+復習: ワーキングツリーとは、実際にファイルを編集する作業場所のことです。
+
+詳しくは <a href="/guides/git-basics/02-how-git-works">Git の仕組み</a> を確認してください。
+</Callout>
+
+## ステージした変更を取り消す
+
+次は「`git add` でステージまでしてしまったけど、やっぱりやめたい」というケースを体験します。
+
+### 変更をステージしてしまう
+
+`index.html` にうっかり不要な行を追加してしまったとします。
+
+<CollapsibleCode title="index.html" defaultOpen={false}>
+```html
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自己紹介</title>
+</head>
+<body>
+    <h1>自己紹介</h1>
+    <p>名前: あなたの名前</p>
+    <p>テスト中です。あとで消します。</p>
+    <h2>プロフィール</h2>
+    <ul>
+        <li>好きな食べ物: ラーメン</li>
+        <li>住んでいるところ: 東京</li>
+        <li>ひとこと: よろしくお願いします！</li>
+    </ul>
+</body>
+</html>
+```
+</CollapsibleCode>
+
+そして、うっかりステージまでしてしまいます。
+
+<CopyableCode>
+```bash
+git add index.html
+```
+</CopyableCode>
+
+`git status` で確認します。
+
+<ContentImage
+  src="/learn/github/gitstatus8.jpg"
+  alt="git statusコマンドの実行結果"
+  caption=""
+  width={650}
+  height={450}
+/>
+
+**Changes to be committed** に入ってしまいました。このままコミットすると「テスト中です」が履歴に残ってしまいます。
+
+### git restore --staged でステージを取り消す
+
+`--staged` オプションを付けると、**ステージだけを取り消し**できます。
+
+<CopyableCode>
+```bash
+git restore --staged index.html
+```
+</CopyableCode>
+
+<CopyableCode>
+```bash
+git status
+```
+</CopyableCode>
+
+<ContentImage
+  src="/learn/github/gitstatus9.jpg"
+  alt="git statusの実行結果"
+  caption=""
+  width={650}
+  height={450}
+/>
+
+ファイルが **Changes not staged for commit** に戻りました。ステージから降ろされた状態です。
+
+<Callout type="tip">
+ここが大事なポイントです。`git restore --staged` は **ステージを取り消すだけ** で、ファイルの中身は変わりません。
+
+「テスト中です」の行はまだファイルに残っています。
+</Callout>
+
+### ファイルの中身も元に戻す
+
+ステージの取り消しに続いて、ワーキングツリーの変更も取り消しましょう。
+
+<CopyableCode>
+```bash
+git restore index.html
+```
+</CopyableCode>
+
+<CopyableCode>
+```bash
+git status
+```
+</CopyableCode>
+
+```title="出力例"
+On branch main
+nothing to commit, working tree clean
+```
+
+きれいに元通りになりました。
+
+## まとめ: 2つの restore を使い分ける
+
+同じ`restore`コマンドですがオプションの有無によって、自分の作業内容が無かったことにもなり得ます。
+
+<ContentTable
+  headers={["コマンド", "取り消す対象", "ファイルの中身"]}
+  rows={[
+    [<code>git restore ファイル名</code>, "ワーキングツリーの変更", "最後のコミットの状態に戻る（編集が消える）"],
+    [<code>git restore --staged ファイル名</code>, "ステージへの追加", "変わらない（編集はそのまま残る）"],
+  ]}
+/>
+
+<LearnMore>
+`git restore` は Git 2.23 で導入された比較的新しいコマンドです。それ以前は `git checkout -- ファイル名` がワーキングツリーの取り消し、`git reset HEAD ファイル名` がステージの取り消しに使われていました。
+
+古い記事やドキュメントでは `git checkout` や `git reset` が出てくることがありますが、`git restore` のほうが目的が明確でわかりやすいため、こちらを使うのがおすすめです。
+</LearnMore>
+
+## このレッスンのまとめ
+
+<SummaryList>
+- `git restore ファイル名` でワーキングツリーの変更を取り消せる
+- `git restore --staged ファイル名` でステージを取り消せる
+- `git restore` は **コミット前の変更** に使うコマンド
+- 間違えても Git があれば安心して元に戻せる
+</SummaryList>
+
+## 次のステップ
+
+次のレッスンでは、ローカルのリポジトリを GitHub に公開します。ローカルからリモートへ！
