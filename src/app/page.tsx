@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { CONTENT_MAX_WIDTH } from '@/lib/constants'
-import { ClickableCard } from '@/components/ui/clickable-card'
 
 export default function HomePage() {
     return (
@@ -14,7 +13,7 @@ export default function HomePage() {
             </section>
 
             {/* Main CTA - Learn */}
-            <section className={`${CONTENT_MAX_WIDTH} mx-auto mb-8`}>
+            <section className={`${CONTENT_MAX_WIDTH} mx-auto`}>
                 <Link
                     href="/learn"
                     className="group block p-card-cta bg-foreground text-background rounded-lg hover:bg-foreground/90 transition-colors"
@@ -31,21 +30,6 @@ export default function HomePage() {
                         ハンズオンで基礎を身に着ける
                     </p>
                 </Link>
-            </section>
-
-            {/* Secondary - Blog */}
-            <section className={`${CONTENT_MAX_WIDTH} mx-auto`}>
-                <ClickableCard href="/blog" padding="none" className="p-6">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <span className="text-xs text-muted-foreground">Blog</span>
-                            <h3 className="font-medium group-hover:underline">
-                                雑記ブログ
-                            </h3>
-                        </div>
-                        <span className="text-muted-foreground text-sm">→</span>
-                    </div>
-                </ClickableCard>
             </section>
         </div>
     )
