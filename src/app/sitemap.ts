@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
-import { getPosts } from '@/lib/get-posts'
 import { getCourses } from '@/lib/get-courses'
+import { getGuides } from '@/lib/get-guides'
+import { getDictionaryEntries } from '@/lib/get-dictionary'
 
 export const dynamic = 'force-static'
 
@@ -21,21 +22,36 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             priority: 0.9,
         },
         {
-            url: `${baseUrl}/blog`,
+            url: `${baseUrl}/guides`,
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.9,
         },
+        {
+            url: `${baseUrl}/dictionary`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.8,
+        },
+        {
+            url: `${baseUrl}/about`,
+            lastModified: new Date(),
+            changeFrequency: 'monthly',
+            priority: 0.5,
+        },
+        {
+            url: `${baseUrl}/contact`,
+            lastModified: new Date(),
+            changeFrequency: 'monthly',
+            priority: 0.5,
+        },
+        {
+            url: `${baseUrl}/privacy`,
+            lastModified: new Date(),
+            changeFrequency: 'monthly',
+            priority: 0.3,
+        },
     ]
-
-    // Blog posts
-    const posts = await getPosts()
-    const blogEntries: MetadataRoute.Sitemap = posts.map((post) => ({
-        url: `${baseUrl}${post.route}`,
-        lastModified: post.frontMatter?.date ? new Date(post.frontMatter.date) : new Date(),
-        changeFrequency: 'monthly',
-        priority: 0.7,
-    }))
 
     // Learn courses and lessons
     const courses = await getCourses()
@@ -59,5 +75,40 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         }
     }
 
-    return [...staticPages, ...blogEntries, ...learnEntries]
+    // Guides and sections
+    const guides = await getGuides()
+    const guideEntries: MetadataRoute.Sitemap = []
+
+    for (const guide of guides) {
+        guideEntries.push({
+            url: `${baseUrl}${guide.route}`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.8,
+        })
+
+        for (const section of guide.sections) {
+            guideEntries.push({
+                url: `${baseUrl}${section.route}`,
+                lastModified: new Date(),
+                changeFrequency: 'monthly',
+                priority: 0.7,
+            })
+        }
+    }
+
+    // Dictionary entries (exclude stub pages)
+    // memo : Google広告で価値が低いと審査される可能性のある辞書記事をサイトマップから除外する
+    const stubSlugs = new Set(['cli', 'editor', 'nodejs', 'typescript'])
+    const dictionaryEntries = await getDictionaryEntries()
+    const dictionaryPages: MetadataRoute.Sitemap = dictionaryEntries
+        .filter((entry) => !stubSlugs.has(entry.slug))
+        .map((entry) => ({
+            url: `${baseUrl}${entry.route}`,
+            lastModified: new Date(),
+            changeFrequency: 'monthly',
+            priority: 0.6,
+        }))
+
+    return [...staticPages, ...learnEntries, ...guideEntries, ...dictionaryPages]
 }

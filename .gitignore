@@ -3,7 +3,7 @@ node_modules
 /.idea
 _pagefind/
 /.env
-
+next-env.ts
 
 # 草案ディレクトリ
 drafts/
