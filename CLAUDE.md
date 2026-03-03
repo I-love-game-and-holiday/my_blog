@@ -23,6 +23,7 @@
 | **Learn** | ハンズオン形式の学習コース。手を動かしながら段階的に学ぶ（進捗表示付き） |
 | **Guide** | リファレンス形式の知識ガイド。読んで体系的に知識を得る |
 | **Blog** | 技術記事・備忘録 |
+| **Dictionary** | プログラミング用語集。コンテンツ内の用語を自動リンクし、モーダルで解説を表示 |
 | **SEO最適化** | 自動サイトマップ・RSS・メタデータ生成 |
 
 ---
@@ -46,6 +47,7 @@
 blog/
 ├── content/              # MDXコンテンツ
 │   ├── blog/            # ブログ記事
+│   ├── dictionary/      # プログラミング用語集（38+エントリ）
 │   ├── learn/           # ハンズオン学習コース
 │   │   └── {course}/    # コースフォルダ
 │   │       ├── _meta.ts # コースメタデータ
@@ -54,16 +56,26 @@ blog/
 │       └── {guide}/     # ガイドフォルダ（構成は learn と同じ）
 ├── src/
 │   ├── app/             # Next.js App Router
+│   │   ├── api/         # APIルート（dictionary等）
 │   │   ├── blog/        # ブログページ
+│   │   ├── dictionary/  # 用語集ページ
+│   │   ├── guides/      # ガイドページ
 │   │   ├── learn/       # 学習ページ
 │   │   ├── sitemap.ts   # サイトマップ生成
 │   │   ├── robots.ts    # robots.txt生成
 │   │   └── rss.xml/     # RSSフィード
 │   ├── components/      # Reactコンポーネント
+│   │   ├── code/        # コード表示・プレイグラウンド
+│   │   ├── content/     # コンテンツ用コンポーネント
+│   │   ├── dictionary/  # 用語集コンポーネント
+│   │   ├── layout/      # レイアウトコンポーネント
 │   │   └── ui/          # shadcn/uiコンポーネント
+│   ├── contexts/        # React Contextプロバイダー
 │   ├── lib/             # ユーティリティ関数
 │   │   ├── get-posts.ts # ブログ記事取得
 │   │   ├── get-courses.ts # コース取得
+│   │   ├── get-guides.ts  # ガイド取得
+│   │   ├── get-dictionary.ts # 用語取得
 │   │   ├── mdx.ts       # MDXコンパイル
 │   │   └── highlight.ts # コードハイライト（shiki）
 │   └── styles/          # グローバルスタイル
@@ -195,6 +207,16 @@ tags:
 | ユーティリティ | kebab-case | `get-posts.ts` |
 | 型定義 | kebab-case | `types.ts` |
 
+#### コンポーネントファイルのサフィックス
+
+| サフィックス | 用途 | 例 |
+|-------------|------|-----|
+| `-client.tsx` | クライアント専用コンポーネント（`'use client'`） | `code-playground-client.tsx` |
+| `-wrapper.tsx` | コンテナ/ラッパーコンポーネント | `code-block-wrapper.tsx` |
+| `-context.tsx` | Contextプロバイダー | `course-progress-context.tsx` |
+| `-tracker.tsx` | 副作用のみ（UIなし、`return null`） | `lesson-view-tracker.tsx` |
+| `index.ts` | バレルエクスポート | `components/code/index.ts` |
+
 #### 禁止事項
 
 - インターフェースに `I` プレフィックスを付けない: `IPost` → `Post`
@@ -259,6 +281,54 @@ type ContentType = 'blog' | 'learn';
 import { getPosts } from '@/lib/get-posts';
 import { SiteHeader } from '@/components/site-header';
 ```
+
+### Server/Client コンポーネント分離
+
+データ取得はサーバーコンポーネント、インタラクティブなUIはクライアントコンポーネントに分離する:
+
+```
+article-layout.tsx       ← Server: データ取得（dictionary等）
+article-layout-client.tsx ← Client: Provider・インタラクション
+```
+
+- ページファイル（`page.tsx`）は原則 `async` サーバーコンポーネント
+- `'use client'` が必要な部分だけ `-client.tsx` に切り出す
+
+### エラーハンドリング
+
+データ取得関数（`get-*.ts`）は**サイレント失敗**パターンを採用する:
+
+```typescript
+// try-catch でエラーを捕捉し、空配列を返す（例外を投げない）
+try {
+  // ファイル読み込み処理
+} catch (error) {
+  console.error('[getPosts] Error:', error);
+  return [];
+}
+```
+
+- ディレクトリが存在しない場合は `fs.existsSync()` で事前チェックし、空コレクションを返す
+- ログには `[関数名]` プレフィックスを付ける
+
+### 型定義の配置
+
+型は**使用するモジュール内にインライン定義**する。集中型の `types.ts` は使用しない:
+
+- `PostItem` → `get-posts.ts`
+- `CourseItem`, `LessonItem` → `get-courses.ts`
+- `GuideItem`, `SectionItem` → `get-guides.ts`
+- `DictionaryEntry` → `get-dictionary.ts`
+
+### コメント言語
+
+コード内のコメント・JSDocはすべて**日本語**で記述する。
+
+### 環境変数
+
+| 変数名 | 用途 | フォールバック |
+|--------|------|---------------|
+| `NEXT_PUBLIC_SITE_URL` | サイトURL（sitemap, RSS, robots等で使用） | `https://tanaka101.com` |
 
 ---
 
@@ -330,6 +400,20 @@ import { SiteHeader } from '@/components/site-header';
 | 幅・高さ | Layer 3 | `clamp()` ユーティリティ |
 
 **迷ったときの原則**: 「その値は0か1か（離散）、それとも連続的に変化するか？」 → 離散ならLayer 1、連続ならLayer 3。
+
+### Z-index管理
+
+`globals.css` でCSS変数として段階的に定義し、コンポーネントでは `z-(--z-name)` 構文で参照する:
+
+| 変数名 | 値 | 用途 |
+|--------|-----|------|
+| `--z-base` | 10 | 基本レイヤー |
+| `--z-panel-trigger` | 40 | パネルのトリガーボタン |
+| `--z-panel` | 50 | スライドパネル |
+| `--z-overlay` | 50 | オーバーレイ |
+| `--z-header` | 60 | サイトヘッダー |
+
+新しいz-indexを追加する場合は、この変数テーブルに追加し、直接数値を書かないこと。
 
 ---
 
