@@ -16,6 +16,7 @@ import { CollapsibleCode, CopyableCode, OsCommandTabs, OsCodeBlock, CodePlaygrou
 import { OsTable } from '@/components/os/os-table'
 import { FileTree, FileTreeFolder, FileTreeFile } from '@/components/content/file-tree'
 import { LearnMore } from '@/components/content/learn-more'
+import { SummaryList } from '@/components/content/summary-list'
 import { ResponsivePreview } from '@/components/content/responsive-preview'
 
 const mdxComponents = {
@@ -35,6 +36,7 @@ const mdxComponents = {
     FileTreeFile,
     HtmlPreview,
     LearnMore,
+    SummaryList,
     CodePlayground,
     ResponsivePreview,
 }

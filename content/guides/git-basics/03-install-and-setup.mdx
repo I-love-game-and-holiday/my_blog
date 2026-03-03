@@ -41,6 +41,30 @@ git config --global user.email "your@email.com"
 名前は本名でもニックネームでも構いません。メールアドレスは後で GitHub に登録するものと同じにしておくとスムーズです。
 </Callout>
 
+### メールアドレスを公開したくない場合
+
+コミットに記録されたメールアドレスは、GitHub にプッシュすると**誰でも見られる状態**になります。
+個人のメールアドレスを公開したくない場合は、GitHub が提供する **noreply メール**を使いましょう。
+
+#### 設定手順
+
+1. <a href="https://github.com/settings/emails" target="_blank" rel="noopener noreferrer">GitHub の Settings → Emails</a> を開く
+2. **「Keep my email addresses private」** にチェックを入れる
+3. 表示される `ユーザー名@users.noreply.github.com` のアドレスをコピーする
+4. ターミナルで以下を実行する
+
+```bash
+git config --global user.email "ユーザー名@users.noreply.github.com"
+```
+
+<Callout type="tip">
+同じ設定画面にある **「Block command line pushes that expose my email」** にもチェックを入れておくと、うっかり本物のメールアドレスでプッシュしようとしたときにブロックしてくれます。
+</Callout>
+
+<Callout type="info">
+GitHub アカウントをまだ作成していない場合、この設定は後からでも大丈夫です。
+</Callout>
+
 ### 設定の確認
 
 正しく設定できたか確認しましょう。
@@ -59,5 +83,6 @@ git config --global user.email
   points={[
     "git --version でインストールを確認する",
     "git config でユーザー名とメールアドレスを設定する",
+    "メールアドレスを公開したくない場合は GitHub の noreply メールを設定する",
   ]}
 />
