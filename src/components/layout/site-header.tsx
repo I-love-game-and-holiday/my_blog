@@ -10,6 +10,7 @@ const navigation = [
     { name: 'Learn', href: '/learn' },
     { name: 'Guides', href: '/guides' },
     { name: 'Dictionary', href: '/dictionary' },
+    { name: 'Blog', href: '/blog' },
 ]
 
 export function SiteHeader() {
