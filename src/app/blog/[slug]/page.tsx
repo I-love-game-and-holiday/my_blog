@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { getPostSlugs, getPosts } from '@/lib/get-posts'
 import { getPostContent } from '@/lib/mdx'
 import { notFound } from 'next/navigation'
@@ -39,9 +40,19 @@ export default async function BlogPostPage(props: PageProps) {
 
     return (
         <div className="container py-12">
+            <nav className="text-sm text-muted-foreground mb-6">
+                <Link href="/blog" className="hover:text-foreground transition-colors">
+                    Blog
+                </Link>
+                <span className="mx-2">/</span>
+                <span className="text-foreground">
+                    {metadata?.title}
+                </span>
+            </nav>
+
             <article className="prose max-w-none">
                 <header className="mb-8 not-prose">
-                    <h1 className="text-3xl font-bold tracking-tight mb-2">
+                    <h1 className="text-page-title font-bold tracking-tight mb-2">
                         {metadata?.title}
                     </h1>
                     {metadata?.date && (
