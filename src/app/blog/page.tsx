@@ -1,5 +1,5 @@
-import Link from 'next/link'
 import { getPosts } from '@/lib/get-posts'
+import { ClickableCard } from '@/components/ui/clickable-card'
 
 export const metadata = {
     title: 'Blog',
@@ -21,34 +21,34 @@ export default async function BlogPage() {
             {posts.length === 0 ? (
                 <p className="text-muted-foreground">まだ記事がありません。</p>
             ) : (
-                <div className="space-y-6">
+                <div className="space-y-4">
                     {posts.map((post) => (
-                        <article
+                        <ClickableCard
                             key={post.route}
-                            className="group"
+                            href={post.route}
+                            padding="none"
+                            className="flex flex-col gap-1 p-5"
                         >
-                            <Link href={post.route} className="block">
-                                <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 sm:gap-4">
-                                    <h2 className="text-lg font-medium group-hover:underline">
-                                        {post.frontMatter?.title || post.title}
-                                    </h2>
-                                    {post.frontMatter?.date && (
-                                        <time className="text-sm text-muted-foreground shrink-0">
-                                            {new Date(post.frontMatter.date).toLocaleDateString('ja-JP', {
-                                                year: 'numeric',
-                                                month: 'long',
-                                                day: 'numeric',
-                                            })}
-                                        </time>
-                                    )}
-                                </div>
-                                {post.frontMatter?.description && (
-                                    <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
-                                        {post.frontMatter.description}
-                                    </p>
+                            <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 sm:gap-4">
+                                <h2 className="text-lg font-medium group-hover:underline">
+                                    {post.frontMatter?.title || post.title}
+                                </h2>
+                                {post.frontMatter?.date && (
+                                    <time className="text-sm text-muted-foreground shrink-0">
+                                        {new Date(post.frontMatter.date).toLocaleDateString('ja-JP', {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric',
+                                        })}
+                                    </time>
                                 )}
-                            </Link>
-                        </article>
+                            </div>
+                            {post.frontMatter?.description && (
+                                <p className="text-sm text-muted-foreground line-clamp-2">
+                                    {post.frontMatter.description}
+                                </p>
+                            )}
+                        </ClickableCard>
                     ))}
                 </div>
             )}
