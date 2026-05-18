@@ -26,14 +26,6 @@ export function SiteFooter() {
                     >
                         お問い合わせ
                     </Link>
-                    <Link
-                        href="https://x.com/tanaka101com"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hover:text-foreground transition-colors"
-                    >
-                        X (Twitter)
-                    </Link>
                 </div>
             </div>
         </footer>
