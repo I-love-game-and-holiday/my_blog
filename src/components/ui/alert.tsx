@@ -1,7 +1,7 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
-import { TipsAndUpdates as TipsAndUpdatesIcon } from '@mui/icons-material'
+import { Lightbulb } from 'lucide-react'
 
 const alertVariants = cva(
   "relative my-4 rounded-lg border-l-4 p-4",
@@ -37,7 +37,7 @@ const titleMap = {
 const iconMap = {
   default: "💡",
   tip: "💡",
-  note: null, // Material-UIアイコンを使用
+  note: null, // Lucideアイコンを使用
   warning: "⚠️",
   important: "❗",
 }
@@ -71,7 +71,7 @@ function Alert({
         {!hideIcon && (
           <div className="flex-shrink-0" aria-hidden="true">
             {currentVariant === "note" ? (
-              <TipsAndUpdatesIcon className="h-2.5 w-2.5" />
+              <Lightbulb className="h-2.5 w-2.5" />
             ) : (
               <span className="text-xl leading-none mt-0.5">{icon}</span>
             )}
