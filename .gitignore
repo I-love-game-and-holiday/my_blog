@@ -4,6 +4,7 @@ node_modules
 _pagefind/
 /.env
 next-env.ts
+tsconfig.tsbuildinfo
 
 # 草案ディレクトリ
 drafts/

@@ -1,5 +1,7 @@
 # tanaka101
 
+[![CI](https://github.com/I-love-game-and-holiday/my_blog/actions/workflows/ci.yml/badge.svg)](https://github.com/I-love-game-and-holiday/my_blog/actions/workflows/ci.yml)
+
 Progate を終えた方がwebを学習できるサイト
 
 フロントエンド領域の学習と継続的なアウトプットを目的に運用しています。
