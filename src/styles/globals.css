@@ -202,6 +202,16 @@
     @apply mb-2;
 }
 
+/* not-prose配下ではprose側のリストスタイル（list-disc等）を打ち消す */
+.not-prose ul,
+.not-prose ol {
+    @apply list-none m-0 pl-0;
+}
+
+.not-prose li {
+    @apply m-0;
+}
+
 .prose code {
     @apply bg-muted px-1.5 py-0.5 rounded text-sm font-mono;
 }
