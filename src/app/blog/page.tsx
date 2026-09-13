@@ -43,11 +43,6 @@ export default async function BlogPage() {
                                     </time>
                                 )}
                             </div>
-                            {post.frontMatter?.description && (
-                                <p className="text-sm text-muted-foreground line-clamp-2">
-                                    {post.frontMatter.description}
-                                </p>
-                            )}
                         </ClickableCard>
                     ))}
                 </div>

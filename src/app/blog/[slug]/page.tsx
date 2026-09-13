@@ -3,6 +3,7 @@ import { getPostSlugs, getPosts } from '@/lib/get-posts'
 import { getPostContent } from '@/lib/mdx'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import { BlogToc } from '@/components/content/blog-toc'
 
 type PageParams = {
     slug: string
@@ -36,7 +37,7 @@ export default async function BlogPostPage(props: PageProps) {
         notFound()
     }
 
-    const { metadata, content } = result
+    const { metadata, content, headings } = result
 
     return (
         <div className="container py-12">
@@ -70,6 +71,7 @@ export default async function BlogPostPage(props: PageProps) {
                         </p>
                     )}
                 </header>
+                <BlogToc headings={headings} />
                 {content}
             </article>
         </div>
