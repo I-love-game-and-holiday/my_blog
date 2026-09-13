@@ -76,6 +76,8 @@ export async function getPostContent(slug: string) {
     const fileContent = fs.readFileSync(filePath, 'utf-8')
     const { data, content } = matter(fileContent)
 
+    const headings = extractHeadings(content)
+
     const { content: mdxContent } = await compileMDX({
         source: content,
         components: mdxComponents,
@@ -91,6 +93,7 @@ export async function getPostContent(slug: string) {
     return {
         metadata: data,
         content: mdxContent,
+        headings,
         rawContent: content,
     }
 }

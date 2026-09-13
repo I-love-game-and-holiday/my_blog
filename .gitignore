@@ -11,3 +11,6 @@ next-env.d.ts
 
 # 草案ディレクトリ
 drafts/
+
+# Claude Code のローカル個人設定
+.claude/settings.local.json
