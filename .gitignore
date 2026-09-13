@@ -6,6 +6,9 @@ _pagefind/
 next-env.ts
 tsconfig.tsbuildinfo
 
+# typescript
+next-env.d.ts
+
 # 草案ディレクトリ
 drafts/
 
