@@ -1,0 +1,153 @@
+---
+title: "dependabotを導入してバージョン更新を自動化してみた"
+date: "2026-09-14"
+description: "今まで、バージョン更新を手動でしていましたが、忙しくて放置しても問題ないように自動化してみました"
+tags: []
+---
+
+
+## dependabotとは
+
+
+<ContentImage
+  src="/blog/dependabot/dependabot-icon.jpg"
+  alt="dependabotのアイコン"
+  caption=""
+  width={500}
+  height={450}
+/>
+
+- dependabotはGitHubが公式に提供するサービス
+- リポジトリ内の依存関係の修正を容易にするサービス
+    1. 依存関係内の脆弱性を検知してアラートする
+    2. 既知の脆弱性を持つ依存関係を修正版へ更新するプルリクエストを自動作成する
+    3. 依存関係を最新の状態に保つためのプルリクエストを自動作成する
+    >[Dependabot クイックスタート ガイド](https://docs.github.com/ja/code-security/tutorials/secure-your-dependencies/dependabot-quickstart#dependabot-%E3%81%AE%E6%A6%82%E8%A6%81)
+
+今回は、この3つ目の機能とgithub actionsを組み合わせて、バージョン更新の自動化を目指します。
+
+## dependabotを導入する
+
+バージョン更新を行うプルリクエストを作成する場合はWeb上で操作は不要で、
+プロジェクトのルートに`.github/dependabot.yml`を置くだけでよいです。
+
+<CollapsibleCode title="dependabot.yml" defaultOpen={true} >
+```yml
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly" #毎週実行
+    open-pull-requests-limit: 10 # 同時に作成できるプルリクは10個まで
+```
+</CollapsibleCode>
+
+## プルリクエストを自動承認するgithub actionsを作成する
+
+github actionsはgithub上の特定の条件(pushなど)を満たした際に、処理を自動実行する仕組みです。
+dependabot自身がマージまで行うわけではないので、マージの自動化を行うにはgithub actionsと併用します。
+
+個人開発なので、メジャーバージョンアップ以外は全自動でマージを行い、メジャーバージョンアップは自動マージをしない方針で
+ymlを作りました。
+
+<CollapsibleCode title=".github/workflows/dependabot-auto-merge.yml" defaultOpen={true} >
+```yml
+name: Dependabot auto-merge
+
+on: pull_request
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dependabotのメタデータを取得
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: patch/minor更新のみ自動マージを有効化
+        if: |
+          steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
+          steps.metadata.outputs.update-type == 'version-update:semver-minor'
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+</CollapsibleCode>
+
+`if: github.actor == 'dependabot[bot]'`
+
+上記で、プルリクエストの作成者がbotの場合はマージしてよいかを判定します。
+githubはこの利用方法について、詳しく解説しています。
+
+>[GitHub ActionsでのDependabotの自動化](https://docs.github.com/ja/code-security/tutorials/secure-your-dependencies/automate-dependabot-with-actions)
+
+
+## テストを通過したらマージを許可するルールの追加
+
+このブログは、型チェックなどをしてからデプロイするようにしています。
+この型チェックを通過した場合にdependabotのマージを許可するルールを追加します。
+
+ここで使用している型チェックやテストのjob名は`build`と宣言しています。
+
+### Rulesetsを追加する
+
+リポジトリの設定画面より、Rulesetsを追加します。
+<ContentImage
+  src="/blog/dependabot/github-rulesets-1.jpg"
+  alt="githubの設定画面(ルールセット)"
+  caption=""
+/>
+### Require status checks to passを設定する
+`Require status checks to pass`は指定したステータスチェック（CIなど）が成功していないと、そのブランチへのマージを禁止するという意味です。
+
+<ContentImage
+  src="/blog/dependabot/github-rulesets-2.jpg"
+  alt="githubの設定画面(ルールセットの詳細)"
+  caption=""
+/>
+
+ここで私が使用している、github actionsのjobである`build`を指定します。
+バージョン更新で型エラーや`npm run build`に失敗したら、マージを停止してくれるようになります。
+
+<small>手打ちで`build`と入力するとjob完了のステータスを正しく検知できず、全てのプルリクが止まってしまいました。
+検索欄に出てくる候補を押下する必要があるようです。なんとなく、環境変数や参照する値って手打ちすることが多い印象があって、ちょっとハマりかけました。</small>
+
+## dependabot.ymlをリモートにプッシュ
+
+リモートリポジトリにymlを上げると自動で依存関係を調査してくれます。
+そして古くなった依存関係を更新するプルリクエストの作成＆マージまで完了してくれます！
+
+これはとても便利ですね、もう少し早くやっておけばよかったです。
+
+<ContentImage
+  src="/blog/dependabot/github-rulesets-3.jpg"
+  alt="マイナーバージョンアップのプルリクエスト"
+  caption=""
+/>
+
+肝心のメジャーバージョンアップは...
+
+<ContentImage
+  src="/blog/dependabot/github-rulesets-4.png"
+  alt="メジャーバージョンアップのプルリクエスト"
+  caption=""
+/>
+
+しっかり止まってますね。
+メジャーバージョンアップは適宜調べて自分でマージするか判断するようにしていく運用ができそうです。
+
+## まとめ
+
+今回は、dependabotを利用してブログで利用しているライブラリや依存関係の更新を自動化しました。
+ステータスチェックのjob名は手打ちせず、検索候補から選択するようにしましょう。
+
+書きたい記事溜まっているので、どんどん書いていきたいですね。ではまた。
