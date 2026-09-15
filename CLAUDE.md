@@ -101,6 +101,29 @@ npm run start
 
 ---
 
+## ブランチ命名規約
+
+`{変更種別}/{内容}` 形式とする。コンテンツ（`content/` 配下）に関する変更は `{変更種別}/{コンテンツ種別}/{内容}` のように対象を挟む。個人開発のため厳密な運用はせず、目安として使う。
+
+**変更種別**
+
+| 種別 | 用途 |
+|------|------|
+| `feature/` | 新機能・新規追加 |
+| `fix/` | バグ修正 |
+| `chore/` | 設定変更・雑務 |
+| `ci/` | CI/CD設定 |
+
+**コンテンツ種別**（対象が `content/` 配下の場合に挟む）: `blog` / `learn` / `guides` / `dictionary`
+
+例:
+- `feature/blog/dependabot-intro`（ブログ記事の新規追加）
+- `fix/learn/react-basics-typo`（学習コースの誤字修正）
+- `chore/cleanup-config`（コンテンツ以外の雑務）
+- `ci/dependabot-auto-merge`（CI設定）
+
+---
+
 ## コンテンツ作成
 
 ### ブログ記事
