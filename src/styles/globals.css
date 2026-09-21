@@ -95,6 +95,37 @@
 }
 
 /* ============================================
+ * 永続化スライドパネル（コンテンツサイドバー・左）
+ *
+ * 開閉状態は <html data-content-sidebar="closed"> で決める。
+ * hydration前のインラインスクリプトが属性を付与するため、
+ * 初回描画から正しい状態になり、開→閉のアニメーションが起きない。
+ * ============================================ */
+[data-slide-panel='content-sidebar'][data-part='panel'] {
+    translate: 0 0;
+}
+
+[data-slide-panel='content-sidebar'][data-part='trigger'] {
+    pointer-events: none;
+}
+
+[data-slide-panel='content-sidebar'][data-part='indicator'] {
+    opacity: 0;
+}
+
+html[data-content-sidebar='closed'] [data-slide-panel='content-sidebar'][data-part='panel'] {
+    translate: -100% 0;
+}
+
+html[data-content-sidebar='closed'] [data-slide-panel='content-sidebar'][data-part='trigger'] {
+    pointer-events: auto;
+}
+
+html[data-content-sidebar='closed'] [data-slide-panel='content-sidebar'][data-part='indicator'] {
+    opacity: 1;
+}
+
+/* ============================================
  * Fluid Utilities (Layer 3)
  *
  * breakpoint(md:, sm:等)を使わずに

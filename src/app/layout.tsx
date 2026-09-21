@@ -5,6 +5,7 @@ import { SiteHeader } from '@/components/layout/site-header'
 import { SiteFooter } from '@/components/layout/site-footer'
 import { ThemeProvider } from '@/components/theme-provider'
 import { CourseProgressProvider } from '@/contexts/course-progress-context'
+import { CONTENT_SIDEBAR_INIT_SCRIPT } from '@/lib/content-sidebar-state'
 import { Metadata } from 'next'
 import { Inter, Nunito } from 'next/font/google'
 
@@ -39,6 +40,7 @@ export default function RootLayout({
         <html lang="ja" className={`${inter.className} ${nunito.variable}`} suppressHydrationWarning>
             <Head backgroundColor={{ dark: '#171717', light: '#ffffff' }} />
             <body className="min-h-screen flex flex-col">
+                <script dangerouslySetInnerHTML={{ __html: CONTENT_SIDEBAR_INIT_SCRIPT }} />
                 <ThemeProvider>
                     <CourseProgressProvider>
                         <SiteHeader />
