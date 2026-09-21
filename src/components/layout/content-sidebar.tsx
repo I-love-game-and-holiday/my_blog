@@ -7,6 +7,7 @@ import { SlidePanel } from './slide-panel'
 import { MobileCollapseSection } from './mobile-collapse-section'
 import { useCourseProgress } from '@/contexts/course-progress-context'
 import { COMPLETED_CIRCLE_BG, PROGRESS_BAR_BG } from '@/lib/constants'
+import { CONTENT_SIDEBAR_ATTRIBUTE, CONTENT_SIDEBAR_STORAGE_KEY } from '@/lib/content-sidebar-state'
 
 interface TableOfContentsItem {
     id: string
@@ -65,7 +66,22 @@ export function ContentSidebar({
     goals = [],
     courseSlug,
 }: ContentSidebarProps) {
-    const [isOpen, setIsOpen] = useState(true)
+    // モバイルの開閉はページごとに初期化する（保存対象はデスクトップのみ）
+    const [isMobileOpen, setIsMobileOpen] = useState(true)
+
+    // デスクトップの開閉は <html> のdata属性（CSSが参照）とLocalStorageで管理する
+    const handleDesktopOpenChange = (open: boolean) => {
+        if (open) {
+            document.documentElement.removeAttribute(CONTENT_SIDEBAR_ATTRIBUTE)
+        } else {
+            document.documentElement.setAttribute(CONTENT_SIDEBAR_ATTRIBUTE, 'closed')
+        }
+        try {
+            localStorage.setItem(CONTENT_SIDEBAR_STORAGE_KEY, String(open))
+        } catch {
+            // 書き込み失敗時は無視
+        }
+    }
 
     const content = (
         <ContentSidebarBody
@@ -87,8 +103,8 @@ export function ContentSidebar({
             <MobileCollapseSection
                 title={title}
                 icon={<BookOpen className="h-4 w-4" />}
-                isOpen={isOpen}
-                onOpenChange={setIsOpen}
+                isOpen={isMobileOpen}
+                onOpenChange={setIsMobileOpen}
             >
                 {content}
             </MobileCollapseSection>
@@ -96,8 +112,8 @@ export function ContentSidebar({
             {/* デスクトップ */}
             <SlidePanel
                 position="left"
-                isOpen={isOpen}
-                onOpenChange={setIsOpen}
+                persistedId="content-sidebar"
+                onOpenChange={handleDesktopOpenChange}
                 title={title}
             >
                 {content}

@@ -77,6 +77,7 @@ blog/
 │   │   ├── get-guides.ts  # ガイド取得
 │   │   ├── get-dictionary.ts # 用語取得
 │   │   ├── mdx.ts       # MDXコンパイル
+│   │   ├── content-sidebar-state.ts # サイドバー開閉状態の保存キー・復元スクリプト
 │   │   └── highlight.ts # コードハイライト（shiki）
 │   └── styles/          # グローバルスタイル
 ├── public/              # 静的ファイル
@@ -318,6 +319,23 @@ article-layout-client.tsx ← Client: Provider・インタラクション
 
 - ページファイル（`page.tsx`）は原則 `async` サーバーコンポーネント
 - `'use client'` が必要な部分だけ `-client.tsx` に切り出す
+
+### 静的生成ページでのUI状態の復元（ちらつき防止）
+
+learn/guides/blog のページは `generateStaticParams` で静的生成されるため、サーバーはユーザー固有の状態（LocalStorage等）を知れない。HTMLは常に初期状態で出力される。
+
+**やってはいけない**: マウント後（`useEffect` / `useLayoutEffect`）にLocalStorageを読んでstateを書き換える。初期状態で描画された後に切り替わるため、transitionのあるUIは開閉アニメーションとして見えてしまう。また `cookies()` は静的生成では効かない（`force-dynamic` にすると静的配信を失う）。
+
+**採用している方式**（コンテンツサイドバーの開閉）:
+
+1. `src/app/layout.tsx` の `<body>` 先頭に、描画前に実行されるインラインスクリプトを置く（`async` なしのため、後続の要素が作られる前に実行される）
+2. スクリプトがLocalStorageを読み、`<html>` にdata属性（`data-content-sidebar="closed"`）を付ける
+3. 見た目は `globals.css` の属性セレクタ（`永続化スライドパネル` セクション）が決める。Reactのstateは見た目に使わない
+4. ユーザー操作時のみ、data属性とLocalStorageを更新する（このときだけtransitionが働く）
+
+- 保存キー・属性名・スクリプトは `src/lib/content-sidebar-state.ts` に集約する
+- `SlidePanel` に `persistedId` を渡すと、この方式で動く（現状 `content-sidebar` のCSSのみ定義済み）
+- 別のパネルに適用する場合は、`globals.css` に同じ形のセレクタを追加し、スクリプトも対応させる
 
 ### エラーハンドリング
 
