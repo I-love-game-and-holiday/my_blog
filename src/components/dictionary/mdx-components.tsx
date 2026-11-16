@@ -114,7 +114,7 @@ function processChildren(
 
     const element = children as ReactElement<ElementProps>
 
-    // Skip processing for certain elements
+    // コード・リンク・ボタンの中や、すでに用語リンクになっている箇所には用語リンクを付けない
     const skipTags = ['pre', 'code', 'a', 'button', 'DictionaryTerm']
     if (typeof element.type === 'string' && skipTags.includes(element.type)) {
         return children
@@ -129,12 +129,11 @@ function processChildren(
         processChildren(child, findTerms, `${keyPrefix}-${index}`)
     )
 
-    // Clone element with processed children
-    const { children: _, ...restProps } = element.props
+    // 子要素を処理済みのものに差し替えた要素を作る（children 以外のpropsはそのまま引き継ぐ）
     return {
         ...element,
         props: {
-            ...restProps,
+            ...element.props,
             children: processedChildren,
         },
     }

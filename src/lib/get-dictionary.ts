@@ -86,24 +86,32 @@ export async function getDictionaryEntries(): Promise<DictionaryEntry[]> {
  * 本文で使えるコンポーネントは DICTIONARY_MDX_COMPONENTS のみ（記事より少ない）。
  * 理由は compile-mdx.ts のコメントを参照。
  *
+ * 読み込みやコンパイルに失敗した場合も、例外は投げずに null を返す（エラーはログに出す）。
+ * 用語1件の書き間違いで、用語を使っている全記事のビルドが止まらないようにするため。
+ *
  * @param slug ファイル名（拡張子なし）
- * @returns ファイルが存在しない場合は null
+ * @returns ファイルが存在しない・読み込みに失敗した場合は null
  */
 export async function getDictionaryEntry(slug: string): Promise<DictionaryEntryWithContent | null> {
-    const filePath = path.join(DICTIONARY_DIR, `${slug}.mdx`)
+    try {
+        const filePath = path.join(DICTIONARY_DIR, `${slug}.mdx`)
 
-    if (!fs.existsSync(filePath)) {
+        if (!fs.existsSync(filePath)) {
+            return null
+        }
+
+        const fileContent = fs.readFileSync(filePath, 'utf-8')
+        const { data, content } = matter(fileContent)
+
+        const mdxContent = await compileMdxSource(content, DICTIONARY_MDX_COMPONENTS)
+
+        return {
+            ...toDictionaryEntry(slug, data),
+            content: mdxContent,
+        }
+    } catch (error) {
+        console.error(`[getDictionaryEntry] Error (${slug}):`, error)
         return null
-    }
-
-    const fileContent = fs.readFileSync(filePath, 'utf-8')
-    const { data, content } = matter(fileContent)
-
-    const mdxContent = await compileMdxSource(content, DICTIONARY_MDX_COMPONENTS)
-
-    return {
-        ...toDictionaryEntry(slug, data),
-        content: mdxContent,
     }
 }
 

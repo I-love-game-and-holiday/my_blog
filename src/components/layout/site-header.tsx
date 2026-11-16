@@ -33,7 +33,7 @@ export function SiteHeader() {
                     <span className="font-bold text-xl">tanaka101</span>
                 </Link>
 
-                {/* Desktop nav (md and above) */}
+                {/* PC用ナビゲーション（md以上） */}
                 <nav className="hidden md:flex items-center space-x-6">
                     <ThemeToggle />
                     {navigation.map((item) => (
@@ -51,7 +51,7 @@ export function SiteHeader() {
                     ))}
                 </nav>
 
-                {/* Mobile controls (below md) */}
+                {/* スマホ用の操作ボタン（md未満） */}
                 <div className="flex items-center gap-2 md:hidden">
                     <ThemeToggle />
                     <button
@@ -69,7 +69,7 @@ export function SiteHeader() {
                 </div>
             </div>
 
-            {/* Mobile dropdown menu */}
+            {/* スマホ用のドロップダウンメニュー */}
             {isMenuOpen && (
                 <nav className="md:hidden border-t border-border bg-background">
                     <div className="container py-4 space-y-1">

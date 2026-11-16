@@ -26,19 +26,19 @@
     --color-success: var(--success);
     --color-success-foreground: var(--success-foreground);
 
-    /* Layout */
+    /* レイアウト */
     --header-height: 3.5rem;
     --container-max-width: 56rem;
     --content-max-width: 42rem;
 
-    /* Z-index scale */
+    /* 重なり順（z-index）の段階 */
     --z-base: 10;
     --z-panel-trigger: 40;
     --z-panel: 50;
     --z-overlay: 50;
     --z-header: 60;
 
-    /* Code block colors */
+    /* コードブロックの色 */
     --color-code-bg: #1a1a1a;
     --color-code-fg: #e5e5e5;
     --color-code-highlight: #6366f1;
@@ -136,7 +136,7 @@ html[data-content-sidebar='closed'] [data-slide-panel='content-sidebar'][data-pa
  *   推奨値 = 最小値 + (最大値 - 最小値) の割合を vw で表現
  * ============================================ */
 
-/* --- Fluid Typography --- */
+/* --- 可変フォントサイズ --- */
 
 /* 記事ページタイトル、CTAの見出し等 (24px → 30px) */
 .text-page-title {
@@ -150,7 +150,7 @@ html[data-content-sidebar='closed'] [data-slide-panel='content-sidebar'][data-pa
     line-height: 1.5;
 }
 
-/* --- Fluid Spacing --- */
+/* --- 可変余白 --- */
 
 /* ホームページのヒーローセクション余白 (64px → 96px) */
 .py-section-hero {
@@ -169,7 +169,7 @@ html[data-content-sidebar='closed'] [data-slide-panel='content-sidebar'][data-pa
     padding: clamp(2rem, 1.75rem + 1vw, 2.5rem);
 }
 
-/* --- Fluid Sizing --- */
+/* --- 可変サイズ --- */
 
 /* ヒーローアイコン (96px → 128px) */
 .size-hero-icon {
@@ -177,7 +177,12 @@ html[data-content-sidebar='closed'] [data-slide-panel='content-sidebar'][data-pa
     height: clamp(6rem, 5rem + 4vw, 8rem);
 }
 
-/* --- Typography --- */
+/* 辞書スライドパネルの幅 (320px → 480px)。パネルは lg 以上でのみ表示される（画面幅1024px→1536pxで変化） */
+.w-panel-dictionary {
+    width: clamp(20rem, 31.25vw, 30rem);
+}
+
+/* --- 文字組み --- */
 .prose {
     @apply max-w-none;
 }
@@ -259,7 +264,7 @@ html[data-content-sidebar='closed'] [data-slide-panel='content-sidebar'][data-pa
     @apply border-l-4 border-border pl-4 italic my-4 text-muted-foreground;
 }
 
-/* --- Typography Small --- */
+/* --- 文字組み（小） --- */
 .prose-sm {
     @apply text-sm;
 }
@@ -292,7 +297,7 @@ html[data-content-sidebar='closed'] [data-slide-panel='content-sidebar'][data-pa
     @apply mb-1;
 }
 
-/* --- Code Highlighting --- */
+/* --- コードハイライト --- */
 pre code.nextra-code > span[data-highlighted-line] {
     display: block;
     background: color-mix(in srgb, var(--color-code-highlight) 10%, transparent);
@@ -308,7 +313,7 @@ pre code.nextra-code > span[data-highlighted-line] {
     padding-inline: clamp(1.3rem, 0.5rem + 2vw, 2rem);
 }
 
-/* --- Dictionary Term --- */
+/* --- 辞書用語リンク --- */
 .dictionary-term {
     @apply inline cursor-pointer text-inherit;
     text-decoration: underline;
@@ -327,12 +332,12 @@ pre code.nextra-code > span[data-highlighted-line] {
     text-decoration-color: var(--primary);
 }
 
-/* --- Figure Caption --- */
+/* --- 図のキャプション --- */
 .figure-caption {
     @apply mt-2 text-center text-sm text-muted-foreground;
 }
 
-/* --- Table --- */
+/* --- 表 --- */
 .content-table {
     @apply w-full text-sm;
     border-collapse: separate;
@@ -371,7 +376,7 @@ pre code.nextra-code > span[data-highlighted-line] {
     @apply border-b border-border;
 }
 
-/* --- Summary List --- */
+/* --- まとめリスト --- */
 /* レッスン / ガイドの末尾まとめ用リストコンポーネント */
 .summary-list {
     @apply my-6 rounded-lg border border-green-200 bg-green-50/50 p-4 dark:border-green-800 dark:bg-green-950/20;
@@ -394,7 +399,7 @@ pre code.nextra-code > span[data-highlighted-line] {
     @apply rounded bg-green-100 px-1 py-0.5 text-xs font-mono text-green-800 dark:bg-green-900/40 dark:text-green-300;
 }
 
-/* --- Code Block --- */
+/* --- コードブロック --- */
 .code-block-header {
     @apply border-b border-border;
 }
@@ -430,7 +435,7 @@ pre code.nextra-code > span[data-highlighted-line] {
     min-height: 3rem;
 }
 
-/* --- Responsive Preview Slider --- */
+/* --- レスポンシブプレビューのスライダー --- */
 .responsive-preview-slider {
     -webkit-appearance: none;
     appearance: none;

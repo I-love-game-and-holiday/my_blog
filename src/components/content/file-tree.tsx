@@ -83,7 +83,7 @@ function FileTreeFile({ name, active = false }: FileTreeFileProps) {
                 active && 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
             )}
         >
-            <span className="w-3.5" /> {/* Spacer for alignment with folder chevron */}
+            <span className="w-3.5" /> {/* フォルダの開閉アイコンと位置を揃えるための余白 */}
             <File className={cn('h-4 w-4', active ? 'text-blue-500' : 'text-muted-foreground')} />
             <span className={cn(active ? 'font-medium' : 'text-foreground')}>{name}</span>
             {active && (
@@ -93,7 +93,7 @@ function FileTreeFile({ name, active = false }: FileTreeFileProps) {
     )
 }
 
-// Named exports for MDX usage
+// MDXから <FileTree> などの名前で使えるように公開する
 export { FileTreeRoot as FileTree }
 export { FileTreeFolder }
 export { FileTreeFile }

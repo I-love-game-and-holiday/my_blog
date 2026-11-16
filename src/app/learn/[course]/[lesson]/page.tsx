@@ -65,7 +65,7 @@ export default async function LessonPage(props: PageProps) {
     const dictionaryEntries = await getDictionaryEntries()
     const pageTerms = findDictionaryTermsInContent(rawContent, dictionaryEntries)
 
-    // Find current lesson index and navigation
+    // 現在のレッスンの位置と、前後のレッスンを求める
     const currentIndex = course.lessons.findIndex(l => l.slug === params.lesson)
     const prevLesson = currentIndex > 0 ? course.lessons[currentIndex - 1] : null
     const nextLesson = currentIndex < course.lessons.length - 1 ? course.lessons[currentIndex + 1] : null
@@ -85,7 +85,7 @@ export default async function LessonPage(props: PageProps) {
                 {/* 進捗トラッカー */}
                 <LessonViewTracker courseSlug={params.course} lessonSlug={params.lesson} />
 
-                {/* Course sidebar (left) */}
+                {/* コースのサイドバー（左） */}
                 <ContentSidebar
                     title="コース内容"
                     parentRoute={course.route}
@@ -99,7 +99,7 @@ export default async function LessonPage(props: PageProps) {
                     courseSlug={params.course}
                 />
 
-                {/* Dictionary sidebar (right) */}
+                {/* 辞書のサイドバー（右） */}
                 <DictionarySidebar pageTerms={pageTerms} />
 
 
@@ -120,7 +120,7 @@ export default async function LessonPage(props: PageProps) {
                     </MdxContentWrapper>
                 </article>
 
-                {/* Navigation */}
+                {/* 前後のレッスンへのナビゲーション */}
                 <LessonNavigation
                     courseSlug={params.course}
                     currentLessonSlug={params.lesson}

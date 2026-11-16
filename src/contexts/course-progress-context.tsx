@@ -37,7 +37,7 @@ const DEFAULT_COURSE_PROGRESS: CourseProgressData = {
 }
 
 // ============================================================
-// Context
+// コンテキスト
 // ============================================================
 
 const CourseProgressContext = createContext<CourseProgressContextValue | null>(null)
@@ -131,8 +131,10 @@ export function CourseProgressProvider({ children }: CourseProgressProviderProps
 
     const resetCourseProgress = useCallback((courseSlug: string) => {
         setProgressMap(prev => {
-            const { [courseSlug]: _, ...rest } = prev
-            return rest
+            // 元のstateは書き換えず、コピーからこのコースの進捗だけを消す
+            const next = { ...prev }
+            delete next[courseSlug]
+            return next
         })
     }, [])
 

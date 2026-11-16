@@ -61,7 +61,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         },
     ]
 
-    // Blog posts
+    // ブログ記事
     const posts = await getPosts()
     const blogEntries: MetadataRoute.Sitemap = posts.map((post) => ({
         url: `${baseUrl}${post.route}`,
@@ -70,7 +70,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.7,
     }))
 
-    // Learn courses and lessons
+    // 学習コースとレッスン
     const courses = await getCourses()
     const learnEntries: MetadataRoute.Sitemap = []
 
@@ -92,7 +92,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         }
     }
 
-    // Guides and sections
+    // ガイドとセクション
     const guides = await getGuides()
     const guideEntries: MetadataRoute.Sitemap = []
 
@@ -114,7 +114,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         }
     }
 
-    // Dictionary entries (exclude stub pages)
+    // 用語集（中身の薄いページは除く）
     // memo : Google広告で価値が低いと審査される可能性のある辞書記事をサイトマップから除外する
     const stubSlugs = new Set(['cli', 'editor', 'nodejs', 'typescript'])
     const dictionaryEntries = await getDictionaryEntries()
