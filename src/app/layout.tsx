@@ -3,7 +3,7 @@ import { Analytics } from "@vercel/analytics/next"
 import '@/styles/globals.css'
 import { SiteHeader } from '@/components/layout/site-header'
 import { SiteFooter } from '@/components/layout/site-footer'
-import { ThemeProvider } from '@/components/theme-provider'
+import { ThemeProvider } from '@/components/theme/theme-provider'
 import { CourseProgressProvider } from '@/contexts/course-progress-context'
 import { CONTENT_SIDEBAR_INIT_SCRIPT } from '@/lib/content-sidebar-state'
 import { Metadata } from 'next'

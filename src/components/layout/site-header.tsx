@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
-import { ThemeToggle } from '@/components/theme-toggle'
+import { ThemeToggle } from '@/components/theme/theme-toggle'
 
 const navigation = [
     { name: 'Learn', href: '/learn' },

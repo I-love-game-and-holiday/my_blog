@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { ArticleLayout } from '@/components/layout/article-layout'
 import { Breadcrumb } from '@/components/layout/breadcrumb'
-import { MdxContentWrapper } from '@/components/dictionary/mdx-components'
+import { TermAutoLink } from '@/components/dictionary/term-auto-link-client'
 import { ContentSidebar } from '@/components/layout/content-sidebar'
 import { DictionarySidebar } from '@/components/layout/dictionary-sidebar'
 import { LessonNavigation } from '@/components/content/lesson-navigation'
@@ -115,9 +115,9 @@ export default async function LessonPage(props: PageProps) {
                             </p>
                         )}
                     </header>
-                    <MdxContentWrapper dictionaryEntries={dictionaryEntries}>
+                    <TermAutoLink dictionaryEntries={dictionaryEntries}>
                         {content}
-                    </MdxContentWrapper>
+                    </TermAutoLink>
                 </article>
 
                 {/* 前後のレッスンへのナビゲーション */}

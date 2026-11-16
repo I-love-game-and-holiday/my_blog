@@ -139,12 +139,18 @@ function processChildren(
     }
 }
 
-type MdxContentWrapperProps = {
+type TermAutoLinkProps = {
     children: ReactNode
     dictionaryEntries: DictionaryEntry[]
 }
 
-export function MdxContentWrapper({ children, dictionaryEntries }: MdxContentWrapperProps) {
+/**
+ * 記事本文の中に出てくる辞書用語を探し、自動で用語リンク（DictionaryTerm）に置き換える
+ *
+ * 用語はページ表示時（クライアント側）に、React要素のツリーをたどって文字列部分から探す。
+ * learn / guides の記事ページで、コンパイル済みのMDX本文を包んで使う。
+ */
+export function TermAutoLink({ children, dictionaryEntries }: TermAutoLinkProps) {
     const findTerms = useMemo(
         () => createTermMatcher(dictionaryEntries),
         [dictionaryEntries]

@@ -64,10 +64,11 @@ blog/
 │   │   ├── robots.ts    # robots.txt生成
 │   │   └── rss.xml/     # RSSフィード
 │   ├── components/      # Reactコンポーネント
-│   │   ├── code/        # コード表示・プレイグラウンド
-│   │   ├── content/     # コンテンツ用コンポーネント
-│   │   ├── dictionary/  # 用語集コンポーネント
-│   │   ├── layout/      # レイアウトコンポーネント
+│   │   ├── code/        # コード表示・プレイグラウンド・OS切替（タブ・テーブル）
+│   │   ├── content/     # コンテンツ用コンポーネント（MDX内で使う部品・コースUI）
+│   │   ├── dictionary/  # 用語集コンポーネント（用語リンク・自動リンク・検索）
+│   │   ├── layout/      # レイアウトコンポーネント（ヘッダー・サイドバー・パンくず等）
+│   │   ├── theme/       # ダーク/ライトテーマ（Provider・切替ボタン）
 │   │   └── ui/          # shadcn/uiコンポーネント
 │   ├── contexts/        # React Contextプロバイダー
 │   ├── lib/             # ユーティリティ関数
@@ -79,8 +80,10 @@ blog/
 │   │   ├── get-dictionary.ts # 用語取得
 │   │   ├── compile-mdx.ts # MDXのコンパイル設定・MDXで使えるコンポーネント一覧
 │   │   ├── mdx.ts       # 記事1件分の本文読み込み（blog/learn/guides）
+│   │   ├── term-boundary.ts # 用語の自動リンクで使う単語境界の判定
 │   │   ├── content-sidebar-state.ts # サイドバー開閉状態の保存キー・復元スクリプト
-│   │   └── highlight.ts # コードハイライト（shiki）
+│   │   ├── highlight.ts # コードハイライト（shiki）
+│   │   └── utils.ts     # cn()（Tailwindクラスの結合。shadcn/ui 由来）
 │   └── styles/          # グローバルスタイル
 ├── public/              # 静的ファイル
 ```
@@ -180,7 +183,7 @@ MDXに書けるコンポーネントは `src/lib/compile-mdx.ts` に登録した
 | `CollapsibleCode` | 折りたたみできるコードブロック | `title`（既定 `"コード"`）, `defaultOpen`（既定 `false`）, `children` |
 | `OsCodeBlock` | Mac/Windowsで表示を切り替える単一コードブロック | `mac`, `windows`, `title`（省略可） |
 | `OsCommandTabs` | Mac/Windows切替の複数コマンド表示 | `commands`: `{ mac, windows, description? }[]` |
-| `OsTable` | Mac/Windows切替のテーブル（`components/os/os-table.tsx`） | - |
+| `OsTable` | Mac/Windows切替のテーブル | - |
 
 ````mdx
 <CollapsibleCode title="index.html" defaultOpen={false}>
@@ -449,7 +452,6 @@ try {
 | `.text-page-subtitle` | ホームのサブテキスト | 18px → 20px |
 | `.py-section-hero` | ヒーローセクション余白 | 64px → 96px |
 | `.p-card-cta` | CTAカード内パディング | 32px → 40px |
-| `.size-hero-icon` | ヒーローアイコン | 96px → 128px |
 | `.py-section-static` | About・Privacyなど静的ページの上下余白 | 64px → 96px |
 | `.w-panel-dictionary` | 辞書スライドパネルの幅（lg以上で表示） | 320px → 480px |
 

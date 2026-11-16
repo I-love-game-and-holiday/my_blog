@@ -171,12 +171,6 @@ html[data-content-sidebar='closed'] [data-slide-panel='content-sidebar'][data-pa
 
 /* --- 可変サイズ --- */
 
-/* ヒーローアイコン (96px → 128px) */
-.size-hero-icon {
-    width: clamp(6rem, 5rem + 4vw, 8rem);
-    height: clamp(6rem, 5rem + 4vw, 8rem);
-}
-
 /* 辞書スライドパネルの幅 (320px → 480px)。パネルは lg 以上でのみ表示される（画面幅1024px→1536pxで変化） */
 .w-panel-dictionary {
     width: clamp(20rem, 31.25vw, 30rem);
