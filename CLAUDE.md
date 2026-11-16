@@ -56,7 +56,6 @@ blog/
 │       └── {guide}/     # ガイドフォルダ（構成は learn と同じ）
 ├── src/
 │   ├── app/             # Next.js App Router
-│   │   ├── api/         # APIルート（dictionary等）
 │   │   ├── blog/        # ブログページ
 │   │   ├── dictionary/  # 用語集ページ
 │   │   ├── guides/      # ガイドページ
@@ -65,20 +64,26 @@ blog/
 │   │   ├── robots.ts    # robots.txt生成
 │   │   └── rss.xml/     # RSSフィード
 │   ├── components/      # Reactコンポーネント
-│   │   ├── code/        # コード表示・プレイグラウンド
-│   │   ├── content/     # コンテンツ用コンポーネント
-│   │   ├── dictionary/  # 用語集コンポーネント
-│   │   ├── layout/      # レイアウトコンポーネント
+│   │   ├── code/        # コード表示・プレイグラウンド・OS切替（タブ・テーブル）
+│   │   ├── content/     # コンテンツ用コンポーネント（MDX内で使う部品・コースUI）
+│   │   ├── dictionary/  # 用語集コンポーネント（用語リンク・自動リンク・検索）
+│   │   ├── layout/      # レイアウトコンポーネント（ヘッダー・サイドバー・パンくず等）
+│   │   ├── theme/       # ダーク/ライトテーマ（Provider・切替ボタン）
 │   │   └── ui/          # shadcn/uiコンポーネント
 │   ├── contexts/        # React Contextプロバイダー
 │   ├── lib/             # ユーティリティ関数
+│   │   ├── content-collection.ts # content/ 読み込みの共通処理（MDX一覧・order並べ替え・_meta.ts解析）
+│   │   ├── constants.ts # サイト全体の定数（SITE_URL, CODE_THEME, スタイル定数）
 │   │   ├── get-posts.ts # ブログ記事取得
 │   │   ├── get-courses.ts # コース取得
 │   │   ├── get-guides.ts  # ガイド取得
 │   │   ├── get-dictionary.ts # 用語取得
-│   │   ├── mdx.ts       # MDXコンパイル
+│   │   ├── compile-mdx.ts # MDXのコンパイル設定・MDXで使えるコンポーネント一覧
+│   │   ├── mdx.ts       # 記事1件分の本文読み込み（blog/learn/guides）
+│   │   ├── term-boundary.ts # 用語の自動リンクで使う単語境界の判定
 │   │   ├── content-sidebar-state.ts # サイドバー開閉状態の保存キー・復元スクリプト
-│   │   └── highlight.ts # コードハイライト（shiki）
+│   │   ├── highlight.ts # コードハイライト（shiki）
+│   │   └── utils.ts     # cn()（Tailwindクラスの結合。shadcn/ui 由来）
 │   └── styles/          # グローバルスタイル
 ├── public/              # 静的ファイル
 ```
@@ -166,6 +171,36 @@ tags:
    レッスン本文...
    ```
 
+### MDXで使えるコンポーネント
+
+MDXに書けるコンポーネントは `src/lib/compile-mdx.ts` に登録したものだけ。記事用（`ARTICLE_MDX_COMPONENTS`）と用語集用（`DICTIONARY_MDX_COMPONENTS`）の2種類があり、用語集用に登録したものは記事でも使える。
+
+#### コード表示用（`src/components/code/`）
+
+| コンポーネント | 用途 | 主なprops |
+|--------------|------|-----------|
+| `CopyableCode` | コピーボタン付きコードブロック（ヘッダーなし） | `children`: コードブロック |
+| `CollapsibleCode` | 折りたたみできるコードブロック | `title`（既定 `"コード"`）, `defaultOpen`（既定 `false`）, `children` |
+| `OsCodeBlock` | Mac/Windowsで表示を切り替える単一コードブロック | `mac`, `windows`, `title`（省略可） |
+| `OsCommandTabs` | Mac/Windows切替の複数コマンド表示 | `commands`: `{ mac, windows, description? }[]` |
+| `OsTable` | Mac/Windows切替のテーブル | - |
+
+````mdx
+<CollapsibleCode title="index.html" defaultOpen={false}>
+```html
+<!DOCTYPE html>
+```
+</CollapsibleCode>
+
+<OsCommandTabs
+  commands={[
+    { mac: "brew install node", windows: "winget install OpenJS.NodeJS", description: "インストール" },
+  ]}
+/>
+````
+
+新しいコード表示コンポーネントを作るときは、共通部品（`CodeBlockWrapper`: 外枠 / `CodeBlockHeader`: ヘッダー / `CodeBlockContent`: 本文 / `CopyButton`: コピー機能）を組み合わせ、`components/code/index.ts` からエクスポートし、`compile-mdx.ts` に登録する。
+
 ### コンテンツ文字数ガイドライン
 
 | 対象 | 目安 | 理由 |
@@ -248,6 +283,7 @@ tags:
 - インターフェースに `I` プレフィックスを付けない: `IPost` → `Post`
 - `_` プレフィックス/サフィックスを使用しない
 - default exportを使用しない（named exportのみ）
+  - 例外: Next.js が default export を要求するファイル（`page.tsx`, `layout.tsx`, `not-found.tsx`, `sitemap.ts`, `robots.ts` など）と、`content/` 配下の `_meta.ts`
 - 曖昧な略語を使用しない: `btn` → `button`, `msg` → `message`
 
 #### 略語の扱い
@@ -371,7 +407,7 @@ try {
 
 | 変数名 | 用途 | フォールバック |
 |--------|------|---------------|
-| `NEXT_PUBLIC_SITE_URL` | サイトURL（sitemap, RSS, robots等で使用） | `https://tanaka101.com` |
+| `NEXT_PUBLIC_SITE_URL` | サイトURL（sitemap, RSS, robots等で使用）。コードからは `constants.ts` の `SITE_URL` 経由で参照する | `https://tanaka101.com` |
 
 ---
 
@@ -396,6 +432,8 @@ try {
 
 **使用場所**: レイアウトコンポーネント（`site-header.tsx`等）やページファイルのグリッド定義。
 
+**例外**: フロー方向の切替と同時に、軸が変わる `gap` を切り替えるのはLayer 1として扱う（例: `flex-col gap-1 sm:flex-row sm:gap-4`）。縦並びと横並びで必要な間隔が違うだけで、値が連続的に変化するわけではないため。
+
 ### Layer 2: コンテナ層（@container）
 
 親のサイズに応じてコンポーネントが適応する。現在は未使用だが、サイドバー内ウィジェットなどコンテキスト依存のレイアウトに使う想定。
@@ -414,7 +452,8 @@ try {
 | `.text-page-subtitle` | ホームのサブテキスト | 18px → 20px |
 | `.py-section-hero` | ヒーローセクション余白 | 64px → 96px |
 | `.p-card-cta` | CTAカード内パディング | 32px → 40px |
-| `.size-hero-icon` | ヒーローアイコン | 96px → 128px |
+| `.py-section-static` | About・Privacyなど静的ページの上下余白 | 64px → 96px |
+| `.w-panel-dictionary` | 辞書スライドパネルの幅（lg以上で表示） | 320px → 480px |
 
 #### 新規トークン追加時のルール
 

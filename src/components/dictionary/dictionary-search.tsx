@@ -63,7 +63,7 @@ export function DictionarySearch({ entries }: DictionarySearchProps) {
         })
     }, [entries, query])
 
-    // Group entries by first character of reading (hiragana)
+    // 読み（ひらがな）の1文字目でグループ分けする
     const groupedEntries = useMemo(() => {
         return filteredEntries.reduce((acc, entry) => {
             const firstChar = entry.reading.charAt(0)

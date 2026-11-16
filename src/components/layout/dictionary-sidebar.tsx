@@ -72,7 +72,7 @@ export function DictionarySidebar({ pageTerms }: DictionarySidebarProps) {
                 isOpen={isPanelOpen}
                 onOpenChange={handlePanelOpenChange}
                 title="辞書"
-                width="lg:w-80 xl:w-96 2xl:w-120"
+                width="w-panel-dictionary"
             >
                 <DictionarySidebarBody
                     pageTerms={pageTerms}

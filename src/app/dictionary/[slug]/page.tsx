@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { getDictionaryEntry, getDictionarySlugs } from '@/lib/get-dictionary'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import { Breadcrumb } from '@/components/layout/breadcrumb'
 
 type PageParams = {
     slug: string
@@ -36,16 +37,13 @@ export default async function DictionaryEntryPage(props: PageProps) {
 
     return (
         <div className="container py-12">
-            {/* Breadcrumb */}
-            <nav className="text-sm text-muted-foreground mb-6">
-                <Link href="/dictionary" className="hover:text-foreground transition-colors">
-                    用語辞典
-                </Link>
-                <span className="mx-2">/</span>
-                <span className="text-foreground">
-                    {entry.term}
-                </span>
-            </nav>
+            {/* パンくずリスト */}
+            <Breadcrumb
+                items={[
+                    { label: '用語辞典', href: '/dictionary' },
+                    { label: entry.term },
+                ]}
+            />
 
             <article className="prose max-w-none">
                 <header className="mb-8 not-prose">

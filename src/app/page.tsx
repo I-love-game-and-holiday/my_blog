@@ -4,7 +4,7 @@ import { CONTENT_MAX_WIDTH } from '@/lib/constants'
 export default function HomePage() {
     return (
         <div className="container py-section-hero">
-            {/* Hero Section */}
+            {/* ヒーローセクション */}
             <section className="text-center mb-16">
                 <p className={`text-page-subtitle text-muted-foreground ${CONTENT_MAX_WIDTH} mx-auto`}>
                     基礎を学んだあなたが、<br className="md:hidden" />
@@ -12,7 +12,7 @@ export default function HomePage() {
                 </p>
             </section>
 
-            {/* Main CTA - Learn */}
+            {/* メインの導線: Learn */}
             <section className={`${CONTENT_MAX_WIDTH} mx-auto mb-6`}>
                 <Link
                     href="/learn"
@@ -32,7 +32,7 @@ export default function HomePage() {
                 </Link>
             </section>
 
-            {/* Secondary - Blog */}
+            {/* サブの導線: Blog */}
             <section className={`${CONTENT_MAX_WIDTH} mx-auto`}>
                 <Link
                     href="/blog"

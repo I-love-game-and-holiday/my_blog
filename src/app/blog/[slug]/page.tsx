@@ -1,9 +1,9 @@
-import Link from 'next/link'
 import { getPostSlugs, getPosts } from '@/lib/get-posts'
 import { getPostContent } from '@/lib/mdx'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { BlogToc } from '@/components/content/blog-toc'
+import { Breadcrumb } from '@/components/layout/breadcrumb'
 
 type PageParams = {
     slug: string
@@ -41,15 +41,12 @@ export default async function BlogPostPage(props: PageProps) {
 
     return (
         <div className="container py-12">
-            <nav className="text-sm text-muted-foreground mb-6">
-                <Link href="/blog" className="hover:text-foreground transition-colors">
-                    Blog
-                </Link>
-                <span className="mx-2">/</span>
-                <span className="text-foreground">
-                    {metadata?.title}
-                </span>
-            </nav>
+            <Breadcrumb
+                items={[
+                    { label: 'Blog', href: '/blog' },
+                    { label: metadata?.title },
+                ]}
+            />
 
             <article className="prose max-w-none">
                 <header className="mb-8 not-prose">

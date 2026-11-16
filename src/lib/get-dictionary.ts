@@ -1,36 +1,23 @@
+/**
+ * 用語集（content/dictionary/*.mdx）の読み込みと、本文中の用語の検出
+ *
+ * - 一覧（getDictionaryEntries）: frontmatter だけを読む軽い処理。検索や用語の自動リンクに使う
+ * - 1件の詳細（getDictionaryEntry）: 本文までコンパイルする重い処理。用語ページやモーダル表示に使う
+ */
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
-import { compileMDX } from 'next-mdx-remote/rsc'
-import rehypeSlug from 'rehype-slug'
-import rehypePrettyCode from 'rehype-pretty-code'
-import { ContentImage } from '@/components/content/content-image'
-import { ContentTable } from '@/components/content/content-table'
-import { BoxDiagram } from '@/components/content/box-diagram'
-import { FlowDiagram } from '@/components/content/flow-diagram'
-import { SectionSummary } from '@/components/content/section-summary'
-import { Callout } from '@/components/content/callout'
-import { OsCommandTabs, OsCodeBlock, CodePlayground } from '@/components/code'
-import { OsTable } from '@/components/os/os-table'
-import { LearnMore } from '@/components/content/learn-more'
+import { DICTIONARY_MDX_COMPONENTS, compileMdxSource } from '@/lib/compile-mdx'
+import { getMdxSlugs, readFrontMatter } from '@/lib/content-collection'
 import { isValidTermBoundary } from '@/lib/term-boundary'
 
-const mdxComponents = {
-    ContentImage,
-    ContentTable,
-    BoxDiagram,
-    FlowDiagram,
-    SectionSummary,
-    Callout,
-    OsCommandTabs,
-    OsCodeBlock,
-    OsTable,
-    LearnMore,
-    CodePlayground,
-}
-
+/** 用語集のMDXを置くディレクトリ */
 const DICTIONARY_DIR = path.join(process.cwd(), 'content', 'dictionary')
 
+/**
+ * 用語1件分のメタデータ（本文なし）
+ * term・reading・aliases は frontmatter が空のときの代わりの値を入れて、必ず値がある状態にしている
+ */
 export type DictionaryEntry = {
     slug: string
     term: string
@@ -44,96 +31,99 @@ export type DictionaryEntry = {
     }
 }
 
+/** 用語1件分のメタデータ + コンパイル済みの本文 */
 export type DictionaryEntryWithContent = DictionaryEntry & {
     content: React.ReactElement
 }
 
-export async function getDictionaryEntries(): Promise<DictionaryEntry[]> {
-    try {
-        if (!fs.existsSync(DICTIONARY_DIR)) {
-            return []
-        }
-
-        const files = fs.readdirSync(DICTIONARY_DIR).filter(file => file.endsWith('.mdx'))
-
-        const entries: DictionaryEntry[] = files.map(file => {
-            const slug = file.replace('.mdx', '')
-            const filePath = path.join(DICTIONARY_DIR, file)
-            const fileContent = fs.readFileSync(filePath, 'utf-8')
-            const { data } = matter(fileContent)
-
-            return {
-                slug,
-                term: data.term || slug,
-                reading: data.reading || data.term || slug,
-                aliases: data.aliases || [],
-                route: `/dictionary/${slug}`,
-                frontMatter: {
-                    term: data.term || slug,
-                    reading: data.reading,
-                    aliases: data.aliases || [],
-                }
-            }
-        })
-
-        // Sort alphabetically by term
-        return entries.sort((a, b) => a.term.localeCompare(b.term, 'ja'))
-    } catch (e) {
-        console.error('[getDictionaryEntries] Error:', e)
-        return []
-    }
-}
-
-export async function getDictionaryEntry(slug: string): Promise<DictionaryEntryWithContent | null> {
-    const filePath = path.join(DICTIONARY_DIR, `${slug}.mdx`)
-
-    if (!fs.existsSync(filePath)) {
-        return null
-    }
-
-    const fileContent = fs.readFileSync(filePath, 'utf-8')
-    const { data, content } = matter(fileContent)
-
-    const { content: mdxContent } = await compileMDX({
-        source: content,
-        components: mdxComponents,
-        options: {
-            parseFrontmatter: false,
-            blockJS: false,
-            mdxOptions: {
-                rehypePlugins: [rehypeSlug, [rehypePrettyCode, { theme: 'github-dark' }]],
-            },
-        },
-    })
+/**
+ * frontmatter から用語1件分のメタデータを組み立てる
+ * 一覧用（getDictionaryEntries）と1件用（getDictionaryEntry）で同じ形にするための共通処理
+ *
+ * @param slug ファイル名（拡張子なし）
+ * @param data gray-matter で読んだ frontmatter
+ */
+function toDictionaryEntry(slug: string, data: ReturnType<typeof readFrontMatter>): DictionaryEntry {
+    const term = data.term || slug
+    const aliases = data.aliases || []
 
     return {
         slug,
-        term: data.term || slug,
-        reading: data.reading || data.term || slug,
-        aliases: data.aliases || [],
+        term,
+        // 読みがなければ用語名で代用する（用語集ページの五十音グループ分けに使う）
+        reading: data.reading || term,
+        aliases,
         route: `/dictionary/${slug}`,
         frontMatter: {
-            term: data.term || slug,
+            term,
             reading: data.reading,
-            aliases: data.aliases || [],
+            aliases,
         },
-        content: mdxContent,
     }
 }
 
-export function getDictionarySlugs(): string[] {
+/**
+ * 全用語のメタデータを、用語名の五十音・アルファベット順で返す
+ * 本文はコンパイルしないので、全件取得しても軽い
+ */
+export async function getDictionaryEntries(): Promise<DictionaryEntry[]> {
     try {
-        if (!fs.existsSync(DICTIONARY_DIR)) {
-            return []
-        }
-        return fs.readdirSync(DICTIONARY_DIR)
-            .filter(file => file.endsWith('.mdx'))
-            .map(file => file.replace('.mdx', ''))
-    } catch {
+        const entries = getMdxSlugs(DICTIONARY_DIR).map(slug =>
+            toDictionaryEntry(slug, readFrontMatter(path.join(DICTIONARY_DIR, `${slug}.mdx`)))
+        )
+
+        // 用語名で並べ替える（'ja' を指定して日本語の並び順にする）
+        return entries.sort((a, b) => a.term.localeCompare(b.term, 'ja'))
+    } catch (error) {
+        console.error('[getDictionaryEntries] Error:', error)
         return []
     }
 }
 
+/**
+ * 用語1件を、本文をコンパイルした状態で返す
+ *
+ * 本文で使えるコンポーネントは DICTIONARY_MDX_COMPONENTS のみ（記事より少ない）。
+ * 理由は compile-mdx.ts のコメントを参照。
+ *
+ * 読み込みやコンパイルに失敗した場合も、例外は投げずに null を返す（エラーはログに出す）。
+ * 用語1件の書き間違いで、用語を使っている全記事のビルドが止まらないようにするため。
+ *
+ * @param slug ファイル名（拡張子なし）
+ * @returns ファイルが存在しない・読み込みに失敗した場合は null
+ */
+export async function getDictionaryEntry(slug: string): Promise<DictionaryEntryWithContent | null> {
+    try {
+        const filePath = path.join(DICTIONARY_DIR, `${slug}.mdx`)
+
+        if (!fs.existsSync(filePath)) {
+            return null
+        }
+
+        const fileContent = fs.readFileSync(filePath, 'utf-8')
+        const { data, content } = matter(fileContent)
+
+        const mdxContent = await compileMdxSource(content, DICTIONARY_MDX_COMPONENTS)
+
+        return {
+            ...toDictionaryEntry(slug, data),
+            content: mdxContent,
+        }
+    } catch (error) {
+        console.error(`[getDictionaryEntry] Error (${slug}):`, error)
+        return null
+    }
+}
+
+/** 全用語のslug（ファイル名）。generateStaticParams 用 */
+export function getDictionarySlugs(): string[] {
+    return getMdxSlugs(DICTIONARY_DIR)
+}
+
+/**
+ * 全用語を本文付きで返す（キーはslug）
+ * 記事中の用語をクリックしたときのモーダル表示用に、記事ページでまとめて渡している
+ */
 export async function getAllDictionaryContents(): Promise<Map<string, DictionaryEntryWithContent>> {
     const slugs = getDictionarySlugs()
     const contents = new Map<string, DictionaryEntryWithContent>()
@@ -146,38 +136,6 @@ export async function getAllDictionaryContents(): Promise<Map<string, Dictionary
     }
 
     return contents
-}
-
-export async function findDictionaryEntryByTerm(term: string): Promise<DictionaryEntry | null> {
-    const entries = await getDictionaryEntries()
-    const lowerTerm = term.toLowerCase()
-
-    for (const entry of entries) {
-        if (entry.term.toLowerCase() === lowerTerm) {
-            return entry
-        }
-        for (const alias of entry.aliases) {
-            if (alias.toLowerCase() === lowerTerm) {
-                return entry
-            }
-        }
-    }
-
-    return null
-}
-
-export async function getAllTermsAndAliases(): Promise<Map<string, string>> {
-    const entries = await getDictionaryEntries()
-    const termMap = new Map<string, string>()
-
-    for (const entry of entries) {
-        termMap.set(entry.term.toLowerCase(), entry.slug)
-        for (const alias of entry.aliases) {
-            termMap.set(alias.toLowerCase(), entry.slug)
-        }
-    }
-
-    return termMap
 }
 
 /**

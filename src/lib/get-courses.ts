@@ -1,153 +1,57 @@
-import fs from 'fs'
+/**
+ * 学習コース（content/learn/）の一覧・メタデータの取得
+ *
+ * フォルダの読み方は guides と同じなので、実際の処理は content-collection.ts にまとめてある。
+ * レッスン本文の読み込みは mdx.ts の getLessonContent を使う。
+ */
 import path from 'path'
-import matter from 'gray-matter'
+import {
+    getMdxSlugs,
+    getSubdirectoryNames,
+    readCollections,
+    type CollectionChildItem,
+    type CollectionMeta,
+} from '@/lib/content-collection'
 
-export type LessonItem = {
-    slug: string
-    title: string
-    route: string
-    frontMatter: {
-        title?: string
-        order?: number
-        description?: string
-    }
-}
+/** レッスン1つ分 */
+export type LessonItem = CollectionChildItem
 
+/** コース1つ分。lessons はorder順 */
 export type CourseItem = {
     slug: string
     title: string
     route: string
-    frontMatter: {
-        title?: string
-        description?: string
-        order?: number
-        goals?: string[]
-    }
+    frontMatter: CollectionMeta
     lessons: LessonItem[]
 }
 
 const LEARN_DIR = path.join(process.cwd(), 'content', 'learn')
 
+/** 全コースを、レッスン一覧付き・order順で返す */
 export async function getCourses(): Promise<CourseItem[]> {
     try {
-        if (!fs.existsSync(LEARN_DIR)) {
-            return []
-        }
-
-        const courseDirs = fs.readdirSync(LEARN_DIR, { withFileTypes: true })
-            .filter(dirent => dirent.isDirectory())
-            .map(dirent => dirent.name)
-
-        const courses: CourseItem[] = []
-
-        for (const courseSlug of courseDirs) {
-            const coursePath = path.join(LEARN_DIR, courseSlug)
-
-            // Read course meta from _meta.ts or index.mdx
-            let courseMeta: any = {}
-            const metaPath = path.join(coursePath, '_meta.ts')
-            if (fs.existsSync(metaPath)) {
-                const metaContent = fs.readFileSync(metaPath, 'utf-8')
-                // Simple parsing for title and description from export default
-                const titleMatch = metaContent.match(/title:\s*['"]([^'"]+)['"]/)
-                const descMatch = metaContent.match(/description:\s*['"]([^'"]+)['"]/)
-                const orderMatch = metaContent.match(/order:\s*(\d+)/)
-                // Parse goals array
-                const goalsMatch = metaContent.match(/goals:\s*\[([\s\S]*?)\]/)
-                let goals: string[] | undefined
-                if (goalsMatch) {
-                    goals = goalsMatch[1]
-                        .match(/['"]([^'"]+)['"]/g)
-                        ?.map(s => s.slice(1, -1))
-                }
-                courseMeta = {
-                    title: titleMatch?.[1],
-                    description: descMatch?.[1],
-                    order: orderMatch ? parseInt(orderMatch[1]) : undefined,
-                    goals,
-                }
-            }
-
-            // Get lessons
-            const lessonFiles = fs.readdirSync(coursePath)
-                .filter(file => file.endsWith('.mdx'))
-
-            const lessons: LessonItem[] = lessonFiles.map(file => {
-                const lessonSlug = file.replace('.mdx', '')
-                const filePath = path.join(coursePath, file)
-                const fileContent = fs.readFileSync(filePath, 'utf-8')
-                const { data } = matter(fileContent)
-
-                return {
-                    slug: lessonSlug,
-                    title: data.title || lessonSlug,
-                    route: `/learn/${courseSlug}/${lessonSlug}`,
-                    frontMatter: {
-                        title: data.title,
-                        order: data.order,
-                        description: data.description,
-                    }
-                }
-            })
-
-            // Sort lessons by order
-            lessons.sort((a, b) => {
-                const orderA = a.frontMatter.order ?? 999
-                const orderB = b.frontMatter.order ?? 999
-                return orderA - orderB
-            })
-
-            courses.push({
-                slug: courseSlug,
-                title: courseMeta.title || courseSlug,
-                route: `/learn/${courseSlug}`,
-                frontMatter: courseMeta,
-                lessons
-            })
-        }
-
-        // Sort courses by order
-        courses.sort((a, b) => {
-            const orderA = a.frontMatter.order ?? 999
-            const orderB = b.frontMatter.order ?? 999
-            return orderA - orderB
-        })
-
-        return courses
-    } catch (e) {
-        console.error('[getCourses] Error:', e)
+        return readCollections(LEARN_DIR, '/learn').map(({ children, ...course }) => ({
+            ...course,
+            lessons: children,
+        }))
+    } catch (error) {
+        console.error('[getCourses] Error:', error)
         return []
     }
 }
 
+/** コース1つを返す。見つからない場合は null */
 export async function getCourse(courseSlug: string): Promise<CourseItem | null> {
     const courses = await getCourses()
-    return courses.find(c => c.slug === courseSlug) || null
+    return courses.find(course => course.slug === courseSlug) || null
 }
 
+/** 全コースのslug（フォルダ名）。generateStaticParams 用 */
 export function getCourseSlugs(): string[] {
-    try {
-        if (!fs.existsSync(LEARN_DIR)) {
-            return []
-        }
-        return fs.readdirSync(LEARN_DIR, { withFileTypes: true })
-            .filter(dirent => dirent.isDirectory())
-            .map(dirent => dirent.name)
-    } catch {
-        return []
-    }
+    return getSubdirectoryNames(LEARN_DIR)
 }
 
+/** コース内の全レッスンのslug（ファイル名）。generateStaticParams 用 */
 export function getLessonSlugs(courseSlug: string): string[] {
-    try {
-        const coursePath = path.join(LEARN_DIR, courseSlug)
-        if (!fs.existsSync(coursePath)) {
-            return []
-        }
-        return fs.readdirSync(coursePath)
-            .filter(file => file.endsWith('.mdx'))
-            .map(file => file.replace('.mdx', ''))
-    } catch {
-        return []
-    }
+    return getMdxSlugs(path.join(LEARN_DIR, courseSlug))
 }

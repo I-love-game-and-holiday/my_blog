@@ -5,7 +5,8 @@ import { getDictionaryEntries, findDictionaryTermsInContent } from '@/lib/get-di
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { ArticleLayout } from '@/components/layout/article-layout'
-import { MdxContentWrapper } from '@/components/dictionary/mdx-components'
+import { Breadcrumb } from '@/components/layout/breadcrumb'
+import { TermAutoLink } from '@/components/dictionary/term-auto-link-client'
 import { ContentSidebar } from '@/components/layout/content-sidebar'
 import { DictionarySidebar } from '@/components/layout/dictionary-sidebar'
 
@@ -63,7 +64,7 @@ export default async function SectionPage(props: PageProps) {
     const dictionaryEntries = await getDictionaryEntries()
     const pageTerms = findDictionaryTermsInContent(rawContent, dictionaryEntries)
 
-    // Find current section index and navigation
+    // 現在のセクションの位置と、前後のセクションを求める
     const currentIndex = guide.sections.findIndex(s => s.slug === params.section)
     const prevSection = currentIndex > 0 ? guide.sections[currentIndex - 1] : null
     const nextSection = currentIndex < guide.sections.length - 1 ? guide.sections[currentIndex + 1] : null
@@ -72,19 +73,13 @@ export default async function SectionPage(props: PageProps) {
         <ArticleLayout>
             <div className="container py-12">
                 {/* パンくずリスト */}
-                <nav className="text-sm text-muted-foreground mb-6">
-                    <Link href="/guides" className="hover:text-foreground transition-colors">
-                        Guides
-                    </Link>
-                    <span className="mx-2">/</span>
-                    <Link href={guide.route} className="hover:text-foreground transition-colors">
-                        {guide.frontMatter?.title || guide.title}
-                    </Link>
-                    <span className="mx-2">/</span>
-                    <span className="text-foreground">
-                        {metadata?.title}
-                    </span>
-                </nav>
+                <Breadcrumb
+                    items={[
+                        { label: 'Guides', href: '/guides' },
+                        { label: guide.frontMatter?.title || guide.title, href: guide.route },
+                        { label: metadata?.title },
+                    ]}
+                />
 
                 {/* ガイドサイドバー(左) */}
                 <ContentSidebar
@@ -113,12 +108,12 @@ export default async function SectionPage(props: PageProps) {
                             </p>
                         )}
                     </header>
-                    <MdxContentWrapper dictionaryEntries={dictionaryEntries}>
+                    <TermAutoLink dictionaryEntries={dictionaryEntries}>
                         {content}
-                    </MdxContentWrapper>
+                    </TermAutoLink>
                 </article>
 
-                {/* Navigation */}
+                {/* 前後のセクションへのナビゲーション */}
                 <nav className="mt-12 pt-8 border-t border-border">
                     <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between sm:items-center sm:gap-4">
                         {prevSection ? (

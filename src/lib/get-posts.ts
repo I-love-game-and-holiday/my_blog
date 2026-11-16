@@ -1,13 +1,22 @@
-import fs from 'fs'
+/**
+ * ブログ記事（content/blog/*.mdx）の一覧・メタデータの取得
+ *
+ * 記事本文の読み込みは mdx.ts の getPostContent を使う。
+ */
 import path from 'path'
-import matter from 'gray-matter'
+import { getMdxSlugs, readFrontMatter } from '@/lib/content-collection'
 
+/** getPosts の絞り込み条件（すべて省略可） */
 type GetPostsOptions = {
+    /** 先頭から何件返すか */
     first?: number
+    /** いずれかのタグを持つ記事だけに絞る */
     tags?: string[]
+    /** このタイトルの記事を除く（関連記事で自分自身を除くときなど） */
     excludeByTitle?: string
 }
 
+/** ブログ記事1つ分 */
 export type PostItem = {
     slug: string
     title: string
@@ -22,21 +31,13 @@ export type PostItem = {
 
 const BLOG_DIR = path.join(process.cwd(), 'content', 'blog')
 
+/** ブログ記事を新しい順に返す。options で絞り込みできる */
 export async function getPosts(options: GetPostsOptions = {}): Promise<PostItem[]> {
     const { first, tags, excludeByTitle } = options
 
     try {
-        if (!fs.existsSync(BLOG_DIR)) {
-            return []
-        }
-
-        const files = fs.readdirSync(BLOG_DIR).filter(file => file.endsWith('.mdx'))
-
-        let posts: PostItem[] = files.map(file => {
-            const slug = file.replace('.mdx', '')
-            const filePath = path.join(BLOG_DIR, file)
-            const fileContent = fs.readFileSync(filePath, 'utf-8')
-            const { data } = matter(fileContent)
+        let posts: PostItem[] = getMdxSlugs(BLOG_DIR).map(slug => {
+            const data = readFrontMatter(path.join(BLOG_DIR, `${slug}.mdx`))
 
             return {
                 slug,
@@ -47,50 +48,42 @@ export async function getPosts(options: GetPostsOptions = {}): Promise<PostItem[
                     date: data.date || '',
                     tags: data.tags || [],
                     description: data.description || '',
-                }
+                },
             }
         })
 
-        // Sort by date descending
+        // 日付の新しい順に並べる
         posts = posts.sort((a, b) => {
             const dateA = new Date(a.frontMatter.date || '')
             const dateB = new Date(b.frontMatter.date || '')
             return dateB.getTime() - dateA.getTime()
         })
 
-        // Filter by tags
+        // 指定したタグのどれかを持つ記事に絞る
         if (tags && tags.length > 0) {
             posts = posts.filter(post =>
                 tags.some(tag => post.frontMatter.tags?.includes(tag))
             )
         }
 
-        // Exclude by title
+        // 指定したタイトルの記事を除く
         if (excludeByTitle) {
             posts = posts.filter(post => post.title !== excludeByTitle)
         }
 
-        // Limit
+        // 件数を制限する
         if (first) {
             posts = posts.slice(0, first)
         }
 
         return posts
-    } catch (e) {
-        console.error('[getPosts] Error:', e)
+    } catch (error) {
+        console.error('[getPosts] Error:', error)
         return []
     }
 }
 
+/** 全記事のslug（ファイル名）。generateStaticParams 用 */
 export function getPostSlugs(): string[] {
-    try {
-        if (!fs.existsSync(BLOG_DIR)) {
-            return []
-        }
-        return fs.readdirSync(BLOG_DIR)
-            .filter(file => file.endsWith('.mdx'))
-            .map(file => file.replace('.mdx', ''))
-    } catch {
-        return []
-    }
+    return getMdxSlugs(BLOG_DIR)
 }

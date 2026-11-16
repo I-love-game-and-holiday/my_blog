@@ -1,8 +1,9 @@
-import { getPosts } from "@/lib/get-posts"
+import { getPosts } from '@/lib/get-posts'
+import { SITE_URL } from '@/lib/constants'
 
 const CONFIG = {
     title: 'tanaka101',
-    siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://tanaka101.com',
+    siteUrl: SITE_URL,
     description: 'プロゲートを終えた非エンジニア向けの学習サイト',
     lang: 'ja-jp'
 }
