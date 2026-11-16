@@ -3,11 +3,12 @@ import { getPosts } from '@/lib/get-posts'
 import { getCourses } from '@/lib/get-courses'
 import { getGuides } from '@/lib/get-guides'
 import { getDictionaryEntries } from '@/lib/get-dictionary'
+import { SITE_URL } from '@/lib/constants'
 
 export const dynamic = 'force-static'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tanaka101.com'
+    const baseUrl = SITE_URL
 
     const staticPages: MetadataRoute.Sitemap = [
         {

@@ -1,4 +1,20 @@
 /**
+ * サイト全体の設定
+ */
+
+/**
+ * サイトのURL（末尾スラッシュなし）。sitemap・robots・RSS で使う
+ * 環境変数 NEXT_PUBLIC_SITE_URL がなければ本番URLにする
+ */
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://tanaka101.com'
+
+/**
+ * コードハイライトのテーマ（shiki のテーマ名）
+ * MDXのコードブロック（compile-mdx.ts）と OsCommandTabs（highlight.ts）の両方で使う
+ */
+export const CODE_THEME = 'github-dark'
+
+/**
  * レイアウト関連の定数
  */
 

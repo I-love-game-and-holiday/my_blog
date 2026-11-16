@@ -56,7 +56,6 @@ blog/
 │       └── {guide}/     # ガイドフォルダ（構成は learn と同じ）
 ├── src/
 │   ├── app/             # Next.js App Router
-│   │   ├── api/         # APIルート（dictionary等）
 │   │   ├── blog/        # ブログページ
 │   │   ├── dictionary/  # 用語集ページ
 │   │   ├── guides/      # ガイドページ
@@ -72,11 +71,14 @@ blog/
 │   │   └── ui/          # shadcn/uiコンポーネント
 │   ├── contexts/        # React Contextプロバイダー
 │   ├── lib/             # ユーティリティ関数
+│   │   ├── content-collection.ts # content/ 読み込みの共通処理（MDX一覧・order並べ替え・_meta.ts解析）
+│   │   ├── constants.ts # サイト全体の定数（SITE_URL, CODE_THEME, スタイル定数）
 │   │   ├── get-posts.ts # ブログ記事取得
 │   │   ├── get-courses.ts # コース取得
 │   │   ├── get-guides.ts  # ガイド取得
 │   │   ├── get-dictionary.ts # 用語取得
-│   │   ├── mdx.ts       # MDXコンパイル
+│   │   ├── compile-mdx.ts # MDXのコンパイル設定・MDXで使えるコンポーネント一覧
+│   │   ├── mdx.ts       # 記事1件分の本文読み込み（blog/learn/guides）
 │   │   ├── content-sidebar-state.ts # サイドバー開閉状態の保存キー・復元スクリプト
 │   │   └── highlight.ts # コードハイライト（shiki）
 │   └── styles/          # グローバルスタイル
@@ -371,7 +373,7 @@ try {
 
 | 変数名 | 用途 | フォールバック |
 |--------|------|---------------|
-| `NEXT_PUBLIC_SITE_URL` | サイトURL（sitemap, RSS, robots等で使用） | `https://tanaka101.com` |
+| `NEXT_PUBLIC_SITE_URL` | サイトURL（sitemap, RSS, robots等で使用）。コードからは `constants.ts` の `SITE_URL` 経由で参照する | `https://tanaka101.com` |
 
 ---
 

@@ -1,10 +1,10 @@
-import Link from 'next/link'
 import { getCourse, getCourses } from '@/lib/get-courses'
 import { getLessonContent } from '@/lib/mdx'
 import { getDictionaryEntries, findDictionaryTermsInContent } from '@/lib/get-dictionary'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { ArticleLayout } from '@/components/layout/article-layout'
+import { Breadcrumb } from '@/components/layout/breadcrumb'
 import { MdxContentWrapper } from '@/components/dictionary/mdx-components'
 import { ContentSidebar } from '@/components/layout/content-sidebar'
 import { DictionarySidebar } from '@/components/layout/dictionary-sidebar'
@@ -73,20 +73,14 @@ export default async function LessonPage(props: PageProps) {
     return (
         <ArticleLayout>
             <div className="container py-12">
-                {/* Breadcrumb */}
-                <nav className="text-sm text-muted-foreground mb-6">
-                    <Link href="/learn" className="hover:text-foreground transition-colors">
-                        Learn
-                    </Link>
-                    <span className="mx-2">/</span>
-                    <Link href={course.route} className="hover:text-foreground transition-colors">
-                        {course.frontMatter?.title || course.title}
-                    </Link>
-                    <span className="mx-2">/</span>
-                    <span className="text-foreground">
-                        {metadata?.title}
-                    </span>
-                </nav>
+                {/* パンくずリスト */}
+                <Breadcrumb
+                    items={[
+                        { label: 'Learn', href: '/learn' },
+                        { label: course.frontMatter?.title || course.title, href: course.route },
+                        { label: metadata?.title },
+                    ]}
+                />
 
                 {/* 進捗トラッカー */}
                 <LessonViewTracker courseSlug={params.course} lessonSlug={params.lesson} />
