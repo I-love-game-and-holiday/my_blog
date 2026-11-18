@@ -1,10 +1,13 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@/lib/seo'
 import { getGuides } from '@/lib/get-guides'
 import { ClickableCard } from '@/components/ui/clickable-card'
 
-export const metadata = {
+export const metadata: Metadata = buildPageMetadata({
     title: 'Guides',
     description: '開発に必要な基礎知識を体系的に学ぶガイド',
-}
+    path: '/guides',
+})
 
 export default async function GuidesPage() {
     const guides = await getGuides()

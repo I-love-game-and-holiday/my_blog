@@ -33,6 +33,7 @@ export function CopyButton({ getText, className }: CopyButtonProps) {
 
     return (
         <button
+            type="button"
             onClick={handleCopy}
             className={cn(
                 'flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-md',
@@ -53,6 +54,10 @@ export function CopyButton({ getText, className }: CopyButtonProps) {
                     <span>コピー</span>
                 </>
             )}
+            {/* 「コピーしました」を支援技術に読み上げさせる（見た目には出さない） */}
+            <span role="status" className="sr-only">
+                {copied ? 'コピーしました' : ''}
+            </span>
         </button>
     )
 }

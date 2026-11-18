@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { getGuide, getGuideSlugs } from '@/lib/get-guides'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import { buildPageMetadata } from '@/lib/seo'
 import { ClickableCard } from '@/components/ui/clickable-card'
 
 type PageParams = {
@@ -21,10 +22,11 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
     const params = await props.params
     const guide = await getGuide(params.guide)
     if (!guide) return {}
-    return {
+    return buildPageMetadata({
         title: guide.frontMatter?.title || guide.title,
         description: guide.frontMatter?.description,
-    }
+        path: guide.route,
+    })
 }
 
 export default async function GuidePage(props: PageProps) {

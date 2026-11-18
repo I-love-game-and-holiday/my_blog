@@ -1,10 +1,13 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@/lib/seo'
 import { getPosts } from '@/lib/get-posts'
 import { ClickableCard } from '@/components/ui/clickable-card'
 
-export const metadata = {
+export const metadata: Metadata = buildPageMetadata({
     title: 'Blog',
     description: '技術メモ、IT以外の雑多な内容も書いていきます。',
-}
+    path: '/blog',
+})
 
 export default async function BlogPage() {
     const posts = await getPosts()

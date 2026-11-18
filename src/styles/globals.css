@@ -37,6 +37,7 @@
     --z-panel: 50;
     --z-overlay: 50;
     --z-header: 60;
+    --z-skip-link: 70;
 
     /* コードブロックの色 */
     --color-code-bg: #1a1a1a;
@@ -95,18 +96,36 @@
 }
 
 /* ============================================
+ * スライドパネル本体（SlidePanel）
+ *
+ * 閉じている間は visibility: hidden にして、中身をフォーカス・読み上げの対象から外す。
+ * 閉じるときは translate のアニメーションが終わってから（300ms後に）隠し、
+ * 開くときはすぐに表示する。
+ * ============================================ */
+.slide-panel {
+    transition: translate 300ms ease-in-out, visibility 0s linear 0s;
+}
+
+.slide-panel[data-state='closed'],
+html[data-content-sidebar='closed'] .slide-panel[data-slide-panel='content-sidebar'] {
+    visibility: hidden;
+    transition: translate 300ms ease-in-out, visibility 0s linear 300ms;
+}
+
+/* ============================================
  * 永続化スライドパネル（コンテンツサイドバー・左）
  *
  * 開閉状態は <html data-content-sidebar="closed"> で決める。
  * hydration前のインラインスクリプトが属性を付与するため、
  * 初回描画から正しい状態になり、開→閉のアニメーションが起きない。
+ * トリガーは開いている間は visibility: hidden にして、Tabキーの移動先からも外す。
  * ============================================ */
 [data-slide-panel='content-sidebar'][data-part='panel'] {
     translate: 0 0;
 }
 
 [data-slide-panel='content-sidebar'][data-part='trigger'] {
-    pointer-events: none;
+    visibility: hidden;
 }
 
 [data-slide-panel='content-sidebar'][data-part='indicator'] {
@@ -118,11 +137,29 @@ html[data-content-sidebar='closed'] [data-slide-panel='content-sidebar'][data-pa
 }
 
 html[data-content-sidebar='closed'] [data-slide-panel='content-sidebar'][data-part='trigger'] {
-    pointer-events: auto;
+    visibility: visible;
 }
 
 html[data-content-sidebar='closed'] [data-slide-panel='content-sidebar'][data-part='indicator'] {
     opacity: 1;
+}
+
+/* ============================================
+ * アニメーション抑制（OSの「視差効果を減らす」設定）
+ *
+ * 動きを減らしたい利用者には、transition・animation をほぼ0秒にする。
+ * 0にしないのは、transitionend などのイベントを待つ処理が止まらないようにするため。
+ * ============================================ */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        transition-delay: 0s !important;
+        scroll-behavior: auto !important;
+    }
 }
 
 /* ============================================

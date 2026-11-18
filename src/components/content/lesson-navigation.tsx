@@ -25,7 +25,7 @@ export function LessonNavigation({
     }
 
     return (
-        <nav className="mt-12 pt-8 border-t border-border">
+        <nav aria-label="前後のレッスン" className="mt-12 pt-8 border-t border-border">
             <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between sm:items-center sm:gap-4">
                 {prevLesson ? (
                     <Link

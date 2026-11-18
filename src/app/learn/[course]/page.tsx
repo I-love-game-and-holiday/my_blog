@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { getCourse, getCourseSlugs } from '@/lib/get-courses'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import { buildPageMetadata } from '@/lib/seo'
 import { CourseGoals } from '@/components/content/course-goals'
 import { CourseProgressBadge } from '@/components/content/course-progress-badge'
 import {
@@ -28,10 +29,11 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
     const params = await props.params
     const course = await getCourse(params.course)
     if (!course) return {}
-    return {
+    return buildPageMetadata({
         title: course.frontMatter?.title || course.title,
         description: course.frontMatter?.description,
-    }
+        path: course.route,
+    })
 }
 
 export default async function CoursePage(props: PageProps) {

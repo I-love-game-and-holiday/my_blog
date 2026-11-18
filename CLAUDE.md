@@ -68,6 +68,7 @@ blog/
 │   │   ├── content/     # コンテンツ用コンポーネント（MDX内で使う部品・コースUI）
 │   │   ├── dictionary/  # 用語集コンポーネント（用語リンク・自動リンク・検索）
 │   │   ├── layout/      # レイアウトコンポーネント（ヘッダー・サイドバー・パンくず等）
+│   │   ├── seo/         # 構造化データ（JSON-LD）の出力
 │   │   ├── theme/       # ダーク/ライトテーマ（Provider・切替ボタン）
 │   │   └── ui/          # shadcn/uiコンポーネント
 │   ├── contexts/        # React Contextプロバイダー
@@ -80,6 +81,7 @@ blog/
 │   │   ├── get-dictionary.ts # 用語取得
 │   │   ├── compile-mdx.ts # MDXのコンパイル設定・MDXで使えるコンポーネント一覧
 │   │   ├── mdx.ts       # 記事1件分の本文読み込み（blog/learn/guides）
+│   │   ├── seo.ts       # ページのメタデータ（canonical・OGP・Twitter Card）と構造化データの組み立て
 │   │   ├── term-boundary.ts # 用語の自動リンクで使う単語境界の判定
 │   │   ├── content-sidebar-state.ts # サイドバー開閉状態の保存キー・復元スクリプト
 │   │   ├── highlight.ts # コードハイライト（shiki）
@@ -373,6 +375,15 @@ learn/guides/blog のページは `generateStaticParams` で静的生成され�
 - `SlidePanel` に `persistedId` を渡すと、この方式で動く（現状 `content-sidebar` のCSSのみ定義済み）
 - 別のパネルに適用する場合は、`globals.css` に同じ形のセレクタを追加し、スクリプトも対応させる
 
+### メタデータ（SEO）
+
+- `metadata` / `generateMetadata` は必ず `Metadata` 型を付け、`import type { Metadata } from 'next'` で読み込む
+- 中身は `src/lib/seo.ts` の `buildPageMetadata({ title, description, path })` で作る。canonical・OGP・Twitter Card がまとめて入る
+  - Next.js は `openGraph` などを深くマージしないため、ページで直接 `openGraph` を書くと `siteName` などが消える。必ずこの関数を通す
+  - `path` はサイト内のパス（`/learn/...`）。ルートの `metadataBase` で絶対URLになる
+- 記事ページ（blog/learn/guides の本文）は `type: 'article'` を指定し、`JsonLd` で `BreadcrumbList` と `Article` の構造化データを出す
+- サイト名・説明は `constants.ts` の `SITE_NAME` / `SITE_DESCRIPTION` を使う
+
 ### エラーハンドリング
 
 データ取得関数（`get-*.ts`）は**サイレント失敗**パターンを採用する:
@@ -494,6 +505,7 @@ try {
 | `--z-panel` | 50 | スライドパネル |
 | `--z-overlay` | 50 | オーバーレイ |
 | `--z-header` | 60 | サイトヘッダー |
+| `--z-skip-link` | 70 | スキップリンク（「本文へ移動」。フォーカス時のみ表示） |
 
 新しいz-indexを追加する場合は、この変数テーブルに追加し、直接数値を書かないこと。
 
