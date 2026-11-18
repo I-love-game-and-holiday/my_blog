@@ -1,11 +1,14 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@/lib/seo'
 import { getCourses } from '@/lib/get-courses'
 import { ClickableCard } from '@/components/ui/clickable-card'
 import { CourseProgressBadge } from '@/components/content/course-progress-badge'
 
-export const metadata = {
+export const metadata: Metadata = buildPageMetadata({
     title: 'Learn',
     description: '基礎を学んだ次に進むためのハンズオンコース',
-}
+    path: '/learn',
+})
 
 export default async function LearnPage() {
     const courses = await getCourses()

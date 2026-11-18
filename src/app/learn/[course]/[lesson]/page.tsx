@@ -3,6 +3,8 @@ import { getLessonContent } from '@/lib/mdx'
 import { getDictionaryEntries, findDictionaryTermsInContent } from '@/lib/get-dictionary'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import { buildArticleJsonLd, buildBreadcrumbJsonLd, buildPageMetadata } from '@/lib/seo'
+import { JsonLd } from '@/components/seo/json-ld'
 import { ArticleLayout } from '@/components/layout/article-layout'
 import { Breadcrumb } from '@/components/layout/breadcrumb'
 import { TermAutoLink } from '@/components/dictionary/term-auto-link-client'
@@ -40,11 +42,14 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
     const params = await props.params
     const course = await getCourse(params.course)
     const lesson = course?.lessons.find(l => l.slug === params.lesson)
+    if (!lesson) return {}
 
-    return {
-        title: lesson?.frontMatter?.title,
-        description: lesson?.frontMatter?.description,
-    }
+    return buildPageMetadata({
+        title: lesson.frontMatter?.title || lesson.title,
+        description: lesson.frontMatter?.description,
+        path: lesson.route,
+        type: 'article',
+    })
 }
 
 export default async function LessonPage(props: PageProps) {
@@ -70,17 +75,22 @@ export default async function LessonPage(props: PageProps) {
     const prevLesson = currentIndex > 0 ? course.lessons[currentIndex - 1] : null
     const nextLesson = currentIndex < course.lessons.length - 1 ? course.lessons[currentIndex + 1] : null
 
+    const lessonPath = course.lessons[currentIndex]?.route ?? `${course.route}/${params.lesson}`
+    const breadcrumbItems = [
+        { label: 'Learn', href: '/learn' },
+        { label: course.frontMatter?.title || course.title, href: course.route },
+        { label: metadata?.title },
+    ]
+
     return (
         <ArticleLayout>
             <div className="container py-12">
+                {/* 構造化データ（検索結果のパンくず・記事情報） */}
+                <JsonLd data={buildBreadcrumbJsonLd(breadcrumbItems.map(item => ({ label: item.label, path: item.href })), lessonPath)} />
+                <JsonLd data={buildArticleJsonLd({ title: metadata?.title, description: metadata?.description, path: lessonPath })} />
+
                 {/* パンくずリスト */}
-                <Breadcrumb
-                    items={[
-                        { label: 'Learn', href: '/learn' },
-                        { label: course.frontMatter?.title || course.title, href: course.route },
-                        { label: metadata?.title },
-                    ]}
-                />
+                <Breadcrumb items={breadcrumbItems} />
 
                 {/* 進捗トラッカー */}
                 <LessonViewTracker courseSlug={params.course} lessonSlug={params.lesson} />

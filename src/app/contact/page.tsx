@@ -1,10 +1,12 @@
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@/lib/seo'
 import { CONTENT_MAX_WIDTH } from '@/lib/constants'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
     title: 'お問い合わせ',
     description: 'tanaka101へのお問い合わせはこちら',
-}
+    path: '/contact',
+})
 
 export default function ContactPage() {
     return (

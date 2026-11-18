@@ -1,11 +1,13 @@
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@/lib/seo'
 import { CONTENT_MAX_WIDTH } from '@/lib/constants'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
     title: 'About',
     description:
         'tanaka101について - Progateの次のステップを支える学習サイト',
-}
+    path: '/about',
+})
 
 export default function AboutPage() {
     return (

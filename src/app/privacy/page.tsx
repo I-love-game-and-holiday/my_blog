@@ -1,10 +1,12 @@
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@/lib/seo'
 import { CONTENT_MAX_WIDTH } from '@/lib/constants'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
     title: 'プライバシーポリシー',
     description: 'tanaka101のプライバシーポリシー',
-}
+    path: '/privacy',
+})
 
 export default function PrivacyPage() {
     return (

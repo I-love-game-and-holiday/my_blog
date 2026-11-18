@@ -1,5 +1,17 @@
 import Link from 'next/link'
-import { CONTENT_MAX_WIDTH } from '@/lib/constants'
+import type { Metadata } from 'next'
+import { CONTENT_MAX_WIDTH, SITE_DESCRIPTION, SITE_NAME } from '@/lib/constants'
+import { buildPageMetadata } from '@/lib/seo'
+
+export const metadata: Metadata = {
+    ...buildPageMetadata({
+        title: SITE_NAME,
+        description: SITE_DESCRIPTION,
+        path: '/',
+    }),
+    // ホームはタイトルの template（「| tanaka101」）を付けない
+    title: { absolute: SITE_NAME },
+}
 
 export default function HomePage() {
     return (

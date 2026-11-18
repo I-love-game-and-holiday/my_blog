@@ -4,6 +4,8 @@ import { getSectionContent } from '@/lib/mdx'
 import { getDictionaryEntries, findDictionaryTermsInContent } from '@/lib/get-dictionary'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import { buildArticleJsonLd, buildBreadcrumbJsonLd, buildPageMetadata } from '@/lib/seo'
+import { JsonLd } from '@/components/seo/json-ld'
 import { ArticleLayout } from '@/components/layout/article-layout'
 import { Breadcrumb } from '@/components/layout/breadcrumb'
 import { TermAutoLink } from '@/components/dictionary/term-auto-link-client'
@@ -39,11 +41,14 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
     const params = await props.params
     const guide = await getGuide(params.guide)
     const section = guide?.sections.find(s => s.slug === params.section)
+    if (!section) return {}
 
-    return {
-        title: section?.frontMatter?.title,
-        description: section?.frontMatter?.description,
-    }
+    return buildPageMetadata({
+        title: section.frontMatter?.title || section.title,
+        description: section.frontMatter?.description,
+        path: section.route,
+        type: 'article',
+    })
 }
 
 export default async function SectionPage(props: PageProps) {
@@ -69,17 +74,22 @@ export default async function SectionPage(props: PageProps) {
     const prevSection = currentIndex > 0 ? guide.sections[currentIndex - 1] : null
     const nextSection = currentIndex < guide.sections.length - 1 ? guide.sections[currentIndex + 1] : null
 
+    const sectionPath = guide.sections[currentIndex]?.route ?? `${guide.route}/${params.section}`
+    const breadcrumbItems = [
+        { label: 'Guides', href: '/guides' },
+        { label: guide.frontMatter?.title || guide.title, href: guide.route },
+        { label: metadata?.title },
+    ]
+
     return (
         <ArticleLayout>
             <div className="container py-12">
+                {/* 構造化データ（検索結果のパンくず・記事情報） */}
+                <JsonLd data={buildBreadcrumbJsonLd(breadcrumbItems.map(item => ({ label: item.label, path: item.href })), sectionPath)} />
+                <JsonLd data={buildArticleJsonLd({ title: metadata?.title, description: metadata?.description, path: sectionPath })} />
+
                 {/* パンくずリスト */}
-                <Breadcrumb
-                    items={[
-                        { label: 'Guides', href: '/guides' },
-                        { label: guide.frontMatter?.title || guide.title, href: guide.route },
-                        { label: metadata?.title },
-                    ]}
-                />
+                <Breadcrumb items={breadcrumbItems} />
 
                 {/* ガイドサイドバー(左) */}
                 <ContentSidebar

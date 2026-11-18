@@ -6,15 +6,28 @@ import { SiteFooter } from '@/components/layout/site-footer'
 import { ThemeProvider } from '@/components/theme/theme-provider'
 import { CourseProgressProvider } from '@/contexts/course-progress-context'
 import { CONTENT_SIDEBAR_INIT_SCRIPT } from '@/lib/content-sidebar-state'
-import { Metadata } from 'next'
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/lib/constants'
+import type { Metadata } from 'next'
 import { Inter, Nunito } from 'next/font/google'
 
+// 各ページは lib/seo.ts の buildPageMetadata で canonical・OGP を上書きする。
+// ここの openGraph・twitter は、それを持たないページ（404など）の既定値
 export const metadata: Metadata = {
+    // 相対パス（canonical・og:url など）を絶対URLに解決する基準
+    metadataBase: new URL(SITE_URL),
     title: {
-        default: 'tanaka101',
-        template: '%s | tanaka101',
+        default: SITE_NAME,
+        template: `%s | ${SITE_NAME}`,
     },
-    description: 'プロゲートを終えた非エンジニア向け。実践的なハンズオンで次のステップへ。',
+    description: SITE_DESCRIPTION,
+    openGraph: {
+        siteName: SITE_NAME,
+        locale: 'ja_JP',
+        type: 'website',
+    },
+    twitter: {
+        card: 'summary',
+    },
     other: {
         'google-adsense-account': 'ca-pub-6394268468794969',
     },

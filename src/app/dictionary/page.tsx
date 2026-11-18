@@ -1,11 +1,13 @@
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@/lib/seo'
 import { getDictionaryEntries } from '@/lib/get-dictionary'
 import { DictionarySearch } from '@/components/dictionary/dictionary-search'
-import type { Metadata } from 'next'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
     title: '用語辞典',
     description: 'プログラミング用語の解説一覧',
-}
+    path: '/dictionary',
+})
 
 export default async function DictionaryPage() {
     const entries = await getDictionaryEntries()

@@ -8,6 +8,12 @@
  */
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://tanaka101.com'
 
+/** サイト名。タイトルの末尾・OGPの og:site_name・構造化データで使う */
+export const SITE_NAME = 'tanaka101'
+
+/** サイト全体の説明。ホームと、説明を持たないページの既定値に使う */
+export const SITE_DESCRIPTION = 'プロゲートを終えた非エンジニア向け。実践的なハンズオンで次のステップへ。'
+
 /**
  * コードハイライトのテーマ（shiki のテーマ名）
  * MDXのコードブロック（compile-mdx.ts）と OsCommandTabs（highlight.ts）の両方で使う

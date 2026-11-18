@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { getDictionaryEntry, getDictionarySlugs } from '@/lib/get-dictionary'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import { buildPageMetadata } from '@/lib/seo'
 import { Breadcrumb } from '@/components/layout/breadcrumb'
 
 type PageParams = {
@@ -20,11 +21,13 @@ export async function generateStaticParams() {
 export async function generateMetadata(props: PageProps): Promise<Metadata> {
     const params = await props.params
     const entry = await getDictionaryEntry(params.slug)
+    if (!entry) return {}
 
-    return {
-        title: entry?.term ? `${entry.term} - 用語辞典` : '用語辞典',
-        description: entry?.term ? `${entry.term}の解説` : undefined,
-    }
+    return buildPageMetadata({
+        title: `${entry.term} - 用語辞典`,
+        description: `${entry.term}の解説`,
+        path: entry.route,
+    })
 }
 
 export default async function DictionaryEntryPage(props: PageProps) {
