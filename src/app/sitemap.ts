@@ -13,59 +13,54 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const staticPages: MetadataRoute.Sitemap = [
         {
             url: baseUrl,
-            lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 1,
         },
         {
             url: `${baseUrl}/learn`,
-            lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.9,
         },
         {
             url: `${baseUrl}/blog`,
-            lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.9,
         },
         {
             url: `${baseUrl}/guides`,
-            lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.9,
         },
         {
             url: `${baseUrl}/dictionary`,
-            lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.8,
         },
         {
             url: `${baseUrl}/about`,
-            lastModified: new Date(),
             changeFrequency: 'monthly',
             priority: 0.5,
         },
         {
             url: `${baseUrl}/contact`,
-            lastModified: new Date(),
             changeFrequency: 'monthly',
             priority: 0.5,
         },
         {
             url: `${baseUrl}/privacy`,
-            lastModified: new Date(),
             changeFrequency: 'monthly',
             priority: 0.3,
         },
     ]
 
+    // 更新日（lastModified）は、日付がわかるブログ記事だけに入れる。
+    // 生成日時を入れると全ページが毎回更新されたように見え、検索エンジンに信用されなくなる
+
     // ブログ記事
     const posts = await getPosts()
     const blogEntries: MetadataRoute.Sitemap = posts.map((post) => ({
         url: `${baseUrl}${post.route}`,
-        lastModified: post.frontMatter?.date ? new Date(post.frontMatter.date) : new Date(),
+        lastModified: post.frontMatter?.date ? new Date(post.frontMatter.date) : undefined,
         changeFrequency: 'monthly',
         priority: 0.7,
     }))
@@ -77,7 +72,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     for (const course of courses) {
         learnEntries.push({
             url: `${baseUrl}${course.route}`,
-            lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.8,
         })
@@ -85,7 +79,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         for (const lesson of course.lessons) {
             learnEntries.push({
                 url: `${baseUrl}${lesson.route}`,
-                lastModified: new Date(),
                 changeFrequency: 'monthly',
                 priority: 0.7,
             })
@@ -99,7 +92,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     for (const guide of guides) {
         guideEntries.push({
             url: `${baseUrl}${guide.route}`,
-            lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.8,
         })
@@ -107,7 +99,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         for (const section of guide.sections) {
             guideEntries.push({
                 url: `${baseUrl}${section.route}`,
-                lastModified: new Date(),
                 changeFrequency: 'monthly',
                 priority: 0.7,
             })
@@ -122,7 +113,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         .filter((entry) => !stubSlugs.has(entry.slug))
         .map((entry) => ({
             url: `${baseUrl}${entry.route}`,
-            lastModified: new Date(),
             changeFrequency: 'monthly',
             priority: 0.6,
         }))
